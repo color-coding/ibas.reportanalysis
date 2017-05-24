@@ -36,6 +36,7 @@ export class ReportBookEditApp extends ibas.BOEditApplication<IReportBookEditVie
         this.view.addReportBookItemEvent = this.addReportBookItem;
         this.view.removeReportBookItemEvent = this.removeReportBookItem;
         this.view.chooseReportBookItemReportEvent = this.chooseReportBookItemReport;
+        this.view.chooseUserRoleItemEvent = this.chooseUserRoleItem;
     }
     /** 视图显示后 */
     protected viewShowed(): void {
@@ -203,6 +204,25 @@ export class ReportBookEditApp extends ibas.BOEditApplication<IReportBookEditVie
         // 仅显示没有标记删除的
         this.view.showReportBookItems(this.editData.reportBookItems.filterDeleted());
     }
+    /**选择客户、角色行事件 */
+    chooseUserRoleItem(): void {
+        let that: this = this;
+        if (this.editData.assignedType === bo.emAssignedType.ROLE) {
+            ibas.servicesManager.runChooseService<bo.UserReport>({
+                boCode: "${Company}_SYS_ROLE",
+                onCompleted(selecteds: ibas.List<bo.UserReport>): void {
+                }
+            });
+        }if (this.editData.assignedType === bo.emAssignedType.USER) {
+            ibas.servicesManager.runChooseService<bo.UserReport>({
+                boCode: "${Company}_SYS_USER",
+                onCompleted(selecteds: ibas.List<bo.UserReport>): void {
+                }
+            });
+        }
+
+
+    }
     /** 选择销售订单行物料事件 */
     chooseReportBookItemReport(caller: bo.ReportBookItem): void {
         let that: this = this;
@@ -253,4 +273,6 @@ export interface IReportBookEditView extends ibas.IBOEditView {
     showReportBookItems(datas: bo.ReportBookItem[]): void;
     /** 选择报表簿-项目-报表事件 */
     chooseReportBookItemReportEvent: Function;
+    /**选择用户、角色事件 */
+    chooseUserRoleItemEvent: Function;
 }
