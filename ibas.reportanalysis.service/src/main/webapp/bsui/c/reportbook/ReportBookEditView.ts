@@ -25,12 +25,37 @@ export class ReportBookEditView extends ibas.BOEditView implements IReportBookEd
     removeReportBookItemEvent: Function;
     /** 选择报表簿-项目-报表事件 */
     chooseReportBookItemReportEvent: Function;
+    /** 选择客户、角色的事件 */
+    chooseUserRoleItemEvent: Function;
 
     /** 绘制视图 */
     darw(): any {
         let that: this = this;
         this.form = new sap.ui.layout.form.SimpleForm("", {
             content: [
+                new sap.ui.core.Title("", { text: "Customer" }),
+                new sap.m.Label("", { text: ibas.i18n.prop("bo_reportbook_assigned") }),
+                new sap.m.Input("", {
+                    showValueHelp: true,
+                    valueHelpRequest: function (): void {
+                        that.fireViewEvents(that.chooseUserRoleItemEvent)
+                    }
+                }).bindProperty("value", {
+                    path: "/assigned"
+                }),
+                new sap.m.Label("", { text: ibas.i18n.prop("bo_reportbook_assignedtype") }),
+                new sap.m.Select("", {
+                    items: utils.createComboBoxItems(bo.emAssignedType)
+                }).bindProperty("selectedKey", {
+                    path: "/assignedType",
+                    type: "sap.ui.model.type.Integer"
+                }),
+                new sap.ui.core.Title("", { text: "Document" }),
+                new sap.m.Label("", { text: ibas.i18n.prop("bo_reportbook_name") }),
+                new sap.m.Input("", {
+                    value: "{/name}",
+                    type: sap.m.InputType.Text
+                }),
             ]
         });
         this.form.addContent(new sap.ui.core.Title("", { text: ibas.i18n.prop("bo_reportbookitem") }));
@@ -153,7 +178,7 @@ export class ReportBookEditView extends ibas.BOEditView implements IReportBookEd
     }
     /** 显示数据 */
     showReportBookItems(datas: bo.ReportBookItem[]): void {
-        this.tableReportBookItem.setModel(new sap.ui.model.json.JSONModel({rows: datas}));
+        this.tableReportBookItem.setModel(new sap.ui.model.json.JSONModel({ rows: datas }));
         // 监听属性改变，并更新控件
         utils.refreshModelChanged(this.tableReportBookItem, datas);
     }
