@@ -1,7 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project 
+    xmlns="http://maven.apache.org/POM/4.0.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-	<groupId>org.colorcoding</groupId>
+    <groupId>org.colorcoding</groupId>
     <artifactId>ibas.businessobjectsenterprise.service</artifactId>
     <version>0.0.1</version>
     <packaging>war</packaging>
@@ -13,37 +14,37 @@
     </organization>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<ibas.version>0.1.2</ibas.version>
+        <ibas.version>0.1.2</ibas.version>
     </properties>
     <build>
         <plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.6</version>
                 <configuration>
                     <archiveClasses>true</archiveClasses>
-                    <warSourceExcludes>**/*.ts,**/*.bat,**/*.sh,3rdparty/*.txt,3rdparty/ibas/**,3rdparty/openui5/**,modules/**,test/**</warSourceExcludes>
+                    <warSourceExcludes>index.html,config.json,tsconfig.json,**/*.ts,**/*.bat,**/*.sh,3rdparty/*.txt,3rdparty/ibas/**,3rdparty/openui5/**,modules/**,test/**</warSourceExcludes>
                 </configuration>
             </plugin>
         </plugins>
     </build>
     <dependencies>
-		<dependency>
-			<groupId>org.colorcoding.ibas</groupId>
-			<artifactId>bobas.businessobjectscommon</artifactId>
-			<version>${ibas.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.colorcoding.ibas</groupId>
+            <artifactId>bobas.businessobjectscommon</artifactId>
+            <version>${ibas.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.colorcoding.ibas</groupId>
             <artifactId>bobas.businessobjectscommon.jersey</artifactId>

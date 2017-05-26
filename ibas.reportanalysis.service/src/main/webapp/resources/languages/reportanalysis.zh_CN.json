@@ -31,5 +31,7 @@
   "reportanalysisusers_refresh_kpi": "KPI",
   "reportanalysisusers_refresh_boe": "BOE报表",
   "reportanalysisusers_refresh_report": "系统报表",
+  "reportanalysisusers_basis_information": "基本信息",
+  "reportanalysisusers_other_information": "其他信息",
   "reportanalysis_closing_delimiter": "----结束----"
 }

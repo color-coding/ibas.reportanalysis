@@ -19,7 +19,7 @@ import * as reportbookViews from "./reportbook/index";
  */
 export default class Navigation extends ibas.ViewNavigation {
 
-    /** 
+    /**
      * 创建实例
      * @param id 应用id
      */

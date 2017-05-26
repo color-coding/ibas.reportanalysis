@@ -275,6 +275,7 @@ export class ReportBook extends BOSimple<ReportBook> implements IReportBook {
     protected init(): void {
         this.reportBookItems = new ReportBookItems(this);
         this.objectCode = config.applyVariables(ReportBook.BUSINESS_OBJECT_CODE);
+        this.assignedType = emAssignedType.ROLE;
     }
 }
 
