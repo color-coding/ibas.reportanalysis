@@ -98,6 +98,7 @@ export class ReportBookEditView extends ibas.BOEditView implements IReportBookEd
                 new sap.ui.table.Column("", {
                     label: ibas.i18n.prop("bo_reportbookitem_report"),
                     template: new sap.m.Input("", {
+                        width: "100%",
                         showValueHelp: true,
                         valueHelpRequest: function (): void {
                             that.fireViewEvents(that.chooseReportBookItemReportEvent,
@@ -111,10 +112,11 @@ export class ReportBookEditView extends ibas.BOEditView implements IReportBookEd
                 }),
                 new sap.ui.table.Column("", {
                     label: ibas.i18n.prop("bo_reportbookitem_name"),
-                    template: new sap.m.Text("", {
-                        wrapping: false
-                    }).bindProperty("text", {
-                        path: "name"
+                    template: new sap.m.Input("", {
+                        width: "100%",
+                        value: "{/name}",
+                        type: sap.m.InputType.Text
+
                     })
                 })
             ]

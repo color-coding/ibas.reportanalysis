@@ -219,7 +219,8 @@ export class ReportBookEditApp extends ibas.BOEditApplication<IReportBookEditVie
             ibas.servicesManager.runChooseService<IUser>({
                 boCode: BO_CODE_USER,
                 onCompleted(selecteds: ibas.List<IUser>): void {
-                    that.editData.assigned = ibas.strings.valueOf(selecteds.firstOrDefault().docEntry);
+                    // that.editData.assigned = ibas.strings.valueOf(selecteds.firstOrDefault().code);
+                    that.editData.assigned = selecteds.firstOrDefault().code;
                 }
             });
         }
