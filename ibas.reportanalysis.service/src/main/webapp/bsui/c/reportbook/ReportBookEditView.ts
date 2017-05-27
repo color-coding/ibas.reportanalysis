@@ -26,29 +26,13 @@ export class ReportBookEditView extends ibas.BOEditView implements IReportBookEd
     /** 选择报表簿-项目-报表事件 */
     chooseReportBookItemReportEvent: Function;
     /** 选择客户、角色的事件 */
-<<<<<<< HEAD
-    chooseUserRoleItemEvent: Function;
-=======
     chooseUserRoleEvent: Function;
->>>>>>> upstream/master
 
     /** 绘制视图 */
     darw(): any {
         let that: this = this;
         this.form = new sap.ui.layout.form.SimpleForm("", {
             content: [
-<<<<<<< HEAD
-                new sap.ui.core.Title("", { text: "Customer" }),
-                new sap.m.Label("", { text: ibas.i18n.prop("bo_reportbook_assigned") }),
-                new sap.m.Input("", {
-                    showValueHelp: true,
-                    valueHelpRequest: function (): void {
-                        that.fireViewEvents(that.chooseUserRoleItemEvent)
-                    }
-                }).bindProperty("value", {
-                    path: "/assigned"
-                }),
-=======
                 new sap.ui.core.Title("", { text: ibas.i18n.prop("reportanalysisusers_basis_information") }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_reportbook_name") }),
                 new sap.m.Input("", {
@@ -64,7 +48,6 @@ export class ReportBookEditView extends ibas.BOEditView implements IReportBookEd
                     type: "sap.ui.model.type.Integer"
                 }),
                 new sap.ui.core.Title("", { text: ibas.i18n.prop("reportanalysisusers_other_information") }),
->>>>>>> upstream/master
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_reportbook_assignedtype") }),
                 new sap.m.Select("", {
                     items: utils.createComboBoxItems(bo.emAssignedType)
@@ -72,14 +55,6 @@ export class ReportBookEditView extends ibas.BOEditView implements IReportBookEd
                     path: "/assignedType",
                     type: "sap.ui.model.type.Integer"
                 }),
-<<<<<<< HEAD
-                new sap.ui.core.Title("", { text: "Document" }),
-                new sap.m.Label("", { text: ibas.i18n.prop("bo_reportbook_name") }),
-                new sap.m.Input("", {
-                    value: "{/name}",
-                    type: sap.m.InputType.Text
-                }),
-=======
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_reportbook_assigned") }),
                 new sap.m.Input("", {
                     showValueHelp: true,
@@ -89,7 +64,6 @@ export class ReportBookEditView extends ibas.BOEditView implements IReportBookEd
                 }).bindProperty("value", {
                     path: "/assigned"
                 })
->>>>>>> upstream/master
             ]
         });
         this.form.addContent(new sap.ui.core.Title("", { text: ibas.i18n.prop("bo_reportbookitem") }));
@@ -124,6 +98,7 @@ export class ReportBookEditView extends ibas.BOEditView implements IReportBookEd
                 new sap.ui.table.Column("", {
                     label: ibas.i18n.prop("bo_reportbookitem_report"),
                     template: new sap.m.Input("", {
+                        width: "100%",
                         showValueHelp: true,
                         valueHelpRequest: function (): void {
                             that.fireViewEvents(that.chooseReportBookItemReportEvent,
@@ -137,10 +112,11 @@ export class ReportBookEditView extends ibas.BOEditView implements IReportBookEd
                 }),
                 new sap.ui.table.Column("", {
                     label: ibas.i18n.prop("bo_reportbookitem_name"),
-                    template: new sap.m.Text("", {
-                        wrapping: false
-                    }).bindProperty("text", {
-                        path: "name"
+                    template: new sap.m.Input("", {
+                        width: "100%",
+                        value: "{/name}",
+                        type: sap.m.InputType.Text
+
                     })
                 })
             ]

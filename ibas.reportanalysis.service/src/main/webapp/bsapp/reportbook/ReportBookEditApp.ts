@@ -38,7 +38,6 @@ export class ReportBookEditApp extends ibas.BOEditApplication<IReportBookEditVie
         this.view.removeReportBookItemEvent = this.removeReportBookItem;
         this.view.chooseUserRoleEvent = this.chooseUserRole;
         this.view.chooseReportBookItemReportEvent = this.chooseReportBookItemReport;
-        this.view.chooseUserRoleItemEvent = this.chooseUserRoleItem;
     }
     /** 视图显示后 */
     protected viewShowed(): void {
@@ -206,28 +205,6 @@ export class ReportBookEditApp extends ibas.BOEditApplication<IReportBookEditVie
         // 仅显示没有标记删除的
         this.view.showReportBookItems(this.editData.reportBookItems.filterDeleted());
     }
-<<<<<<< HEAD
-    /**选择客户、角色行事件 */
-    chooseUserRoleItem(): void {
-        let that: this = this;
-        if (this.editData.assignedType === bo.emAssignedType.ROLE) {
-            ibas.servicesManager.runChooseService<bo.UserReport>({
-                boCode: "${Company}_SYS_ROLE",
-                onCompleted(selecteds: ibas.List<bo.UserReport>): void {
-                }
-            });
-        }if (this.editData.assignedType === bo.emAssignedType.USER) {
-            ibas.servicesManager.runChooseService<bo.UserReport>({
-                boCode: "${Company}_SYS_USER",
-                onCompleted(selecteds: ibas.List<bo.UserReport>): void {
-                }
-            });
-        }
-
-
-    }
-    /** 选择销售订单行物料事件 */
-=======
     /** 选择客户、角色行事件 */
     chooseUserRole(): void {
         let that: this = this;
@@ -242,13 +219,13 @@ export class ReportBookEditApp extends ibas.BOEditApplication<IReportBookEditVie
             ibas.servicesManager.runChooseService<IUser>({
                 boCode: BO_CODE_USER,
                 onCompleted(selecteds: ibas.List<IUser>): void {
-                    that.editData.assigned = ibas.strings.valueOf(selecteds.firstOrDefault().docEntry);
+                    // that.editData.assigned = ibas.strings.valueOf(selecteds.firstOrDefault().code);
+                    that.editData.assigned = selecteds.firstOrDefault().code;
                 }
             });
         }
     }
     /** 选择报表簿-项目-报表事件 */
->>>>>>> upstream/master
     chooseReportBookItemReport(caller: bo.ReportBookItem): void {
         let that: this = this;
         ibas.servicesManager.runChooseService<bo.Report>({
@@ -298,11 +275,6 @@ export interface IReportBookEditView extends ibas.IBOEditView {
     showReportBookItems(datas: bo.ReportBookItem[]): void;
     /** 选择报表簿-项目-报表事件 */
     chooseReportBookItemReportEvent: Function;
-<<<<<<< HEAD
-    /**选择用户、角色事件 */
-    chooseUserRoleItemEvent: Function;
-=======
     /** 选择用户、角色事件 */
     chooseUserRoleEvent: Function;
->>>>>>> upstream/master
 }
