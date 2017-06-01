@@ -40,12 +40,12 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 数据库表
 	 */
-	public static final String DB_TABLE_NAME = "CC_RA_ORBK";
+	public static final String DB_TABLE_NAME = "${Company}_RA_ORBK";
 
 	/**
 	 * 业务对象编码
 	 */
-	public static final String BUSINESS_OBJECT_CODE = "CC_RA_RPTBOOK";
+	public static final String BUSINESS_OBJECT_CODE = "${Company}_RA_RPTBOOK";
 
 	/**
 	 * 业务对象名称

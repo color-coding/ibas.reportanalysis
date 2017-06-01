@@ -1,2 +1,4 @@
 ibas.reportanalysis
+ibas.businessobjectsenterprise
 ibas.reportanalysis.service
+ibas.businessobjectsenterprise.service

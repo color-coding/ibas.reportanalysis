@@ -33,7 +33,7 @@ export class ReportEditView extends ibas.BOEditView implements IReportEditView {
 
     /** 绘制视图 */
     darw(): any {
-        let that = this;
+        let that: this = this;
         this.form = new sap.ui.layout.form.SimpleForm("", {
             content: [
                 new sap.ui.core.Title("", { text: ibas.i18n.prop("reportanalysis_ui_basic") }),
@@ -101,10 +101,10 @@ export class ReportEditView extends ibas.BOEditView implements IReportEditView {
                 }).bindProperty("value", {
                     path: "/server"
                 }),
-                new sap.m.Label("", { text: ibas.i18n.prop("bo_report_username") }),
+                new sap.m.Label("", { text: ibas.i18n.prop("bo_report_user") }),
                 new sap.m.Input("", {
                 }).bindProperty("value", {
-                    path: "/userName"
+                    path: "/user"
                 }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_report_password") }),
                 new sap.m.Input("", {

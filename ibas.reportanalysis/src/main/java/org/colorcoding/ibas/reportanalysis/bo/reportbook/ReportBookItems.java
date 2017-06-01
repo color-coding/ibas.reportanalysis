@@ -66,19 +66,16 @@ public class ReportBookItems extends BusinessObjects<IReportBookItem, IReportBoo
 	@Override
 	protected void afterAddItem(IReportBookItem item) {
 		super.afterAddItem(item);
-		// TODO 设置关联值
 	}
 
 	@Override
 	public ICriteria getElementCriteria() {
 		ICriteria criteria = super.getElementCriteria();
-		// TODO 添加关联查询条件
 		return criteria;
 	}
 
 	@Override
 	public void onParentPropertyChanged(PropertyChangeEvent evt) {
 		super.onParentPropertyChanged(evt);
-		// TODO 设置关联值
 	}
 }

@@ -9,6 +9,7 @@
 import * as ibas from "ibas/index";
 import * as bo from "../../borep/bo/index";
 import { BORepositoryReportAnalysis } from "../../borep/BORepositories";
+import { BO_CODE_USER, IUser, BO_CODE_ROLE, IRole } from "../../3rdparty/initialfantasy/index";
 
 /** 应用-报表簿 */
 export class ReportBookEditApp extends ibas.BOEditApplication<IReportBookEditView, bo.ReportBook> {
@@ -35,6 +36,7 @@ export class ReportBookEditApp extends ibas.BOEditApplication<IReportBookEditVie
         this.view.createDataEvent = this.createData;
         this.view.addReportBookItemEvent = this.addReportBookItem;
         this.view.removeReportBookItemEvent = this.removeReportBookItem;
+        this.view.chooseUserRoleEvent = this.chooseUserRole;
         this.view.chooseReportBookItemReportEvent = this.chooseReportBookItemReport;
     }
     /** 视图显示后 */
@@ -50,7 +52,7 @@ export class ReportBookEditApp extends ibas.BOEditApplication<IReportBookEditVie
     }
     /** 运行,覆盖原方法 */
     run(...args: any[]): void {
-        let that = this;
+        let that: this = this;
         if (ibas.objects.instanceOf(arguments[0], bo.ReportBook)) {
             // 尝试重新查询编辑对象
             let criteria: ibas.ICriteria = arguments[0].criteria();
@@ -91,7 +93,7 @@ export class ReportBookEditApp extends ibas.BOEditApplication<IReportBookEditVie
     /** 保存数据 */
     protected saveData(): void {
         try {
-            let that = this;
+            let that: this = this;
             let boRepository: BORepositoryReportAnalysis = new BORepositoryReportAnalysis();
             boRepository.saveReportBook({
                 beSaved: this.editData,
@@ -127,7 +129,7 @@ export class ReportBookEditApp extends ibas.BOEditApplication<IReportBookEditVie
     }
     /** 删除数据 */
     protected deleteData(): void {
-        let that = this;
+        let that: this = this;
         this.messages({
             type: ibas.emMessageType.QUESTION,
             title: ibas.i18n.prop(this.name),
@@ -143,7 +145,7 @@ export class ReportBookEditApp extends ibas.BOEditApplication<IReportBookEditVie
     }
     /** 新建数据，参数1：是否克隆 */
     protected createData(clone: boolean): void {
-        let that = this;
+        let that: this = this;
         let createData: Function = function (): void {
             if (clone) {
                 // 克隆对象
@@ -203,9 +205,34 @@ export class ReportBookEditApp extends ibas.BOEditApplication<IReportBookEditVie
         // 仅显示没有标记删除的
         this.view.showReportBookItems(this.editData.reportBookItems.filterDeleted());
     }
-    /** 选择销售订单行物料事件 */
+    /** 选择客户、角色行事件 */
+    chooseUserRole(): void {
+        let that: this = this;
+        if (this.editData.assignedType === bo.emAssignedType.ROLE) {
+            ibas.servicesManager.runChooseService<IRole>({
+                boCode: BO_CODE_ROLE,
+                onCompleted(selecteds: ibas.List<IRole>): void {
+                    that.editData.assigned = selecteds.firstOrDefault().code;
+                    if (ibas.objects.isNull(that.editData.name)) {
+                        that.editData.name = ibas.i18n.prop("reportanalysis_someone_report", selecteds.firstOrDefault().name);
+                    }
+                }
+            });
+        } else if (this.editData.assignedType === bo.emAssignedType.USER) {
+            ibas.servicesManager.runChooseService<IUser>({
+                boCode: BO_CODE_USER,
+                onCompleted(selecteds: ibas.List<IUser>): void {
+                    that.editData.assigned = selecteds.firstOrDefault().code;
+                    if (ibas.objects.isNull(that.editData.name)) {
+                        that.editData.name = ibas.i18n.prop("reportanalysis_someone_report", selecteds.firstOrDefault().name);
+                    }
+                }
+            });
+        }
+    }
+    /** 选择报表簿-项目-报表事件 */
     chooseReportBookItemReport(caller: bo.ReportBookItem): void {
-        let that = this;
+        let that: this = this;
         ibas.servicesManager.runChooseService<bo.Report>({
             caller: caller,
             boCode: bo.Report.BUSINESS_OBJECT_CODE,
@@ -215,7 +242,7 @@ export class ReportBookEditApp extends ibas.BOEditApplication<IReportBookEditVie
             onCompleted(selecteds: ibas.List<bo.Report>): void {
                 // 获取触发的对象
                 let index: number = that.editData.reportBookItems.indexOf(caller);
-                let item = that.editData.reportBookItems[index];
+                let item: bo.ReportBookItem = that.editData.reportBookItems[index];
                 // 选择返回数量多余触发数量时,自动创建新的项目
                 let created: boolean = false;
                 for (let selected of selecteds) {
@@ -253,4 +280,6 @@ export interface IReportBookEditView extends ibas.IBOEditView {
     showReportBookItems(datas: bo.ReportBookItem[]): void;
     /** 选择报表簿-项目-报表事件 */
     chooseReportBookItemReportEvent: Function;
+    /** 选择用户、角色事件 */
+    chooseUserRoleEvent: Function;
 }

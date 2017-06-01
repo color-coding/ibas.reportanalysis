@@ -1,19 +1,13 @@
 package org.colorcoding.ibas.reportanalysis.bo.users;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.colorcoding.ibas.bobas.util.ArrayList;
-import org.colorcoding.ibas.reportanalysis.bo.report.IReport;
 import org.colorcoding.ibas.reportanalysis.bo.report.IReportParameter;
-import org.colorcoding.ibas.reportanalysis.bo.report.Report;
 import org.colorcoding.ibas.reportanalysis.data.emReportParameterType;
-import org.colorcoding.ibas.reportanalysis.data.emReportType;
 
 /**
  * 用户报表参数
@@ -33,45 +27,6 @@ public class UserReportParameter {
 		userReportParameter.setDescription(boItem.getDescription());
 		userReportParameter.setValue(boItem.getValue());
 		return userReportParameter;
-	}
-
-	private static final String PARAMETER_NAME_TEMPLATE = "${%s}";
-
-	public static List<UserReportParameter> create(IReport boItem) {
-		ArrayList<UserReportParameter> parameters = new ArrayList<>();
-		if (boItem.getCategory() == emReportType.CRYSTAL) {
-			// 水晶报表参数以参数形式返回
-			UserReportParameter parameter = null;
-			if (boItem.getServer() != null && boItem.getServer().length() > 0) {
-				parameter = new UserReportParameter();
-				parameter.setName(String.format(PARAMETER_NAME_TEMPLATE, Report.PROPERTY_SERVER.getName()));
-				parameter.setCategory(emReportParameterType.PRESET);
-				parameter.setValue(boItem.getServer());
-				parameters.add(parameter);
-			}
-			if (boItem.getUserName() != null && boItem.getUserName().length() > 0) {
-				parameter = new UserReportParameter();
-				parameter.setName(String.format(PARAMETER_NAME_TEMPLATE, Report.PROPERTY_USERNAME.getName()));
-				parameter.setCategory(emReportParameterType.PRESET);
-				parameter.setValue(boItem.getUserName());
-				parameters.add(parameter);
-			}
-			if (boItem.getPassword() != null && boItem.getPassword().length() > 0) {
-				parameter = new UserReportParameter();
-				parameter.setName(String.format(PARAMETER_NAME_TEMPLATE, Report.PROPERTY_PASSWORD.getName()));
-				parameter.setCategory(emReportParameterType.PRESET);
-				parameter.setValue(boItem.getPassword());
-				parameters.add(parameter);
-			}
-			if (boItem.getAddress() != null && boItem.getAddress().length() > 0) {
-				parameter = new UserReportParameter();
-				parameter.setName(String.format(PARAMETER_NAME_TEMPLATE, Report.PROPERTY_ADDRESS.getName()));
-				parameter.setCategory(emReportParameterType.PRESET);
-				parameter.setValue(boItem.getAddress());
-				parameters.add(parameter);
-			}
-		}
-		return parameters;
 	}
 
 	/**
@@ -128,5 +83,10 @@ public class UserReportParameter {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("{report parameter: %s}", this.getName());
 	}
 }

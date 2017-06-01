@@ -24,7 +24,7 @@ export class ReportViewView extends ibas.View implements IReportViewView {
     resetReportEvent: Function;
     /** 绘制视图 */
     darw(): any {
-        let that = this;
+        let that: this = this;
         this.form = new sap.ui.layout.form.SimpleForm("", {
             content: [
             ]
@@ -159,7 +159,7 @@ export class ReportViewTabView extends ibas.TabView implements IReportViewView {
     resetReportEvent: Function;
     /** 绘制视图 */
     darw(): any {
-        let that = this;
+        let that: this = this;
         this.form = new sap.ui.layout.form.SimpleForm("", {
             content: [
             ]

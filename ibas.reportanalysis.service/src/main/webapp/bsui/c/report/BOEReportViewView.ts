@@ -9,7 +9,7 @@
 import * as ibas from "ibas/index";
 import { utils } from "openui5/typings/ibas.utils";
 import * as bo from "../../../borep/bo/index";
-import { ICrystalReportViewView } from "../../../bsapp/report/index";
+import { IBOEReportViewView } from "../../../bsapp/report/index";
 import { views as viewUtils } from "./Utils";
 
 /** 配置项目-全屏模式 */
@@ -33,12 +33,12 @@ let getWindowHeight: Function = function (tab: boolean): number {
 /**
  * 视图-Report
  */
-export class CrystalReportViewView extends ibas.View implements ICrystalReportViewView {
+export class BOEReportViewView extends ibas.View implements IBOEReportViewView {
     /** 运行报表 */
     runReportEvent: Function;
     /** 绘制视图 */
     darw(): any {
-        let that = this;
+        let that: this = this;
         this.form = new sap.ui.layout.form.SimpleForm("", {
             content: [
             ]
@@ -108,12 +108,12 @@ export class CrystalReportViewView extends ibas.View implements ICrystalReportVi
 /**
  * 视图-报表查看-页签，需要与上保持同步
  */
-export class CrystalReportViewTabView extends ibas.TabView implements ICrystalReportViewView {
+export class BOEReportViewTabView extends ibas.TabView implements IBOEReportViewView {
     /** 运行报表 */
     runReportEvent: Function;
     /** 绘制视图 */
     darw(): any {
-        let that = this;
+        let that: this = this;
         this.form = new sap.ui.layout.form.SimpleForm("", {
             content: [
             ]

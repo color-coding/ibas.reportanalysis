@@ -9,8 +9,6 @@ import org.colorcoding.ibas.bobas.data.IDataTable;
 import org.colorcoding.ibas.bobas.i18n.i18n;
 import org.colorcoding.ibas.bobas.repository.BORepository4DbReadonly;
 import org.colorcoding.ibas.bobas.repository.IBORepository4DbReadonly;
-import org.colorcoding.ibas.reportanalysis.bo.report.IReportParameter;
-import org.colorcoding.ibas.reportanalysis.bo.report.Report;
 
 /**
  * 系统报表者
@@ -19,21 +17,28 @@ import org.colorcoding.ibas.reportanalysis.bo.report.Report;
  *
  */
 public class ReportReporter extends Reporter {
+	/**
+	 * 参数名，查询
+	 */
+	public static final String PARAMETER_NAME_SQL = "${SqlString}";
 
 	@Override
-	public IDataTable run(Report report) throws Exception {
-		if (report == null || report.getSqlString() == null || report.getSqlString().isEmpty()) {
-			throw new Exception(i18n.prop("msg_ra_invaild_report_query",
-					report.getName() != null ? report.getName() : report.getObjectKey()));
+	public IDataTable run() throws ReportException {
+		ExecuteReportParameter sqlParameter = this.getReport().getParameters()
+				.firstOrDefault(c -> PARAMETER_NAME_SQL.equalsIgnoreCase(c.getName()));
+		if (sqlParameter == null || sqlParameter.getValue() == null || sqlParameter.getValue().isEmpty()) {
+			throw new ReportException(i18n.prop("msg_ra_invaild_report_query",
+					this.getReport().getName() != null ? this.getReport().getName() : this.getReport().getId()));
 		}
 		IBORepository4DbReadonly boRepository = new BORepository4DbReadonly("Master");
-		String sqlString = report.getSqlString();
+		String sqlString = sqlParameter.getValue();
 		// 替换变量
 		String pattern = "\\$\\{([\\!a-zA-Z].*?)\\}";
 		Matcher matcher = Pattern.compile(pattern).matcher(sqlString);
 		while (matcher.find()) {
 			String vName = matcher.group(0);
-			IReportParameter parameter = report.getReportParameters().firstOrDefault(c -> c.getName().equals(vName));
+			ExecuteReportParameter parameter = this.getReport().getParameters()
+					.firstOrDefault(c -> c.getName().equals(vName));
 			if (parameter != null) {
 				String vValue = parameter.getValue();
 				if (vValue != null) {
@@ -43,15 +48,15 @@ public class ReportReporter extends Reporter {
 		}
 		// 检查是否安全
 		if (!this.check(sqlString)) {
-			throw new Exception(i18n.prop("msg_ra_invaild_report_query", report.getName()));
+			throw new ReportException(i18n.prop("msg_ra_invaild_report_query", this.getReport().getName()));
 		}
 		// 执行语句
 		IOperationResult<IDataTable> opRslt = boRepository.query(new SqlQuery(sqlString));
 		if (opRslt.getError() != null) {
-			throw opRslt.getError();
+			throw new ReportException(opRslt.getError());
 		}
 		if (opRslt.getResultCode() != 0) {
-			throw new Exception(opRslt.getMessage());
+			throw new ReportException(opRslt.getMessage());
 		}
 		return opRslt.getResultObjects().firstOrDefault();
 	}

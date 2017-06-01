@@ -26,6 +26,7 @@ import {
     IReport,
     IReportParameter,
     IReportParameters,
+    BO_CODE_REPORT,
     emReportType,
     emReportParameterType,
 } from "../../api/index";
@@ -34,7 +35,7 @@ import {
 export class Report extends BOSimple<Report> implements IReport {
 
     /** 业务对象编码 */
-    static BUSINESS_OBJECT_CODE: string = "${Company}_RA_REPORT";
+    static BUSINESS_OBJECT_CODE: string = BO_CODE_REPORT;
     /** 构造函数 */
     constructor() {
         super();
@@ -262,11 +263,11 @@ export class Report extends BOSimple<Report> implements IReport {
     /** 映射的属性名称-关联的业务对象 */
     static PROPERTY_BOCODE_NAME: string = "BOCode";
     /** 获取-关联的业务对象 */
-    get bOCode(): string {
+    get boCode(): string {
         return this.getProperty<string>(Report.PROPERTY_BOCODE_NAME);
     }
     /** 设置-关联的业务对象 */
-    set bOCode(value: string) {
+    set boCode(value: string) {
         this.setProperty(Report.PROPERTY_BOCODE_NAME, value);
     }
 
@@ -315,14 +316,14 @@ export class Report extends BOSimple<Report> implements IReport {
     }
 
     /** 映射的属性名称-用户名 */
-    static PROPERTY_USERNAME_NAME: string = "UserName";
+    static PROPERTY_USER_NAME: string = "User";
     /** 获取-用户名 */
-    get userName(): string {
-        return this.getProperty<string>(Report.PROPERTY_USERNAME_NAME);
+    get user(): string {
+        return this.getProperty<string>(Report.PROPERTY_USER_NAME);
     }
     /** 设置-用户名 */
-    set userName(value: string) {
-        this.setProperty(Report.PROPERTY_USERNAME_NAME, value);
+    set user(value: string) {
+        this.setProperty(Report.PROPERTY_USER_NAME, value);
     }
 
     /** 映射的属性名称-密码 */

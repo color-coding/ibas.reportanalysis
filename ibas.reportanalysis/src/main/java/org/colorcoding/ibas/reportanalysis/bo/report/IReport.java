@@ -376,7 +376,7 @@ public interface IReport extends IBOSimple {
 	 * 
 	 * @return 值
 	 */
-	String getUserName();
+	String getUser();
 
 	/**
 	 * 设置-用户名
@@ -384,7 +384,7 @@ public interface IReport extends IBOSimple {
 	 * @param value
 	 *            值
 	 */
-	void setUserName(String value);
+	void setUser(String value);
 
 	/**
 	 * 获取-密码

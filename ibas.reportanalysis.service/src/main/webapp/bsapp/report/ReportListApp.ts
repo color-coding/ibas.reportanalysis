@@ -45,8 +45,8 @@ export class ReportListApp extends ibas.BOListApplication<IReportListView, bo.Re
     protected fetchData(criteria: ibas.ICriteria): void {
         try {
             this.busy(true);
-            let that = this;
-            let boRepository = new BORepositoryReportAnalysis();
+            let that: this = this;
+            let boRepository: BORepositoryReportAnalysis = new BORepositoryReportAnalysis();
             boRepository.fetchReport({
                 criteria: criteria,
                 onCompleted(opRslt: ibas.IOperationResult<bo.Report>): void {
@@ -68,7 +68,7 @@ export class ReportListApp extends ibas.BOListApplication<IReportListView, bo.Re
     }
     /** 新建数据 */
     protected newData(): void {
-        let app = new ReportEditApp();
+        let app: ReportEditApp = new ReportEditApp();
         app.navigation = this.navigation;
         app.viewShower = this.viewShower;
         app.run();
@@ -101,7 +101,7 @@ export class ReportListApp extends ibas.BOListApplication<IReportListView, bo.Re
             ));
             return;
         }
-        let app = new ReportEditApp();
+        let app: ReportEditApp = new ReportEditApp();
         app.navigation = this.navigation;
         app.viewShower = this.viewShower;
         app.run(data);
@@ -128,7 +128,7 @@ export class ReportListApp extends ibas.BOListApplication<IReportListView, bo.Re
         if (beDeleteds.length === 0) {
             return;
         }
-        let that = this;
+        let that: this = this;
         this.messages({
             type: ibas.emMessageType.QUESTION,
             title: ibas.i18n.prop(this.name),

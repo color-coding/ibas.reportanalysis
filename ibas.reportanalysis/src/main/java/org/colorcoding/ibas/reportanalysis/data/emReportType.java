@@ -15,10 +15,10 @@ public enum emReportType {
 	@Value("R")
 	REPORT,
 	/**
-	 * 水晶报表服务
+	 * 报表服务
 	 */
-	@Value("C")
-	CRYSTAL,
+	@Value("B")
+	BOE,
 	/**
 	 * 绩效指标
 	 */

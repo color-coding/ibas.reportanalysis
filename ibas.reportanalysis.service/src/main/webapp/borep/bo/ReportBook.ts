@@ -19,11 +19,13 @@ import {
     BODocumentLine,
     BOSimple,
     BOSimpleLine,
+    config,
 } from "ibas/index";
 import {
     IReportBook,
     IReportBookItem,
     IReportBookItems,
+    BO_CODE_REPORTBOOK,
     emAssignedType,
 } from "../../api/index";
 
@@ -31,7 +33,7 @@ import {
 export class ReportBook extends BOSimple<ReportBook> implements IReportBook {
 
     /** 业务对象编码 */
-    static BUSINESS_OBJECT_CODE: string = "CC_RA_RPTBOOK";
+    static BUSINESS_OBJECT_CODE: string = BO_CODE_REPORTBOOK;
     /** 构造函数 */
     constructor() {
         super();
@@ -272,7 +274,8 @@ export class ReportBook extends BOSimple<ReportBook> implements IReportBook {
     /** 初始化数据 */
     protected init(): void {
         this.reportBookItems = new ReportBookItems(this);
-        this.objectCode = ReportBook.BUSINESS_OBJECT_CODE;
+        this.objectCode = config.applyVariables(ReportBook.BUSINESS_OBJECT_CODE);
+        this.assignedType = emAssignedType.ROLE;
     }
 }
 

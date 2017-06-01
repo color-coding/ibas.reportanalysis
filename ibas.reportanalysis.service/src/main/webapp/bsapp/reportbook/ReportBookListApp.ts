@@ -44,8 +44,8 @@ export class ReportBookListApp extends ibas.BOListApplication<IReportBookListVie
     protected fetchData(criteria: ibas.ICriteria): void {
         try {
             this.busy(true);
-            let that = this;
-            let boRepository = new BORepositoryReportAnalysis();
+            let that: this = this;
+            let boRepository: BORepositoryReportAnalysis = new BORepositoryReportAnalysis();
             boRepository.fetchReportBook({
                 criteria: criteria,
                 onCompleted(opRslt: ibas.IOperationResult<bo.ReportBook>): void {
@@ -67,7 +67,7 @@ export class ReportBookListApp extends ibas.BOListApplication<IReportBookListVie
     }
     /** 新建数据 */
     protected newData(): void {
-        let app = new ReportBookEditApp();
+        let app: ReportBookEditApp = new ReportBookEditApp();
         app.navigation = this.navigation;
         app.viewShower = this.viewShower;
         app.run();
@@ -81,7 +81,7 @@ export class ReportBookListApp extends ibas.BOListApplication<IReportBookListVie
             ));
             return;
         }
-        let app = new ReportBookViewApp();
+        let app: ReportBookViewApp = new ReportBookViewApp();
         app.navigation = this.navigation;
         app.viewShower = this.viewShower;
         app.run(data);
@@ -96,7 +96,7 @@ export class ReportBookListApp extends ibas.BOListApplication<IReportBookListVie
             ));
             return;
         }
-        let app = new ReportBookEditApp();
+        let app: ReportBookEditApp = new ReportBookEditApp();
         app.navigation = this.navigation;
         app.viewShower = this.viewShower;
         app.run(data);
@@ -110,8 +110,8 @@ export class ReportBookListApp extends ibas.BOListApplication<IReportBookListVie
             ));
             return;
         }
-        let beDeleteds:ibas.ArrayList<bo.ReportBook> = new ibas.ArrayList<bo.ReportBook>();
-        if (data instanceof Array ) {
+        let beDeleteds: ibas.ArrayList<bo.ReportBook> = new ibas.ArrayList<bo.ReportBook>();
+        if (data instanceof Array) {
             for (let item of data) {
                 if (ibas.objects.instanceOf(item, bo.ReportBook)) {
                     item.delete();
@@ -123,7 +123,7 @@ export class ReportBookListApp extends ibas.BOListApplication<IReportBookListVie
         if (beDeleteds.length === 0) {
             return;
         }
-        let that = this;
+        let that: this = this;
         this.messages({
             type: ibas.emMessageType.QUESTION,
             title: ibas.i18n.prop(this.name),
@@ -133,7 +133,7 @@ export class ReportBookListApp extends ibas.BOListApplication<IReportBookListVie
                 if (action === ibas.emMessageAction.YES) {
                     try {
                         let boRepository: BORepositoryReportAnalysis = new BORepositoryReportAnalysis();
-                        let saveMethod: Function = function(beSaved: bo.ReportBook):void {
+                        let saveMethod: Function = function (beSaved: bo.ReportBook): void {
                             boRepository.saveReportBook({
                                 beSaved: beSaved,
                                 onCompleted(opRslt: ibas.IOperationResult<bo.ReportBook>): void {
@@ -149,7 +149,7 @@ export class ReportBookListApp extends ibas.BOListApplication<IReportBookListVie
                                             // 处理完成
                                             that.busy(false);
                                             that.messages(ibas.emMessageType.SUCCESS,
-                                            ibas.i18n.prop("sys_shell_data_delete") + ibas.i18n.prop("sys_shell_sucessful"));
+                                                ibas.i18n.prop("sys_shell_data_delete") + ibas.i18n.prop("sys_shell_sucessful"));
                                         }
                                     } catch (error) {
                                         that.messages(ibas.emMessageType.ERROR,

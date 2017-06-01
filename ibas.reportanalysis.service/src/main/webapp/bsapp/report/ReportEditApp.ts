@@ -50,7 +50,7 @@ export class ReportEditApp extends ibas.BOEditApplication<IReportEditView, bo.Re
     }
     /** 运行,覆盖原方法 */
     run(...args: any[]): void {
-        let that = this;
+        let that: this = this;
         if (ibas.objects.instanceOf(arguments[0], bo.Report)) {
             // 尝试重新查询编辑对象
             let criteria: ibas.ICriteria = arguments[0].criteria();
@@ -91,7 +91,7 @@ export class ReportEditApp extends ibas.BOEditApplication<IReportEditView, bo.Re
     /** 保存数据 */
     protected saveData(): void {
         try {
-            let that = this;
+            let that: this = this;
             let boRepository: BORepositoryReportAnalysis = new BORepositoryReportAnalysis();
             boRepository.saveReport({
                 beSaved: this.editData,
@@ -127,7 +127,7 @@ export class ReportEditApp extends ibas.BOEditApplication<IReportEditView, bo.Re
     }
     /** 删除数据 */
     protected deleteData(): void {
-        let that = this;
+        let that: this = this;
         this.messages({
             type: ibas.emMessageType.QUESTION,
             title: ibas.i18n.prop(this.name),
@@ -143,7 +143,7 @@ export class ReportEditApp extends ibas.BOEditApplication<IReportEditView, bo.Re
     }
     /** 新建数据，参数1：是否克隆 */
     protected createData(clone: boolean): void {
-        let that = this;
+        let that: this = this;
         let createData: Function = function (): void {
             if (clone) {
                 // 克隆对象
@@ -204,7 +204,7 @@ export class ReportEditApp extends ibas.BOEditApplication<IReportEditView, bo.Re
     }
     /** 选择报表 */
     private chooseReportAssociatedReport(): void {
-        let that = this;
+        let that: this = this;
         ibas.servicesManager.runChooseService<bo.Report>({
             boCode: bo.Report.BUSINESS_OBJECT_CODE,
             criteria: [

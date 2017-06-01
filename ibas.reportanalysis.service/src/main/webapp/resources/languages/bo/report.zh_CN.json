@@ -24,7 +24,7 @@
   "bo_report_associatedreport": "关联的报表",
   "bo_report_sqlstring": "查询语句",
   "bo_report_server": "服务器名称",
-  "bo_report_username": "用户名",
+  "bo_report_user": "用户名",
   "bo_report_password": "密码",
   "bo_report_address": "报表地址",
   "bo_report_reportparameters": "报表参数",

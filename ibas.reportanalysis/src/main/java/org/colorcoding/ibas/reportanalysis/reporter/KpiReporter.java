@@ -2,7 +2,6 @@ package org.colorcoding.ibas.reportanalysis.reporter;
 
 import org.colorcoding.ibas.bobas.data.IDataTable;
 import org.colorcoding.ibas.bobas.data.KeyText;
-import org.colorcoding.ibas.reportanalysis.bo.report.Report;
 
 /**
  * KPI报表者
@@ -12,7 +11,7 @@ import org.colorcoding.ibas.reportanalysis.bo.report.Report;
  */
 public class KpiReporter extends Reporter {
 	@Override
-	public IDataTable run(Report report) throws Exception {
+	public IDataTable run() throws ReportException {
 		KeyText value = new KeyText();
 		value.key = "${Kpi}";
 		value.text = "100";

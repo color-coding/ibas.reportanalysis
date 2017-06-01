@@ -70,12 +70,13 @@ export class ReportViewApp extends ibas.BOApplicationWithServices<IReportViewVie
     }
     report: bo.UserReport;
     runReport(): void {
-        let that = this;
+        let that: this = this;
         let boRepository: BORepositoryReportAnalysis = new BORepositoryReportAnalysis();
         boRepository.runUserReport({
             report: this.report,
             onCompleted(opRslt: ibas.IOperationResult<ibas.DataTable>): void {
                 try {
+                    that.busy(false);
                     if (opRslt.resultCode !== 0) {
                         throw new Error(opRslt.message);
                     }
@@ -90,6 +91,7 @@ export class ReportViewApp extends ibas.BOApplicationWithServices<IReportViewVie
                 }
             }
         });
+        this.busy(true);
         this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("reportanalysis_running_report", this.report.name));
     }
     /** 获取服务的契约 */

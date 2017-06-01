@@ -21,7 +21,7 @@ export class ReportBookChooseView extends ibas.BOChooseView implements IReportBo
     }
     /** 绘制工具条 */
     darwBars(): any {
-        let that = this;
+        let that: this = this;
         return [
             new sap.m.Button("", {
                 text: ibas.i18n.prop("sys_shell_data_new"),
@@ -50,16 +50,62 @@ export class ReportBookChooseView extends ibas.BOChooseView implements IReportBo
                     that.fireViewEvents(that.closeEvent);
                 }
             }),
-        ]
+        ];
     }
     /** 绘制视图 */
     darw(): any {
-        let that = this;
+        let that: this = this;
         this.table = new sap.ui.table.Table("", {
             enableSelectAll: false,
             visibleRowCount: ibas.config.get(utils.CONFIG_ITEM_LIST_TABLE_VISIBLE_ROW_COUNT, 15),
             rows: "{/rows}",
             columns: [
+                new sap.ui.table.Column("", {
+                    label: ibas.i18n.prop("bo_reportbook_objectkey"),
+                    template: new sap.m.Text("", {
+                        wrapping: false
+                    }).bindProperty("text", {
+                        path: "objectKey"
+                    })
+                }),
+                new sap.ui.table.Column("", {
+                    label: ibas.i18n.prop("bo_reportbook_name"),
+                    template: new sap.m.Text("", {
+                        wrapping: false
+                    }).bindProperty("text", {
+                        path: "name",
+                    })
+                }),
+                new sap.ui.table.Column("", {
+                    label: ibas.i18n.prop("bo_reportbook_activated"),
+                    template: new sap.m.Text("", {
+                        wrapping: false
+                    }).bindProperty("text", {
+                        path: "activated",
+                        formatter(data: any): any {
+                            return ibas.enums.describe(ibas.emYesNo, data);
+                        }
+                    })
+                }),
+                new sap.ui.table.Column("", {
+                    label: ibas.i18n.prop("bo_reportbook_assignedtype"),
+                    template: new sap.m.Text("", {
+                        wrapping: false
+                    }).bindProperty("text", {
+                        path: "assignedType",
+                        formatter(data: any): any {
+                            return ibas.enums.describe(bo.emAssignedType, data);
+                        }
+                    })
+                }),
+                new sap.ui.table.Column("", {
+                    label: ibas.i18n.prop("bo_reportbook_assigned"),
+                    template: new sap.m.Text("", {
+                        wrapping: false
+                    }).bindProperty("text", {
+                        path: "assigned"
+                    })
+                }),
             ]
         });
         this.id = this.table.getId();
@@ -87,10 +133,10 @@ export class ReportBookChooseView extends ibas.BOChooseView implements IReportBo
         let model: sap.ui.model.Model = this.table.getModel(undefined);
         if (!ibas.objects.isNull(model)) {
             // 已存在绑定数据，添加新的
-            let hDatas: bo.ReportBook[] = (<any>model).getData();
-            if (!ibas.objects.isNull(hDatas) && hDatas instanceof Array) {
+            let hDatas: any = (<any>model).getData();
+            if (!ibas.objects.isNull(hDatas) && hDatas.rows instanceof Array) {
                 for (let item of datas) {
-                    hDatas.push(item);
+                    hDatas.rows.push(item);
                 }
                 model.refresh(false);
                 done = true;
@@ -98,7 +144,7 @@ export class ReportBookChooseView extends ibas.BOChooseView implements IReportBo
         }
         if (!done) {
             // 没有显示数据
-            this.table.setModel(new sap.ui.model.json.JSONModel({rows: datas}));
+            this.table.setModel(new sap.ui.model.json.JSONModel({ rows: datas }));
         }
         this.table.setBusy(false);
     }
@@ -108,8 +154,10 @@ export class ReportBookChooseView extends ibas.BOChooseView implements IReportBo
         super.query(criteria);
         this.lastCriteria = criteria;
         // 清除历史数据
-        this.table.setBusy(true);
-        this.table.setFirstVisibleRow(0);
-        this.table.setModel(null);
+        if (this.isDisplayed) {
+            this.table.setBusy(true);
+            this.table.setFirstVisibleRow(0);
+            this.table.setModel(null);
+        }
     }
 }

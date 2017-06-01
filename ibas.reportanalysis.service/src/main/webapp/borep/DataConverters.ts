@@ -29,7 +29,7 @@ export class DataConverter4ra extends ibas.DataConverter4j {
     convert(data: any, sign: string): any {
         if (ibas.objects.instanceOf(data, bo.UserReport)) {
             let newData: bo.UserReport = data;
-            let parameters = [];
+            let parameters: Array<ibas4j.UserReportParameter> = [];
             for (let item of newData.parameters) {
                 parameters.push(this.convert(item, sign));
             }
@@ -37,7 +37,7 @@ export class DataConverter4ra extends ibas.DataConverter4j {
                 type: data.constructor.name,
                 Id: newData.id,
                 Name: newData.name,
-                Group :newData.group,
+                Group: newData.group,
                 Category: ibas.enums.toString(bo.emReportType, newData.category),
                 Parameters: parameters
             };
@@ -117,6 +117,10 @@ class BOConverter4ra extends ibas.BOConverter {
             if (property === bo.ReportParameter.PROPERTY_CATEGORY_NAME) {
                 return ibas.enums.toString(bo.emReportParameterType, value);
             }
+        } else if (boName === bo.ReportBook.name) {
+            if (property === bo.ReportBook.PROPERTY_ASSIGNEDTYPE_NAME) {
+                return ibas.enums.toString(bo.emAssignedType, value);
+            }
         }
         return super.convertData(boName, property, value);
     }
@@ -137,6 +141,10 @@ class BOConverter4ra extends ibas.BOConverter {
         } else if (boName === bo.ReportParameter.name) {
             if (property === bo.ReportParameter.PROPERTY_CATEGORY_NAME) {
                 return ibas.enums.valueOf(bo.emReportParameterType, value);
+            }
+        } else if (boName === bo.ReportBook.name) {
+            if (property === bo.ReportBook.PROPERTY_ASSIGNEDTYPE_NAME) {
+                return ibas.enums.valueOf(bo.emAssignedType, value);
             }
         }
         return super.parsingData(boName, property, value);

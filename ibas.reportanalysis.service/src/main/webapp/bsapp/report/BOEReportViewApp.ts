@@ -12,7 +12,7 @@ import { IReportViewer } from "./Report.d";
 import { BORepositoryReportAnalysis } from "../../borep/BORepositories";
 
 /** 查看应用-报表 */
-export class CrystalReportViewApp extends ibas.Application<ICrystalReportViewView> implements IReportViewer {
+export class BOEReportViewApp extends ibas.Application<IBOEReportViewView> implements IReportViewer {
     /** 应用标识 */
     static APPLICATION_ID: string = "fe4385ed-a329-47e5-b6bb-5273b63e20ba";
     /** 应用名称 */
@@ -20,8 +20,8 @@ export class CrystalReportViewApp extends ibas.Application<ICrystalReportViewVie
     /** 构造函数 */
     constructor() {
         super();
-        this.id = CrystalReportViewApp.APPLICATION_ID;
-        this.name = CrystalReportViewApp.APPLICATION_NAME;
+        this.id = BOEReportViewApp.APPLICATION_ID;
+        this.name = BOEReportViewApp.APPLICATION_NAME;
         this.description = ibas.i18n.prop(this.name);
     }
     /** 注册视图 */
@@ -55,7 +55,7 @@ export class CrystalReportViewApp extends ibas.Application<ICrystalReportViewVie
                 return;
             } else if (arguments.length === 1) {
                 let report: any = arguments[0];
-                if (ibas.objects.instanceOf(report, bo.UserReport) && report.category === bo.emReportType.CRYSTAL) {
+                if (ibas.objects.instanceOf(report, bo.UserReport) && report.category === bo.emReportType.BOE) {
                     this.report = report;
                     this.description = ibas.strings.format("{0} - {1}", this.description, this.report.name);
                     super.run();
@@ -69,12 +69,13 @@ export class CrystalReportViewApp extends ibas.Application<ICrystalReportViewVie
     }
     report: bo.UserReport;
     runReport(): void {
-        let that = this;
+        let that: this = this;
         let boRepository: BORepositoryReportAnalysis = new BORepositoryReportAnalysis();
         boRepository.runUserReport({
             report: this.report,
             onCompleted(opRslt: ibas.IOperationResult<ibas.DataTable>): void {
                 try {
+                    that.busy(false);
                     if (opRslt.resultCode !== 0) {
                         throw new Error(opRslt.message);
                     }
@@ -89,11 +90,12 @@ export class CrystalReportViewApp extends ibas.Application<ICrystalReportViewVie
                 }
             }
         });
+        this.busy(true);
         this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("reportanalysis_running_report", this.report.name));
     }
 }
 /** 视图-报表 */
-export interface ICrystalReportViewView extends ibas.IView {
+export interface IBOEReportViewView extends ibas.IView {
     /** 运行报表 */
     runReportEvent: Function;
     /** 显示报表 */
@@ -102,12 +104,12 @@ export interface ICrystalReportViewView extends ibas.IView {
     showResults(table: ibas.DataTable): void;
 }
 /** 查看应用-报表-页签 */
-export class CrystalReportTabViewApp extends CrystalReportViewApp {
+export class BOEReportTabViewApp extends BOEReportViewApp {
     /** 应用标识 */
     static APPLICATION_ID: string = "fe4385ed-a329-47e5-b6bb-5273b63e20bb";
     /** 构造函数 */
     constructor() {
         super();
-        this.id = CrystalReportTabViewApp.APPLICATION_ID;
+        this.id = BOEReportTabViewApp.APPLICATION_ID;
     }
 }

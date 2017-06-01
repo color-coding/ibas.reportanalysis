@@ -1,0 +1,7 @@
+{
+  "bo_boefolder": "BOE文件夹",
+  "bo_boefolder_id": "编号",
+  "bo_boefolder_parentid": "父项编号",
+  "bo_boefolder_name": "文件夹名称",
+  "bo_boefolder_closing_delimiter": "----结束----"
+}

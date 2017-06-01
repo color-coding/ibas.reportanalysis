@@ -19,7 +19,7 @@ import * as reportbookViews from "./reportbook/index";
  */
 export default class Navigation extends ibas.ViewNavigation {
 
-    /** 
+    /**
      * 创建实例
      * @param id 应用id
      */
@@ -50,14 +50,14 @@ export default class Navigation extends ibas.ViewNavigation {
             case reportbookApps.ReportBookEditApp.APPLICATION_ID:
                 view = new reportbookViews.ReportBookEditView();
                 break;
-            case reportApps.CrystalReportViewApp.APPLICATION_ID:
-                view = new reportViews.CrystalReportViewView();
+            case reportApps.BOEReportViewApp.APPLICATION_ID:
+                view = new reportViews.BOEReportViewView();
                 break;
             case userApps.UserReportPageApp.APPLICATION_ID:
                 view = new userViews.UserReportPageView();
                 break;
-            case reportApps.CrystalReportTabViewApp.APPLICATION_ID:
-                view = new reportViews.CrystalReportViewTabView();
+            case reportApps.BOEReportTabViewApp.APPLICATION_ID:
+                view = new reportViews.BOEReportViewTabView();
                 break;
             case reportApps.ReportTabViewApp.APPLICATION_ID:
                 view = new reportViews.ReportViewTabView();

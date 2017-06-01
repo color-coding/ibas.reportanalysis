@@ -18,7 +18,7 @@
     <Property Name="DataOwner" Description="数据所有者" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="DataOwner"/>
     <Property Name="TeamMembers" Description="团队成员" DataType="Alphanumeric" DataSubType="Default" EditSize="50" Mapped="TeamMembers"/>
     <Property Name="Organization" Description="数据所属组织" DataType="Alphanumeric" DataSubType="Default" EditSize="8" Mapped="OrgCode"/>
-    <Property Name="Name" Description="报表名称" DataType="Alphanumeric" DataSubType="Default" EditSize="50" Mapped="Name"/>
+    <Property Name="Name" Description="报表名称" DataType="Alphanumeric" DataSubType="Default" EditSize="50" Mapped="Name" UniqueKey="Yes"/>
     <Property Name="Activated" Description="是否启用" DataType="Alphanumeric" DataSubType="Default" EditSize="1" DeclaredType="emYesNo" Mapped="Activated"/>
     <Property Name="Category" Description="报表类型" DataType="Alphanumeric" DataSubType="Default" EditSize="1" DeclaredType="emReportType" Mapped="Category"/>
     <Property Name="Group" Description="报表组别" DataType="Alphanumeric" DataSubType="Default" EditSize="8" Mapped="Group"/>
@@ -26,8 +26,8 @@
     <Property Name="ApplicationId" Description="关联的应用" DataType="Alphanumeric" DataSubType="Default" EditSize="36" Mapped="AppId"/>
     <Property Name="AssociatedReport" Description="关联的报表" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Associated"/>
     <Property Name="SqlString" Description="查询语句" DataType="Memo" DataSubType="Default" EditSize="1" Mapped="SqlString"/>
-    <Property Name="Server" Description="服务器名称" DataType="Alphanumeric" DataSubType="Default" EditSize="60" Mapped="Server"/>
-    <Property Name="UserName" Description="用户名" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="UserName"/>
+    <Property Name="Server" Description="服务器名称" DataType="Alphanumeric" DataSubType="Default" EditSize="200" Mapped="Server"/>
+    <Property Name="User" Description="用户名" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="User"/>
     <Property Name="Password" Description="密码" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="Password"/>
     <Property Name="Address" Description="报表地址" DataType="Alphanumeric" DataSubType="Default" EditSize="300" Mapped="Address"/>
   </Model>

@@ -41,7 +41,7 @@ export class ReportChooseApp extends ibas.BOChooseService<IReportChooseView, bo.
     protected fetchData(criteria: ibas.ICriteria): void {
         try {
             this.busy(true);
-            let that = this;
+            let that: this = this;
             let boRepository: BORepositoryReportAnalysis = new BORepositoryReportAnalysis();
             boRepository.fetchReport({
                 criteria: criteria,
@@ -77,7 +77,7 @@ export class ReportChooseApp extends ibas.BOChooseService<IReportChooseView, bo.
         // 关闭自身
         this.destroy();
         // 调用编辑应用
-        let app = new ReportEditApp();
+        let app: ReportEditApp = new ReportEditApp();
         app.navigation = this.navigation;
         app.viewShower = this.viewShower;
         app.run();

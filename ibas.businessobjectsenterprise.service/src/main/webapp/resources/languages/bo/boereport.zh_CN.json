@@ -1,0 +1,11 @@
+{
+  "bo_boereport": "BOE报表",
+  "bo_boereport_id": "编号",
+  "bo_boereport_sign": "唯一标识",
+  "bo_boereport_name": "报表名称",
+  "bo_boereport_description": "报表描述",
+  "bo_boereport_category": "报表类型",
+  "bo_boereport_path": "报表路径",
+  "bo_boereport_group": "报表组别",
+  "bo_boereport_closing_delimiter": "----结束----"
+}

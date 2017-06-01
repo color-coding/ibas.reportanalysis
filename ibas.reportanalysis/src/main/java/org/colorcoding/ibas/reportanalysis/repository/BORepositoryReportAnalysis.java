@@ -18,7 +18,6 @@ import org.colorcoding.ibas.bobas.ownership.PermissionGroup;
 import org.colorcoding.ibas.bobas.repository.BORepositoryServiceApplication;
 import org.colorcoding.ibas.bobas.util.ArrayList;
 import org.colorcoding.ibas.reportanalysis.bo.report.IReport;
-import org.colorcoding.ibas.reportanalysis.bo.report.IReportParameter;
 import org.colorcoding.ibas.reportanalysis.bo.report.Report;
 import org.colorcoding.ibas.reportanalysis.bo.reportbook.IReportBook;
 import org.colorcoding.ibas.reportanalysis.bo.reportbook.IReportBookItem;
@@ -27,8 +26,10 @@ import org.colorcoding.ibas.reportanalysis.bo.users.UserReport;
 import org.colorcoding.ibas.reportanalysis.bo.users.UserReportParameter;
 import org.colorcoding.ibas.reportanalysis.data.emAssignedType;
 import org.colorcoding.ibas.reportanalysis.data.emReportParameterType;
+import org.colorcoding.ibas.reportanalysis.reporter.ExecuteReport;
+import org.colorcoding.ibas.reportanalysis.reporter.ExecuteReportParameter;
 import org.colorcoding.ibas.reportanalysis.reporter.IReporter;
-import org.colorcoding.ibas.reportanalysis.reporter.ReporterFacotry;
+import org.colorcoding.ibas.reportanalysis.reporter.ReporterFactories;
 
 /**
  * ReportAnalysis仓库
@@ -62,7 +63,7 @@ public class BORepositoryReportAnalysis extends BORepositoryServiceApplication
 			condition.setValue(emAssignedType.USER);
 			condition = criteria.getConditions().create();
 			condition.setAlias(ReportBook.PROPERTY_ASSIGNED.getName());
-			condition.setValue(this.getCurrentUser().getId());
+			condition.setValue(user);
 			condition.setBracketClose(1);
 			// 所属角色的查询
 			IOrganizationManager manager = OrganizationFactory.create().createManager();
@@ -184,21 +185,27 @@ public class BORepositoryReportAnalysis extends BORepositoryServiceApplication
 				throw new Exception(i18n.prop("msg_ra_not_found_report",
 						report.getName() != null ? report.getName() : report.getId()));
 			}
-			IReporter reporter = ReporterFacotry.create().create(report);
-			RuntimeLog.log(MessageLevel.DEBUG, MSG_USER_RUN_REPORT, this.getCurrentUser().getId(),
-					boReport.getObjectKey(), boReport.getName());
+			ExecuteReport exeReport = ExecuteReport.create(boReport);
 			// 传递参数
-			for (IReportParameter boItem : boReport.getReportParameters()) {
-				if (boItem.getCategory() == emReportParameterType.PRESET) {
+			for (ExecuteReportParameter rnItem : exeReport.getParameters()) {
+				if (rnItem.getCategory() == emReportParameterType.PRESET) {
 					continue;
 				}
 				for (UserReportParameter usItem : report.getParameters()) {
-					if (boItem.getName().equals(usItem.getName())) {
-						boItem.setValue(usItem.getValue());
+					if (rnItem.getName().equals(usItem.getName())) {
+						rnItem.setValue(usItem.getValue());
 					}
 				}
 			}
-			opRslt.addResultObjects(reporter.run(boReport));
+			IReporter reporter = ReporterFactories.create().create(exeReport);
+			if (reporter == null) {
+				throw new Exception(i18n.prop("msg_ra_not_allowed_run_report",
+						report.getName() != null ? report.getName() : report.getId()));
+			}
+			RuntimeLog.log(MessageLevel.DEBUG, MSG_USER_RUN_REPORT, this.getCurrentUser().getId(),
+					boReport.getObjectKey(), boReport.getName());
+			// 运行报表
+			opRslt.addResultObjects(reporter.run(exeReport));
 		} catch (Exception e) {
 			opRslt.setError(e);
 		}

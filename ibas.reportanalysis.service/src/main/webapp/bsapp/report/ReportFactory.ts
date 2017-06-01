@@ -10,7 +10,7 @@ import * as ibas from "ibas/index";
 import * as bo from "../../borep/bo/index";
 import { IReportViewer } from "./Report.d";
 import { ReportViewApp, ReportTabViewApp } from "./ReportViewApp";
-import { CrystalReportViewApp, CrystalReportTabViewApp } from "./CrystalReportViewApp";
+import { BOEReportViewApp, BOEReportTabViewApp } from "./BOEReportViewApp";
 
 /** 报表查看工厂 */
 class ReportFactory {
@@ -19,8 +19,8 @@ class ReportFactory {
         if (!ibas.objects.isNull(report)) {
             if (report.category === bo.emReportType.REPORT) {
                 return new ReportViewApp();
-            } else if (report.category === bo.emReportType.CRYSTAL) {
-                return new CrystalReportViewApp();
+            } else if (report.category === bo.emReportType.BOE) {
+                return new BOEReportViewApp();
             }
         }
         throw new Error(
@@ -32,8 +32,8 @@ class ReportFactory {
         if (!ibas.objects.isNull(report)) {
             if (report.category === bo.emReportType.REPORT) {
                 return new ReportTabViewApp();
-            } else if (report.category === bo.emReportType.CRYSTAL) {
-                return new CrystalReportTabViewApp();
+            } else if (report.category === bo.emReportType.BOE) {
+                return new BOEReportTabViewApp();
             }
         }
         throw new Error(

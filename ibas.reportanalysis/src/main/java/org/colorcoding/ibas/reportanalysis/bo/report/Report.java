@@ -761,12 +761,12 @@ public class Report extends BusinessObject<Report> implements IReport, IDataOwne
 	/**
 	 * 属性名称-关联的报表
 	 */
-	private static final String PROPERTY_ASSOCIATEDREPORT_NAME = "Associated";
+	private static final String PROPERTY_ASSOCIATEDREPORT_NAME = "AssociatedReport";
 
 	/**
 	 * 关联的报表 属性
 	 */
-	@DbField(name = "AppId", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	@DbField(name = "Associated", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
 	public static final IPropertyInfo<String> PROPERTY_ASSOCIATEDREPORT = registerProperty(
 			PROPERTY_ASSOCIATEDREPORT_NAME, String.class, MY_CLASS);
 
@@ -857,13 +857,13 @@ public class Report extends BusinessObject<Report> implements IReport, IDataOwne
 	/**
 	 * 属性名称-用户名
 	 */
-	private static final String PROPERTY_USERNAME_NAME = "UserName";
+	private static final String PROPERTY_USER_NAME = "User";
 
 	/**
 	 * 用户名 属性
 	 */
-	@DbField(name = "UserName", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
-	public static final IPropertyInfo<String> PROPERTY_USERNAME = registerProperty(PROPERTY_USERNAME_NAME, String.class,
+	@DbField(name = "User", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME, primaryKey = false)
+	public static final IPropertyInfo<String> PROPERTY_USER = registerProperty(PROPERTY_USER_NAME, String.class,
 			MY_CLASS);
 
 	/**
@@ -871,9 +871,9 @@ public class Report extends BusinessObject<Report> implements IReport, IDataOwne
 	 * 
 	 * @return 值
 	 */
-	@XmlElement(name = PROPERTY_USERNAME_NAME)
-	public final String getUserName() {
-		return this.getProperty(PROPERTY_USERNAME);
+	@XmlElement(name = PROPERTY_USER_NAME)
+	public final String getUser() {
+		return this.getProperty(PROPERTY_USER);
 	}
 
 	/**
@@ -882,8 +882,8 @@ public class Report extends BusinessObject<Report> implements IReport, IDataOwne
 	 * @param value
 	 *            值
 	 */
-	public final void setUserName(String value) {
-		this.setProperty(PROPERTY_USERNAME, value);
+	public final void setUser(String value) {
+		this.setProperty(PROPERTY_USER, value);
 	}
 
 	/**

@@ -21,7 +21,7 @@ export class ReportChooseView extends ibas.BOChooseView implements IReportChoose
     }
     /** 绘制工具条 */
     darwBars(): any {
-        let that = this;
+        let that: this = this;
         return [
             new sap.m.Button("", {
                 text: ibas.i18n.prop("sys_shell_data_new"),
@@ -50,11 +50,11 @@ export class ReportChooseView extends ibas.BOChooseView implements IReportChoose
                     that.fireViewEvents(that.closeEvent);
                 }
             }),
-        ]
+        ];
     }
     /** 绘制视图 */
     darw(): any {
-        let that = this;
+        let that: this = this;
         this.table = new sap.ui.table.Table("", {
             enableSelectAll: false,
             visibleRowCount: ibas.config.get(utils.CONFIG_ITEM_LIST_TABLE_VISIBLE_ROW_COUNT, 15),
@@ -133,10 +133,10 @@ export class ReportChooseView extends ibas.BOChooseView implements IReportChoose
         let model: sap.ui.model.Model = this.table.getModel(undefined);
         if (!ibas.objects.isNull(model)) {
             // 已存在绑定数据，添加新的
-            let hDatas: bo.Report[] = (<any>model).getData();
-            if (!ibas.objects.isNull(hDatas) && hDatas instanceof Array) {
+            let hDatas: any = (<any>model).getData();
+            if (!ibas.objects.isNull(hDatas) && hDatas.rows instanceof Array) {
                 for (let item of datas) {
-                    hDatas.push(item);
+                    hDatas.rows.push(item);
                 }
                 model.refresh(false);
                 done = true;
@@ -154,8 +154,10 @@ export class ReportChooseView extends ibas.BOChooseView implements IReportChoose
         super.query(criteria);
         this.lastCriteria = criteria;
         // 清除历史数据
-        this.table.setBusy(true);
-        this.table.setFirstVisibleRow(0);
-        this.table.setModel(null);
+        if (this.isDisplayed) {
+            this.table.setBusy(true);
+            this.table.setFirstVisibleRow(0);
+            this.table.setModel(null);
+        }
     }
 }

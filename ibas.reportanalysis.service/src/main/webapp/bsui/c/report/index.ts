@@ -11,4 +11,4 @@ export * from "./ReportListView";
 export * from "./ReportChooseView";
 export * from "./ReportViewView";
 export * from "./ReportEditView";
-export * from "./CrystalReportViewView";
+export * from "./BOEReportViewView";

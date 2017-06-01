@@ -15,9 +15,9 @@ export * from "./UserReport";
 // 注册业务对象到工厂
 import * as ibas from "ibas/index";
 import { Report } from "./Report";
-ibas.boFactory.register(Report);
+ibas.boFactory.register(Report.BUSINESS_OBJECT_CODE, Report);
 import { ReportBook } from "./ReportBook";
-ibas.boFactory.register(ReportBook);
+ibas.boFactory.register(ReportBook.BUSINESS_OBJECT_CODE, ReportBook);
 import { UserReport, UserReportParameter } from "./UserReport";
 ibas.boFactory.register(UserReport);
 ibas.boFactory.register(UserReportParameter);

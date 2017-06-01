@@ -13,5 +13,12 @@
     "Address": ".../",
     "Repository": "http://localhost:8080/reportanalysis/services/rest/data",
     "Index": "index.users"
+  },
+  {
+    "Id": "c4d3da42-0a53-480b-98fe-bf551a9581c7",
+    "Name": "BusinessObjectsEnterprise",
+    "Category": "",
+    "Address": ".../modules/businessobjectsenterprise",
+    "Repository": "http://localhost:8080/businessobjectsenterprise/services/rest/data"
   }
 ]

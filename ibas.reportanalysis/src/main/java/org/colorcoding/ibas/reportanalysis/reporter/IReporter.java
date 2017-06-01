@@ -1,7 +1,6 @@
 package org.colorcoding.ibas.reportanalysis.reporter;
 
 import org.colorcoding.ibas.bobas.data.IDataTable;
-import org.colorcoding.ibas.reportanalysis.bo.report.Report;
 
 /**
  * 报表者
@@ -18,5 +17,5 @@ public interface IReporter {
 	 * @return
 	 * @throws Exception
 	 */
-	IDataTable run(Report report) throws Exception;
+	IDataTable run(ExecuteReport report) throws ReportException;
 }
