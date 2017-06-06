@@ -51,33 +51,29 @@ export class UserReportPageApp extends ibas.Application<IUserReportPageView> {
         if (!ibas.objects.instanceOf(report, bo.UserReport)) {
             return;
         }
-        try {
-            if (report.category === bo.emReportType.KPI) {
-                // kpi报表
-                // 刷新指标
-                this.runReportKpi(report);
-                // 激活关联报表
-                let parameter: bo.UserReportParameter = report.parameters.firstOrDefault((item: bo.UserReportParameter) => {
-                    return item.name === PARAMETER_NAME_ASSOCIATED_REPORT;
-                });
-                if (!ibas.objects.isNull(parameter)) {
-                    for (let item of this.reports) {
-                        if (item.id === parameter.value) {
-                            this.activeReport(item);
-                            return;
-                        }
+        if (report.category === bo.emReportType.KPI) {
+            // kpi报表
+            // 刷新指标
+            this.runReportKpi(report);
+            // 激活关联报表
+            let parameter: bo.UserReportParameter = report.parameters.firstOrDefault((item: bo.UserReportParameter) => {
+                return item.name === PARAMETER_NAME_ASSOCIATED_REPORT;
+            });
+            if (!ibas.objects.isNull(parameter)) {
+                for (let item of this.reports) {
+                    if (item.id === parameter.value) {
+                        this.activeReport(item);
+                        return;
                     }
-                    // 用户没有此关联报表
-                    this.proceeding(ibas.emMessageType.WARNING, ibas.i18n.prop("reportanalysis_not_found_report", parameter.value));
                 }
-            } else {
-                let app: IReportViewer = reportFactory.createViewer(report);
-                app.navigation = this.navigation;
-                app.viewShower = this.viewShower;
-                app.run(report);
+                // 用户没有此关联报表
+                this.proceeding(ibas.emMessageType.WARNING, ibas.i18n.prop("reportanalysis_not_found_report", parameter.value));
             }
-        } catch (error) {
-            this.messages(error);
+        } else {
+            let app: IReportViewer = reportFactory.createViewer(report);
+            app.navigation = this.navigation;
+            app.viewShower = this.viewShower;
+            app.run(report);
         }
     }
     /** 当前用户报表集合 */

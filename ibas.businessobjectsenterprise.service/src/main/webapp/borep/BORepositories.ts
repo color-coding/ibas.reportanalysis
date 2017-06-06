@@ -31,10 +31,7 @@ export class BORepositoryBusinessObjectsEnterprise extends ibas.BORepositoryAppl
             throw new Error(ibas.i18n.prop("sys_invalid_parameter", "remoteRepository"));
         }
         let that: this = this;
-        let require: Require = ibas.requires.create({
-            baseUrl: "../3rdparty/"
-        }, []);
-        require(["crypto-js"], function (cryptoJS: CryptoJS.Hashes): void {
+        require(["../3rdparty/crypto-js"], function (cryptoJS: CryptoJS.Hashes): void {
             // todo：应对密码加密
             let method: string = ibas.strings.format("connect?user={0}&password={1}", caller.user, caller.password);
             let methodCaller: ibas.MethodCaller = {

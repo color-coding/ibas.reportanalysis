@@ -30,7 +30,7 @@ export class ReportImportView extends ibas.View implements IReportImportView {
     darw(): any {
         let that: this = this;
         this.iptServer = new sap.m.Input("", {
-            value: ibas.config.get(ibas.CONFIG_ITEM_DEBUG_MODE) ? ibas.config.get(CONFIG_ITEM_DEFAULT_BOE_SERVER) : "",
+            value: ibas.config.get(ibas.CONFIG_ITEM_DEBUG_MODE) ? ibas.url.normalize(ibas.config.get(CONFIG_ITEM_DEFAULT_BOE_SERVER)) : "",
         });
         this.iptUser = new sap.m.Input("", {
             value: ibas.config.get(ibas.CONFIG_ITEM_DEBUG_MODE) ? ibas.config.get(CONFIG_ITEM_DEFAULT_BOE_USER) : "",
