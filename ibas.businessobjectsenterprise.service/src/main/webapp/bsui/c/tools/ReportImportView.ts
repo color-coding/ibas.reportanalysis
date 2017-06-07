@@ -29,8 +29,12 @@ export class ReportImportView extends ibas.View implements IReportImportView {
     /** 绘制视图 */
     darw(): any {
         let that: this = this;
+        let address: string = ibas.config.get(CONFIG_ITEM_DEFAULT_BOE_SERVER);
+        if (!ibas.objects.isNull(address)) {
+            address = ibas.url.normalize(address);
+        }
         this.iptServer = new sap.m.Input("", {
-            value: ibas.config.get(ibas.CONFIG_ITEM_DEBUG_MODE) ? ibas.url.normalize(ibas.config.get(CONFIG_ITEM_DEFAULT_BOE_SERVER)) : "",
+            value: address,
         });
         this.iptUser = new sap.m.Input("", {
             value: ibas.config.get(ibas.CONFIG_ITEM_DEBUG_MODE) ? ibas.config.get(CONFIG_ITEM_DEFAULT_BOE_USER) : "",

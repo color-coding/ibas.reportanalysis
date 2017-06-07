@@ -21,7 +21,7 @@ let getWindowWidth: Function = function (tab: boolean): number {
 };
 /** 获取窗口高度 */
 let getWindowHeight: Function = function (tab: boolean): number {
-    let consume: number = 136;
+    let consume: number = 86;
     if (ibas.config.get(CONFIG_ITEM_FULL_SCREEN, false)) {
         consume = consume - 50;
     }

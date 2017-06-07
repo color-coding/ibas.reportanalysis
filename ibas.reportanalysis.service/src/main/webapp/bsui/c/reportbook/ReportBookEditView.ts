@@ -44,7 +44,7 @@ export class ReportBookEditView extends ibas.BOEditView implements IReportBookEd
                 new sap.m.Select("", {
                     items: utils.createComboBoxItems(ibas.emYesNo)
                 }).bindProperty("selectedKey", {
-                    path: "/activated",
+                    path: "{/activated}",
                     type: "sap.ui.model.type.Integer"
                 }),
                 new sap.ui.core.Title("", { text: ibas.i18n.prop("reportanalysis_other_information") }),
@@ -52,7 +52,7 @@ export class ReportBookEditView extends ibas.BOEditView implements IReportBookEd
                 new sap.m.Select("", {
                     items: utils.createComboBoxItems(bo.emAssignedType)
                 }).bindProperty("selectedKey", {
-                    path: "/assignedType",
+                    path: "{/assignedType}",
                     type: "sap.ui.model.type.Integer"
                 }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_reportbook_assigned") }),
@@ -62,7 +62,7 @@ export class ReportBookEditView extends ibas.BOEditView implements IReportBookEd
                         that.fireViewEvents(that.chooseUserRoleEvent);
                     }
                 }).bindProperty("value", {
-                    path: "/assigned"
+                    path: "{/assigned}"
                 })
             ]
         });

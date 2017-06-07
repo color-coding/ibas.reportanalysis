@@ -19,7 +19,7 @@ export module views {
             }));
             return;
         }
-        form.addContent(new sap.m.Title("", {
+        form.addContent(new sap.ui.core.Title("", {
             text: ibas.i18n.prop("reportanalysis_running_parameters")
         }));
         for (let item of parameters) {
@@ -29,21 +29,24 @@ export module views {
             }
             form.addContent(new sap.m.Label("", {
                 textAlign: sap.ui.core.TextAlign.Left,
-                width: "30%",
+                width: "20%",
                 text: ibas.objects.isNull(item.description) ? item.name.replace("\$\{", "").replace("\}", "") : item.description
             }));
             let input: sap.ui.core.Control;
             if (item.category === bo.emReportParameterType.DATETIME) {
                 input = new sap.m.DatePicker("", {
+                    width: "60%",
                     valueFormat: "yyyy-MM-dd",
                 });
                 input.bindProperty("value", {
-                    path: "/value"
+                    path: "{/value}"
                 });
             } else {
-                input = new sap.m.Input("", {});
+                input = new sap.m.Input("", {
+                    width: "60%",
+                });
                 input.bindProperty("value", {
-                    path: "/value"
+                    path: "{/value}"
                 });
             }
             input.setModel(new sap.ui.model.json.JSONModel(item));
