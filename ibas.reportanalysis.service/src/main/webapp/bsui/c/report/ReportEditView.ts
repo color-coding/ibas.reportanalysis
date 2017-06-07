@@ -40,18 +40,18 @@ export class ReportEditView extends ibas.BOEditView implements IReportEditView {
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_report_name") }),
                 new sap.m.Input("", {
                 }).bindProperty("value", {
-                    path: "{/name}"
+                    path: "/name"
                 }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_report_group") }),
                 new sap.m.Input("", {
                 }).bindProperty("value", {
-                    path: "{/group}"
+                    path: "/group"
                 }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_report_activated") }),
                 new sap.m.Select("", {
                     items: utils.createComboBoxItems(ibas.emYesNo)
                 }).bindProperty("selectedKey", {
-                    path: "{/activated}",
+                    path: "/activated",
                     type: "sap.ui.model.type.Integer"
                 }),
                 new sap.ui.core.Title("", { text: ibas.i18n.prop("reportanalysis_ui_associated") }),
@@ -62,7 +62,7 @@ export class ReportEditView extends ibas.BOEditView implements IReportEditView {
                         that.fireViewEvents(that.chooseReportBOCodeEvent);
                     }
                 }).bindProperty("value", {
-                    path: "{/boCode}"
+                    path: "/boCode"
                 }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_report_applicationid") }),
                 new sap.m.Input("", {
@@ -71,7 +71,7 @@ export class ReportEditView extends ibas.BOEditView implements IReportEditView {
                         that.fireViewEvents(that.chooseReportApplicationIdEvent);
                     }
                 }).bindProperty("value", {
-                    path: "{/applicationId}"
+                    path: "/applicationId"
                 }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_report_associatedreport") }),
                 new sap.m.Input("", {
@@ -80,42 +80,42 @@ export class ReportEditView extends ibas.BOEditView implements IReportEditView {
                         that.fireViewEvents(that.chooseReportAssociatedReportEvent);
                     }
                 }).bindProperty("value", {
-                    path: "{/associatedReport}"
+                    path: "/associatedReport"
                 }),
                 new sap.ui.core.Title("", { text: ibas.i18n.prop("reportanalysis_ui_content") }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_report_category") }),
                 new sap.m.Select("", {
                     items: utils.createComboBoxItems(bo.emReportType)
                 }).bindProperty("selectedKey", {
-                    path: "{/category}",
+                    path: "/category",
                     type: "sap.ui.model.type.Integer"
                 }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_report_sqlstring") }),
                 new sap.m.TextArea("", {
                     rows: 9
                 }).bindProperty("value", {
-                    path: "{/sqlString}"
+                    path: "/sqlString"
                 }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_report_server") }),
                 new sap.m.Input("", {
                 }).bindProperty("value", {
-                    path: "{/server}"
+                    path: "/server"
                 }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_report_user") }),
                 new sap.m.Input("", {
                 }).bindProperty("value", {
-                    path: "{/user}"
+                    path: "/user"
                 }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_report_password") }),
                 new sap.m.Input("", {
                     type: sap.m.InputType.Password
                 }).bindProperty("value", {
-                    path: "{/password}"
+                    path: "/password"
                 }),
                 new sap.m.Label("", { text: ibas.i18n.prop("bo_report_address") }),
                 new sap.m.Input("", {
                 }).bindProperty("value", {
-                    path: "{/address}"
+                    path: "/address"
                 }),
             ]
         });
