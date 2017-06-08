@@ -88,7 +88,7 @@ export class BOEReportViewView extends ibas.View implements IBOEReportViewView {
                 );
                 let html: string = ibas.strings.format(
                     `<iframe src="{0}" width="{1}" height="{2}" scrolling="no"></iframe>`,
-                    data.Value, getWindowWidth(false), getWindowHeight(false));
+                    data.Value, getWindowWidth(true), getWindowHeight(true));
                 this.form.addContent(
                     new sap.ui.core.HTML("", {
                         content: html,
