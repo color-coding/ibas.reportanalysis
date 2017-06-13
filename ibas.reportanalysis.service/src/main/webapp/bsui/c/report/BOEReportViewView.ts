@@ -87,7 +87,7 @@ export class BOEReportViewView extends ibas.View implements IBOEReportViewView {
                     ibas.i18n.prop("reportanalysis_running_report", data.Value),
                 );
                 let html: string = ibas.strings.format(
-                    `<iframe src="{0}" width="{1}" height="{2}" scrolling="no"></iframe>`,
+                    `<iframe src="{0}" width="{1}" height="{2}" frameborder="no" border="0" scrolling="no"></iframe>`,
                     data.Value, getWindowWidth(true), getWindowHeight(true));
                 this.form.addContent(
                     new sap.ui.core.HTML("", {
@@ -162,7 +162,7 @@ export class BOEReportViewTabView extends ibas.TabView implements IBOEReportView
                     ibas.i18n.prop("reportanalysis_running_report", data.Value),
                 );
                 let html: string = ibas.strings.format(
-                    `<iframe src="{0}" width="{1}" height="{2}" scrolling="no"></iframe>`,
+                    `<iframe src="{0}" width="{1}" height="{2}" frameborder="no" border="0" scrolling="no"></iframe>`,
                     data.Value, getWindowWidth(true), getWindowHeight(true));
                 this.form.addContent(
                     new sap.ui.core.HTML("", {
