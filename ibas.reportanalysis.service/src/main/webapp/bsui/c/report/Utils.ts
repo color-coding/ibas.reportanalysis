@@ -39,14 +39,14 @@ export module views {
                     valueFormat: "yyyy-MM-dd",
                 });
                 input.bindProperty("value", {
-                    path: "{/value}"
+                    path: "/value"
                 });
             } else {
                 input = new sap.m.Input("", {
                     width: "60%",
                 });
                 input.bindProperty("value", {
-                    path: "{/value}"
+                    path: "/value"
                 });
             }
             input.setModel(new sap.ui.model.json.JSONModel(item));

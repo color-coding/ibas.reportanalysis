@@ -60,8 +60,8 @@ public abstract class Reporter implements IReporter {
 				columnValue.setName("Value");
 				columnValue.setDataType(String.class);
 				IDataTableRow row = table.getRows().create();
-				row.setValue(columnKey, item.key);
-				row.setValue(columnValue, item.text);
+				row.setValue(columnKey, item.getKey());
+				row.setValue(columnValue, item.getText());
 			}
 		}
 		return table;

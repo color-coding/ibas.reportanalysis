@@ -38,8 +38,8 @@ public class BOEReporter extends Reporter {
 			boeService.setAddress(this.getServer());
 			boeService.logon(this.getUser(), this.getPassword());
 			KeyText keyText = new KeyText();
-			keyText.key = PARAMETER_NAME_URL;
-			keyText.text = this.getAddress().replace(PARAMETER_NAME_TOKEN, boeService.getToken());
+			keyText.setKey(PARAMETER_NAME_URL);
+			keyText.setKey(this.getAddress().replace(PARAMETER_NAME_TOKEN, boeService.getToken()));
 			return this.create(new KeyText[] { keyText });
 		} catch (Exception e) {
 			throw new ReportException(e);

@@ -13,8 +13,8 @@ public class KpiReporter extends Reporter {
 	@Override
 	public IDataTable run() throws ReportException {
 		KeyText value = new KeyText();
-		value.key = "${Kpi}";
-		value.text = "100";
+		value.setKey("${Kpi}");
+		value.setText("100");
 		return this.create(new KeyText[] { value });
 	}
 }

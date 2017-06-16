@@ -1,14 +1,15 @@
 package org.colorcoding.ibas.reportanalysis.reporter;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Iterator;
 
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.SqlQuery;
 import org.colorcoding.ibas.bobas.data.IDataTable;
+import org.colorcoding.ibas.bobas.data.IKeyText;
 import org.colorcoding.ibas.bobas.i18n.i18n;
 import org.colorcoding.ibas.bobas.repository.BORepository4DbReadonly;
 import org.colorcoding.ibas.bobas.repository.IBORepository4DbReadonly;
+import org.colorcoding.ibas.initialfantasy.MyConfiguration;
 
 /**
  * 系统报表者
@@ -30,28 +31,48 @@ public class ReportReporter extends Reporter {
 			throw new ReportException(i18n.prop("msg_ra_invaild_report_query",
 					this.getReport().getName() != null ? this.getReport().getName() : this.getReport().getId()));
 		}
-		IBORepository4DbReadonly boRepository = new BORepository4DbReadonly("Master");
-		String sqlString = sqlParameter.getValue();
 		// 替换变量
-		String pattern = "\\$\\{([\\!a-zA-Z].*?)\\}";
-		Matcher matcher = Pattern.compile(pattern).matcher(sqlString);
-		while (matcher.find()) {
-			String vName = matcher.group(0);
-			ExecuteReportParameter parameter = this.getReport().getParameters()
-					.firstOrDefault(c -> c.getName().equals(vName));
-			if (parameter != null) {
-				String vValue = parameter.getValue();
-				if (vValue != null) {
-					sqlString = sqlString.replace(vName, vValue);
-				}
+		String sqlString = MyConfiguration.applyVariables(sqlParameter.getValue(), new Iterator<IKeyText>() {
+			Iterator<ExecuteReportParameter> iterator = getReport().getParameters().iterator();
+
+			@Override
+			public IKeyText next() {
+				ExecuteReportParameter parameter = iterator.next();
+				return new IKeyText() {
+
+					@Override
+					public void setText(String arg0) {
+					}
+
+					@Override
+					public void setKey(String arg0) {
+					}
+
+					@Override
+					public String getText() {
+						return parameter.getValue();
+					}
+
+					@Override
+					public String getKey() {
+						return parameter.getName();
+					}
+
+					@Override
+					public String toString() {
+						return String.format("{keyText: %s %s}", this.getKey(), this.getText());
+					}
+				};
 			}
-		}
-		// 检查是否安全
-		if (!this.check(sqlString)) {
-			throw new ReportException(i18n.prop("msg_ra_invaild_report_query", this.getReport().getName()));
-		}
+
+			@Override
+			public boolean hasNext() {
+				return iterator.hasNext();
+			}
+		});
 		// 执行语句
-		IOperationResult<IDataTable> opRslt = boRepository.query(new SqlQuery(sqlString));
+		IBORepository4DbReadonly boRepository = new BORepository4DbReadonly("Master");
+		IOperationResult<IDataTable> opRslt = boRepository.query(new SqlQuery(sqlString, true, false));
 		if (opRslt.getError() != null) {
 			throw new ReportException(opRslt.getError());
 		}
@@ -61,13 +82,4 @@ public class ReportReporter extends Reporter {
 		return opRslt.getResultObjects().firstOrDefault();
 	}
 
-	protected boolean check(String sql) {
-		String reg = "(?:')|(?:--)|(/\\*(?:.|[\\n\\r])*?\\*/)|"
-				+ "(\\b(update|delete|insert|trancate|into|ascii|master|drop)\\b)";
-		Pattern sqlPattern = Pattern.compile(reg, Pattern.CASE_INSENSITIVE);
-		if (sqlPattern.matcher(sql).find()) {
-			return false;
-		}
-		return true;
-	}
 }
