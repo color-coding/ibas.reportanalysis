@@ -236,8 +236,10 @@ export class ReportImportView extends ibas.View implements IReportImportView {
             if (node.id === parentId) {
                 return node;
             }
+            //如果该分支的子项不为空
             if (!ibas.objects.isNull(node.nodes)) {
                 for (let item of node.nodes) {
+                    //递归。遍历分支子项，如果其父级不为空，返回父级属性
                     let parent: TreeNode = parentNode(item);
                     if (!ibas.objects.isNull(parent)) {
                         return parent;
