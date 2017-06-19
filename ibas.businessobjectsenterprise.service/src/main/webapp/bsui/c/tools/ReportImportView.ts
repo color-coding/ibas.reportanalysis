@@ -31,7 +31,7 @@ export class ReportImportView extends ibas.View implements IReportImportView {
         let that: this = this;
         let address: string = ibas.config.get(CONFIG_ITEM_DEFAULT_BOE_SERVER);
         if (!ibas.objects.isNull(address)) {
-            address = ibas.urls.normalize(address);
+            address = ibas.url.normalize(address);
         }
         this.iptServer = new sap.m.Input("", {
             value: address,
@@ -70,15 +70,6 @@ export class ReportImportView extends ibas.View implements IReportImportView {
                         wrapping: false
                     }).bindProperty("text", {
                         path: "name",
-                    })
-                }),
-                new sap.ui.table.Column("", {
-                    width: "100px",
-                    label: ibas.i18n.prop("bo_boefolder_parentid"),
-                    template: new sap.m.Text("", {
-                        width: "100%",
-                    }).bindProperty("text", {
-                        path: "parentId",
                     })
                 }),
             ]
