@@ -22,7 +22,9 @@ export enum emReportType {
     /** 报表服务 */
     BOE,
     /** 绩效指标 */
-    KPI
+    KPI,
+    /** 报表文件 */
+    FILE
 }
 /**
  * 报表参数类型

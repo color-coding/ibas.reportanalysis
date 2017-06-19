@@ -13,16 +13,16 @@ import { BORepositoryReportAnalysis } from "../../borep/BORepositories";
 import { ReportViewApp, IReportViewView } from "./ReportViewApp";
 
 /** 查看应用-报表 */
-export class BOEReportViewApp extends ReportViewApp<IReportViewView> {
+export class FileReportViewApp extends ReportViewApp<IReportViewView> {
     /** 应用标识 */
-    static APPLICATION_ID: string = "fe4385ed-a329-47e5-b6bb-5273b63e20ba";
+    static APPLICATION_ID: string = "539038dc-d53a-40ca-a536-5e6e85fc4ef0";
     /** 应用名称 */
     static APPLICATION_NAME: string = "reportanalysis_app_report_view";
     /** 构造函数 */
     constructor() {
         super();
-        this.id = BOEReportViewApp.APPLICATION_ID;
-        this.name = BOEReportViewApp.APPLICATION_NAME;
+        this.id = FileReportViewApp.APPLICATION_ID;
+        this.name = FileReportViewApp.APPLICATION_NAME;
         this.description = ibas.i18n.prop(this.name);
     }
     /** 注册视图 */
@@ -36,12 +36,12 @@ export class BOEReportViewApp extends ReportViewApp<IReportViewView> {
     }
 }
 /** 查看应用-报表-页签 */
-export class BOEReportTabViewApp extends BOEReportViewApp {
+export class FileReportTabViewApp extends FileReportViewApp {
     /** 应用标识 */
-    static APPLICATION_ID: string = "fe4385ed-a329-47e5-b6bb-5273b63e20bb";
+    static APPLICATION_ID: string = "539038dc-d53a-40ca-a536-5e6e85fc4ef1";
     /** 构造函数 */
     constructor() {
         super();
-        this.id = BOEReportTabViewApp.APPLICATION_ID;
+        this.id = FileReportTabViewApp.APPLICATION_ID;
     }
 }

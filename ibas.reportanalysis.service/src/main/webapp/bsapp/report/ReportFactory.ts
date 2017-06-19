@@ -9,8 +9,9 @@
 import * as ibas from "ibas/index";
 import * as bo from "../../borep/bo/index";
 import { IReportViewer } from "./Report.d";
-import { ReportViewApp, ReportTabViewApp } from "./ReportViewApp";
+import { SystemReportViewApp, SystemReportTabViewApp } from "./SystemReportViewApp";
 import { BOEReportViewApp, BOEReportTabViewApp } from "./BOEReportViewApp";
+import { FileReportViewApp, FileReportTabViewApp } from "./FileReportViewApp";
 
 /** 报表查看工厂 */
 class ReportFactory {
@@ -18,9 +19,11 @@ class ReportFactory {
     createViewer(report: bo.UserReport): IReportViewer {
         if (!ibas.objects.isNull(report)) {
             if (report.category === bo.emReportType.REPORT) {
-                return new ReportViewApp();
+                return new SystemReportViewApp();
             } else if (report.category === bo.emReportType.BOE) {
                 return new BOEReportViewApp();
+            } else if (report.category === bo.emReportType.FILE) {
+                return new FileReportViewApp();
             }
         }
         throw new Error(
@@ -31,9 +34,11 @@ class ReportFactory {
     createTabViewer(report: bo.UserReport): IReportViewer {
         if (!ibas.objects.isNull(report)) {
             if (report.category === bo.emReportType.REPORT) {
-                return new ReportTabViewApp();
+                return new SystemReportTabViewApp();
             } else if (report.category === bo.emReportType.BOE) {
                 return new BOEReportTabViewApp();
+            } else if (report.category === bo.emReportType.FILE) {
+                return new FileReportTabViewApp();
             }
         }
         throw new Error(

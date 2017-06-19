@@ -34,6 +34,11 @@ let createHTML: Function = function (url: string): string {
     if (ibas.objects.isNull(url)) {
         return "";
     }
+    if (url.endsWith(".swf") || url.indexOf(".swf?") > 0) {
+        return ibas.strings.format(
+            `<object width="{1}" height="{2}" data="{0}" type="application/x-shockwave-flash"></object>`,
+            url, getWindowWidth(true), getWindowHeight(true));
+    }
     return ibas.strings.format(
         `<iframe src="{0}" width="{1}" height="{2}" frameborder="no" border="0" scrolling="no"></iframe>`,
         url, getWindowWidth(true), getWindowHeight(true));
@@ -41,7 +46,7 @@ let createHTML: Function = function (url: string): string {
 /**
  * 视图-Report
  */
-export class BOEReportViewView extends ReportViewView {
+export class FileReportViewView extends ReportViewView {
     /** 运行报表 */
     runReportEvent: Function;
     /** 绘制视图 */
@@ -82,13 +87,15 @@ export class BOEReportViewView extends ReportViewView {
         if (datas.length === 1) {
             let data: any = datas[0];
             if (data.Key === "${Url}") {
+                let url: string = data.Value;
+                url = ibas.urls.normalize(url);
                 this.application.viewShower.proceeding(this,
                     ibas.emMessageType.INFORMATION,
-                    ibas.i18n.prop("reportanalysis_running_report", data.Value),
+                    ibas.i18n.prop("reportanalysis_running_report", url),
                 );
                 this.form.addContent(
                     new sap.ui.core.HTML("", {
-                        content: createHTML(data.Value),
+                        content: createHTML(url),
                         preferDOM: false,
                         sanitizeContent: true,
                         visible: true,
@@ -105,7 +112,7 @@ export class BOEReportViewView extends ReportViewView {
 /**
  * 视图-报表查看-页签，需要与上保持同步
  */
-export class BOEReportViewTabView extends ReportViewTabView {
+export class FileReportViewTabView extends ReportViewTabView {
     /** 运行报表 */
     runReportEvent: Function;
     /** 绘制视图 */
@@ -146,13 +153,15 @@ export class BOEReportViewTabView extends ReportViewTabView {
         if (datas.length === 1) {
             let data: any = datas[0];
             if (data.Key === "${Url}") {
+                let url: string = data.Value;
+                url = ibas.urls.normalize(url);
                 this.application.viewShower.proceeding(this,
                     ibas.emMessageType.INFORMATION,
-                    ibas.i18n.prop("reportanalysis_running_report", data.Value),
+                    ibas.i18n.prop("reportanalysis_running_report", url),
                 );
                 this.form.addContent(
                     new sap.ui.core.HTML("", {
-                        content: createHTML(data.Value),
+                        content: createHTML(url),
                         preferDOM: false,
                         sanitizeContent: true,
                         visible: true,

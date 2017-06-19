@@ -31,7 +31,7 @@ export class ReportImportView extends ibas.View implements IReportImportView {
         let that: this = this;
         let address: string = ibas.config.get(CONFIG_ITEM_DEFAULT_BOE_SERVER);
         if (!ibas.objects.isNull(address)) {
-            address = ibas.url.normalize(address);
+            address = ibas.urls.normalize(address);
         }
         this.iptServer = new sap.m.Input("", {
             value: address,

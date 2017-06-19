@@ -24,4 +24,9 @@ public enum emReportType {
 	 */
 	@Value("K")
 	KPI,
+	/**
+	 * 报表文件
+	 */
+	@Value("F")
+	FILE,
 }

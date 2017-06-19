@@ -3,6 +3,7 @@ package org.colorcoding.ibas.reportanalysis.reporter;
 import java.util.List;
 
 import org.colorcoding.ibas.bobas.util.ArrayList;
+import org.colorcoding.ibas.initialfantasy.MyConfiguration;
 import org.colorcoding.ibas.reportanalysis.bo.report.IReport;
 import org.colorcoding.ibas.reportanalysis.bo.report.IReportParameter;
 import org.colorcoding.ibas.reportanalysis.bo.report.Report;
@@ -20,46 +21,46 @@ public class ExecuteReportParameter {
 		return reportParameter;
 	}
 
-	private static final String PARAMETER_NAME_TEMPLATE = "${%s}";
-
 	public static List<ExecuteReportParameter> create(IReport bo) {
 		ExecuteReportParameter parameter = null;
 		ArrayList<ExecuteReportParameter> parameters = new ArrayList<>();
-		if (bo.getCategory() == emReportType.BOE) {
-			// 水晶报表参数以参数形式返回
-			if (bo.getServer() != null && bo.getServer().length() > 0) {
-				parameter = new ExecuteReportParameter();
-				parameter.setName(String.format(PARAMETER_NAME_TEMPLATE, Report.PROPERTY_SERVER.getName()));
-				parameter.setCategory(emReportParameterType.PRESET);
-				parameter.setValue(bo.getServer());
-				parameters.add(parameter);
-			}
-			if (bo.getUser() != null && bo.getUser().length() > 0) {
-				parameter = new ExecuteReportParameter();
-				parameter.setName(String.format(PARAMETER_NAME_TEMPLATE, Report.PROPERTY_USER.getName()));
-				parameter.setCategory(emReportParameterType.PRESET);
-				parameter.setValue(bo.getUser());
-				parameters.add(parameter);
-			}
-			if (bo.getPassword() != null && bo.getPassword().length() > 0) {
-				parameter = new ExecuteReportParameter();
-				parameter.setName(String.format(PARAMETER_NAME_TEMPLATE, Report.PROPERTY_PASSWORD.getName()));
-				parameter.setCategory(emReportParameterType.PRESET);
-				parameter.setValue(bo.getPassword());
-				parameters.add(parameter);
-			}
-			if (bo.getAddress() != null && bo.getAddress().length() > 0) {
-				parameter = new ExecuteReportParameter();
-				parameter.setName(String.format(PARAMETER_NAME_TEMPLATE, Report.PROPERTY_ADDRESS.getName()));
-				parameter.setCategory(emReportParameterType.PRESET);
-				parameter.setValue(bo.getAddress());
-				parameters.add(parameter);
-			}
-		} else if (bo.getCategory() == emReportType.REPORT) {
+		if (bo.getServer() != null && bo.getServer().length() > 0) {
+			parameter = new ExecuteReportParameter();
+			parameter
+					.setName(String.format(MyConfiguration.VARIABLE_NAMING_TEMPLATE, Report.PROPERTY_SERVER.getName()));
+			parameter.setCategory(emReportParameterType.PRESET);
+			parameter.setValue(bo.getServer());
+			parameters.add(parameter);
+		}
+		if (bo.getUser() != null && bo.getUser().length() > 0) {
+			parameter = new ExecuteReportParameter();
+			parameter.setName(String.format(MyConfiguration.VARIABLE_NAMING_TEMPLATE, Report.PROPERTY_USER.getName()));
+			parameter.setCategory(emReportParameterType.PRESET);
+			parameter.setValue(bo.getUser());
+			parameters.add(parameter);
+		}
+		if (bo.getPassword() != null && bo.getPassword().length() > 0) {
+			parameter = new ExecuteReportParameter();
+			parameter.setName(
+					String.format(MyConfiguration.VARIABLE_NAMING_TEMPLATE, Report.PROPERTY_PASSWORD.getName()));
+			parameter.setCategory(emReportParameterType.PRESET);
+			parameter.setValue(bo.getPassword());
+			parameters.add(parameter);
+		}
+		if (bo.getAddress() != null && bo.getAddress().length() > 0) {
+			parameter = new ExecuteReportParameter();
+			parameter.setName(
+					String.format(MyConfiguration.VARIABLE_NAMING_TEMPLATE, Report.PROPERTY_ADDRESS.getName()));
+			parameter.setCategory(emReportParameterType.PRESET);
+			parameter.setValue(bo.getAddress());
+			parameters.add(parameter);
+		}
+		if (bo.getCategory() == emReportType.REPORT) {
 			// 系统报表
 			if (bo.getSqlString() != null && bo.getSqlString().length() > 0) {
 				parameter = new ExecuteReportParameter();
-				parameter.setName(String.format(PARAMETER_NAME_TEMPLATE, Report.PROPERTY_SQLSTRING.getName()));
+				parameter.setName(
+						String.format(MyConfiguration.VARIABLE_NAMING_TEMPLATE, Report.PROPERTY_SQLSTRING.getName()));
 				parameter.setCategory(emReportParameterType.PRESET);
 				parameter.setValue(bo.getSqlString());
 				parameters.add(parameter);

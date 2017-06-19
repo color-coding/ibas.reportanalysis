@@ -9,6 +9,8 @@ public class ReporterFactory {
 			return new ReportReporter();
 		} else if (report.getCategory() == emReportType.KPI) {
 			return new KpiReporter();
+		} else if (report.getCategory() == emReportType.FILE) {
+			return new FileReporter();
 		}
 		return null;
 	}

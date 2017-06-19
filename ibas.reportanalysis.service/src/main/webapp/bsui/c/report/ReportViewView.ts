@@ -10,18 +10,13 @@ import * as ibas from "ibas/index";
 import { utils } from "openui5/typings/ibas.utils";
 import * as bo from "../../../borep/bo/index";
 import { IReportViewView } from "../../../bsapp/report/index";
-import { views as viewUtils } from "./Utils";
 
 /**
  * 视图-Report
  */
-export class ReportViewView extends ibas.View implements IReportViewView {
-    /** 调用服务事件 */
-    callServicesEvent: Function;
+export abstract class ReportViewView extends ibas.View implements IReportViewView {
     /** 运行报表 */
     runReportEvent: Function;
-    /** 重置报表 */
-    resetReportEvent: Function;
     /** 绘制视图 */
     darw(): any {
         let that: this = this;
@@ -40,123 +35,32 @@ export class ReportViewView extends ibas.View implements IReportViewView {
                         press: function (): void {
                             that.fireViewEvents(that.runReportEvent);
                         }
-                    }),
-                    new sap.m.Button("", {
-                        text: ibas.i18n.prop("sys_shell_reset"),
-                        type: sap.m.ButtonType.Transparent,
-                        icon: "sap-icon://reset",
-                        press: function (): void {
-                            that.fireViewEvents(that.resetReportEvent);
-                        }
                     })
                 ],
-                contentRight: [
-                    new sap.m.Button("", {
-                        type: sap.m.ButtonType.Transparent,
-                        icon: "sap-icon://action",
-                        press: function (event: any): void {
-                            that.fireViewEvents(that.callServicesEvent, {
-                                displayServices(services: ibas.IServiceAgent[]): void {
-                                    if (ibas.objects.isNull(services) || services.length === 0) {
-                                        return;
-                                    }
-                                    let popover: sap.m.Popover = new sap.m.Popover("", {
-                                        showHeader: false,
-                                        placement: sap.m.PlacementType.Bottom,
-                                    });
-                                    for (let service of services) {
-                                        popover.addContent(new sap.m.Button({
-                                            text: ibas.i18n.prop(service.name),
-                                            type: sap.m.ButtonType.Transparent,
-                                            icon: service.icon,
-                                            press: function (): void {
-                                                service.run();
-                                                popover.close();
-                                            }
-                                        }));
-                                    }
-                                    (<any>popover).addStyleClass("sapMOTAPopover sapTntToolHeaderPopover");
-                                    popover.openBy(event.getSource(), true);
-                                }
-                            });
-                        }
-                    })
-                ]
             }),
             content: [this.form]
         });
         this.id = this.page.getId();
         return this.page;
     }
-    private page: sap.m.Page;
-    private form: sap.ui.layout.form.SimpleForm;
-    private tableResult: sap.ui.table.Table;
+    protected page: sap.m.Page;
+    protected form: sap.ui.layout.form.SimpleForm;
 
     /** 显示报表 */
     showReport(report: bo.UserReport): void {
         this.form.destroyContent();
-        viewUtils.addReportParameterUIs(this.form, report.parameters);
+        drawParameterUIs(this.form, report.parameters);
     }
     /** 显示报表结果 */
-    showResults(table: ibas.DataTable): void {
-        if (!ibas.objects.isNull(this.tableResult)) {
-            this.tableResult.destroy(true);
-        }
-        this.form.destroyContent();
-        this.tableResult = new sap.ui.table.Table("", {
-            enableSelectAll: true,
-            visibleRowCount: ibas.config.get(utils.CONFIG_ITEM_LIST_TABLE_VISIBLE_ROW_COUNT, 15),
-            visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive,
-            editable: false,
-            rows: "{/rows}",
-        });
-        for (let col of table.columns) {
-            if (col.definedDataType() === ibas.emTableDataType.DATE) {
-                this.tableResult.addColumn(
-                    new sap.ui.table.Column("", {
-                        label: col.name,
-                        width: "100px",
-                        autoResizable: false,
-                        template: new sap.m.Text("", {
-                            wrapping: false
-                        }).bindProperty("text", {
-                            path: col.name,
-                            formatter(data: any): any {
-                                return ibas.dates.toString(data);
-                            }
-                        })
-                    })
-                );
-            } else {
-                this.tableResult.addColumn(
-                    new sap.ui.table.Column("", {
-                        label: col.name,
-                        width: "100px",
-                        autoResizable: false,
-                        template: new sap.m.Text("", {
-                            wrapping: false
-                        }).bindProperty("text", {
-                            path: col.name,
-                        })
-                    })
-                );
-            }
-        }
-        this.tableResult.setModel(new sap.ui.model.json.JSONModel({ rows: table.convert() }));
-        this.form.addContent(this.tableResult);
-    }
+    abstract showResults(table: ibas.DataTable): void;
 }
 
 /**
  * 视图-报表查看-页签，需要与上保持同步
  */
-export class ReportViewTabView extends ibas.TabView implements IReportViewView {
-    /** 调用服务事件 */
-    callServicesEvent: Function;
+export abstract class ReportViewTabView extends ibas.TabView implements IReportViewView {
     /** 运行报表 */
     runReportEvent: Function;
-    /** 重置报表 */
-    resetReportEvent: Function;
     /** 绘制视图 */
     darw(): any {
         let that: this = this;
@@ -176,108 +80,88 @@ export class ReportViewTabView extends ibas.TabView implements IReportViewView {
                             that.fireViewEvents(that.runReportEvent);
                         }
                     }),
-                    new sap.m.Button("", {
-                        text: ibas.i18n.prop("sys_shell_reset"),
-                        type: sap.m.ButtonType.Transparent,
-                        icon: "sap-icon://reset",
-                        press: function (): void {
-                            that.fireViewEvents(that.resetReportEvent);
-                        }
-                    })
                 ],
-                contentRight: [
-                    new sap.m.Button("", {
-                        type: sap.m.ButtonType.Transparent,
-                        icon: "sap-icon://action",
-                        press: function (event: any): void {
-                            that.fireViewEvents(that.callServicesEvent, {
-                                displayServices(services: ibas.IServiceAgent[]): void {
-                                    if (ibas.objects.isNull(services) || services.length === 0) {
-                                        return;
-                                    }
-                                    let popover: sap.m.Popover = new sap.m.Popover("", {
-                                        showHeader: false,
-                                        placement: sap.m.PlacementType.Bottom,
-                                    });
-                                    for (let service of services) {
-                                        popover.addContent(new sap.m.Button({
-                                            text: ibas.i18n.prop(service.name),
-                                            type: sap.m.ButtonType.Transparent,
-                                            icon: service.icon,
-                                            press: function (): void {
-                                                service.run();
-                                                popover.close();
-                                            }
-                                        }));
-                                    }
-                                    (<any>popover).addStyleClass("sapMOTAPopover sapTntToolHeaderPopover");
-                                    popover.openBy(event.getSource(), true);
-                                }
-                            });
-                        }
-                    })
-                ]
             }),
             content: [this.form]
         });
         this.id = this.page.getId();
         return this.page;
     }
-    private page: sap.m.Page;
-    private form: sap.ui.layout.form.SimpleForm;
-    private tableResult: sap.ui.table.Table;
-
+    protected page: sap.m.Page;
+    protected form: sap.ui.layout.form.SimpleForm;
     /** 显示报表 */
     showReport(report: bo.UserReport): void {
         this.form.destroyContent();
-        viewUtils.addReportParameterUIs(this.form, report.parameters);
+        drawParameterUIs(this.form, report.parameters);
     }
     /** 显示报表结果 */
-    showResults(table: ibas.DataTable): void {
-        if (!ibas.objects.isNull(this.tableResult)) {
-            this.tableResult.destroy(true);
+    abstract showResults(table: ibas.DataTable): void;
+}
+
+function drawParameterUIs(form: sap.ui.layout.form.SimpleForm, parameters: bo.UserReportParameter[]): void {
+    if (ibas.objects.isNull(parameters) || parameters.length === 0) {
+        form.addContent(new sap.m.Title("", {
+            text: ibas.i18n.prop("reportanalysis_running_parameters")
+        }));
+        return;
+    }
+    form.addContent(new sap.ui.core.Title("", {
+        text: ibas.i18n.prop("reportanalysis_running_parameters")
+    }));
+    for (let item of parameters) {
+        if (item.category === bo.emReportParameterType.PRESET) {
+            // 预设的不显示
+            continue;
         }
-        this.form.destroyContent();
-        this.tableResult = new sap.ui.table.Table("", {
-            enableSelectAll: true,
-            visibleRowCount: ibas.config.get(utils.CONFIG_ITEM_LIST_TABLE_VISIBLE_ROW_COUNT, 15),
-            visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive,
-            editable: false,
-            rows: "{/rows}",
-        });
-        for (let col of table.columns) {
-            if (col.definedDataType() === ibas.emTableDataType.DATE) {
-                this.tableResult.addColumn(
-                    new sap.ui.table.Column("", {
-                        label: col.name,
-                        width: "100px",
-                        autoResizable: false,
-                        template: new sap.m.Text("", {
-                            wrapping: false
-                        }).bindProperty("text", {
-                            path: col.name,
-                            formatter(data: any): any {
-                                return ibas.dates.toString(data);
-                            }
-                        })
-                    })
-                );
-            } else {
-                this.tableResult.addColumn(
-                    new sap.ui.table.Column("", {
-                        label: col.name,
-                        width: "100px",
-                        autoResizable: false,
-                        template: new sap.m.Text("", {
-                            wrapping: false
-                        }).bindProperty("text", {
-                            path: col.name,
-                        })
-                    })
-                );
+        form.addContent(new sap.m.Label("", {
+            textAlign: sap.ui.core.TextAlign.Left,
+            width: "20%",
+            text: ibas.objects.isNull(item.description) ? item.name.replace("\$\{", "").replace("\}", "") : item.description
+        }));
+        let input: sap.ui.core.Control;
+        if (item.category === bo.emReportParameterType.DATETIME) {
+            input = new sap.m.DatePicker("", {
+                width: "60%",
+                valueFormat: "yyyy-MM-dd",
+            });
+            input.bindProperty("value", {
+                path: "/value"
+            });
+        } else if (item.category === bo.emReportParameterType.SYSTEM) {
+            input = new sap.m.Input("", {
+                width: "60%",
+                editable: false,
+            });
+            input.bindProperty("value", {
+                path: "/value"
+            });
+        } else if (item.category === bo.emReportParameterType.RANGE) {
+            let values: Array<sap.ui.core.Item> = new Array<sap.ui.core.Item>();
+            for (let value of item.value.split(";")) {
+                if (ibas.strings.isEmpty(value)) {
+                    continue;
+                }
+                values.push(new sap.ui.core.Item("", {
+                    key: value,
+                    text: value
+                }));
             }
+            input = new sap.m.Select("", {
+                width: "60%",
+                items: values
+            });
+            input.bindProperty("selectedKey", {
+                path: "/value"
+            });
+        } else {
+            input = new sap.m.Input("", {
+                width: "60%",
+            });
+            input.bindProperty("value", {
+                path: "/value"
+            });
         }
-        this.tableResult.setModel(new sap.ui.model.json.JSONModel({ rows: table.convert() }));
-        this.form.addContent(this.tableResult);
+        input.setModel(new sap.ui.model.json.JSONModel(item));
+        form.addContent(input);
     }
 }

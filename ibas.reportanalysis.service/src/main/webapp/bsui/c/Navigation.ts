@@ -32,9 +32,6 @@ export default class Navigation extends ibas.ViewNavigation {
             case reportApps.ReportChooseApp.APPLICATION_ID:
                 view = new reportViews.ReportChooseView();
                 break;
-            case reportApps.ReportViewApp.APPLICATION_ID:
-                view = new reportViews.ReportViewView();
-                break;
             case reportApps.ReportEditApp.APPLICATION_ID:
                 view = new reportViews.ReportEditView();
                 break;
@@ -50,17 +47,26 @@ export default class Navigation extends ibas.ViewNavigation {
             case reportbookApps.ReportBookEditApp.APPLICATION_ID:
                 view = new reportbookViews.ReportBookEditView();
                 break;
-            case reportApps.BOEReportViewApp.APPLICATION_ID:
-                view = new reportViews.BOEReportViewView();
-                break;
             case userApps.UserReportPageApp.APPLICATION_ID:
                 view = new userViews.UserReportPageView();
+                break;
+            case reportApps.BOEReportViewApp.APPLICATION_ID:
+                view = new reportViews.BOEReportViewView();
                 break;
             case reportApps.BOEReportTabViewApp.APPLICATION_ID:
                 view = new reportViews.BOEReportViewTabView();
                 break;
-            case reportApps.ReportTabViewApp.APPLICATION_ID:
-                view = new reportViews.ReportViewTabView();
+            case reportApps.SystemReportViewApp.APPLICATION_ID:
+                view = new reportViews.SystemReportViewView();
+                break;
+            case reportApps.SystemReportTabViewApp.APPLICATION_ID:
+                view = new reportViews.SystemReportViewTabView();
+                break;
+            case reportApps.FileReportViewApp.APPLICATION_ID:
+                view = new reportViews.FileReportViewView();
+                break;
+            case reportApps.FileReportTabViewApp.APPLICATION_ID:
+                view = new reportViews.FileReportViewTabView();
                 break;
             default:
                 break;

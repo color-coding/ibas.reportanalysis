@@ -13,3 +13,5 @@ export * from "./ReportChooseApp";
 export * from "./ReportViewApp";
 export * from "./ReportEditApp";
 export * from "./BOEReportViewApp";
+export * from "./FileReportViewApp";
+export * from "./SystemReportViewApp";
