@@ -228,9 +228,11 @@ export class ReportImportView extends ibas.View implements IReportImportView {
     /** 显示目录 */
     showFolders(datas: bo.BOEFolder[]): void {
         let parentNode: Function = function (node: TreeNode, parentId: number): TreeNode {
+            //判断该分支是否为空
             if (ibas.objects.isNull(node)) {
                 return null;
             }
+            //判断该文件夹id
             if (node.id === parentId) {
                 return node;
             }
@@ -248,13 +250,17 @@ export class ReportImportView extends ibas.View implements IReportImportView {
         for (let item of datas) {
             let parent: TreeNode = null;
             for (let node of trees) {
+                //调用方法，将分支和元素的父id作为参数传入
                 parent = parentNode(node, item.parentId);
+                //直到找到父级跳出循环
                 if (!ibas.objects.isNull(parent)) {
                     break;
                 }
             }
+            //如果不存在父级文件夹，则直接加入trees
             if (ibas.objects.isNull(parent)) {
                 trees.push(new TreeNode(item.id, item.name));
+            //否则加入其父级文件夹的子项
             } else {
                 parent.nodes.push(new TreeNode(item.id, item.name));
             }
@@ -266,12 +272,13 @@ export class ReportImportView extends ibas.View implements IReportImportView {
         this.tableReports.setModel(new sap.ui.model.json.JSONModel({ rows: datas }));
     }
 }
-
+/** 创建数据结构 */
 class TreeNode {
     constructor(id: number, name: string);
     constructor() {
         this.id = arguments[0];
         this.name = arguments[1];
+        //在节点的子项加入节点
         this.nodes = new ibas.ArrayList<TreeNode>();
     }
     id: number;
