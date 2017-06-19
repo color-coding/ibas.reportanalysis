@@ -47,7 +47,7 @@ export class ReportImportView extends ibas.View implements IReportImportView {
             selected: false,
             text: ibas.i18n.prop("businessobjectsenterprise_replace_exists"),
         });
-        this.tableFolders = new sap.ui.table.Table("", {
+        this.tableFolders = new sap.ui.table.TreeTable("", {
             enableSelectAll: true,
             visibleRowCount: 4,
             visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive,
@@ -236,10 +236,54 @@ export class ReportImportView extends ibas.View implements IReportImportView {
     }
     /** 显示目录 */
     showFolders(datas: bo.BOEFolder[]): void {
-        this.tableFolders.setModel(new sap.ui.model.json.JSONModel({ rows: datas }));
+        let parentNode: Function = function (node: TreeNode, parentId: number): TreeNode {
+            if (ibas.objects.isNull(node)) {
+                return null;
+            }
+            if (node.id === parentId) {
+                return node;
+            }
+            if (!ibas.objects.isNull(node.nodes)) {
+                for (let item of node.nodes) {
+                    let parent: TreeNode = parentNode(item);
+                    if (!ibas.objects.isNull(parent)) {
+                        return parent;
+                    }
+                }
+            }
+            return null;
+        };
+        let trees: Array<TreeNode> = new Array<TreeNode>();
+        for (let item of datas) {
+            let parent: TreeNode = null;
+            for (let node of trees) {
+                parent = parentNode(node, item.parentId);
+                if (!ibas.objects.isNull(parent)) {
+                    break;
+                }
+            }
+            if (ibas.objects.isNull(parent)) {
+                trees.push(new TreeNode(item.id, item.name));
+            } else {
+                parent.nodes.push(new TreeNode(item.id, item.name));
+            }
+        }
+        this.tableFolders.setModel(new sap.ui.model.json.JSONModel({ rows: trees }));
     }
     /** 显示报表 */
     showReports(datas: bo.BOEReport[]): void {
         this.tableReports.setModel(new sap.ui.model.json.JSONModel({ rows: datas }));
     }
+}
+
+class TreeNode {
+    constructor(id: number, name: string);
+    constructor() {
+        this.id = arguments[0];
+        this.name = arguments[1];
+        this.nodes = new ibas.ArrayList<TreeNode>();
+    }
+    id: number;
+    name: string;
+    nodes: ibas.ArrayList<TreeNode>;
 }

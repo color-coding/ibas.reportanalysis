@@ -78,15 +78,25 @@ export class ReportListApp extends ibas.BOListApplication<IReportListView, bo.Re
             ));
             return;
         }
-        let report: bo.UserReport = bo.UserReport.create(data);
-        try {
-            let app: IReportViewer = reportFactory.createViewer(report);
-            app.navigation = this.navigation;
-            app.viewShower = this.viewShower;
-            app.run(report);
-        } catch (error) {
-            this.messages(error);
-        }
+        let that: this = this;
+        let boRepository: BORepositoryReportAnalysis = new BORepositoryReportAnalysis();
+        boRepository.fetchReport({
+            criteria: data.criteria(),
+            onCompleted(opRslt: ibas.IOperationResult<bo.Report>): void {
+                try {
+                    if (opRslt.resultObjects.length > 0) {
+                        data = opRslt.resultObjects.firstOrDefault();
+                    }
+                    let report: bo.UserReport = bo.UserReport.create(data);
+                    let app: IReportViewer = reportFactory.createViewer(report);
+                    app.navigation = that.navigation;
+                    app.viewShower = that.viewShower;
+                    app.run(report);
+                } catch (error) {
+                    that.messages(error);
+                }
+            }
+        });
     }
     /** 编辑数据，参数：目标数据 */
     protected editData(data: bo.Report): void {

@@ -20,7 +20,7 @@
     <Property Name="Organization" Description="数据所属组织" DataType="Alphanumeric" DataSubType="Default" EditSize="8" Mapped="OrgCode"/>
     <Property Name="AssignedType" Description="指派类型" DataType="Alphanumeric" DataSubType="Default" EditSize="1" DeclaredType="emAssignedType" Mapped="AssignedType"/>
     <Property Name="Assigned" Description="指派目标" DataType="Alphanumeric" DataSubType="Default" EditSize="20" Mapped="Assigned"/>
-    <Property Name="Name" Description="报表名称" DataType="Alphanumeric" DataSubType="Default" EditSize="50" Mapped="Name"/>
+    <Property Name="Name" Description="报表簿名称" DataType="Alphanumeric" DataSubType="Default" EditSize="50" Mapped="Name"/>
     <Property Name="Activated" Description="是否启用" DataType="Alphanumeric" DataSubType="Default" EditSize="1" DeclaredType="emYesNo" Mapped="Activated"/>
   </Model>
   <Model Name="ReportBookItem" Description="报表簿-项目" ModelType="SimpleLine" Mapped="${Company}_RA_RBK1">

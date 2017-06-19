@@ -18,7 +18,7 @@
   "bo_reportbook_organization": "数据所属组织",
   "bo_reportbook_assignedtype": "指派类型",
   "bo_reportbook_assigned": "指派目标",
-  "bo_reportbook_name": "报表名称",
+  "bo_reportbook_name": "报表簿名称",
   "bo_reportbook_activated": "是否启用",
   "bo_reportbook_reportbookitems": "报表簿-项目",
   "bo_reportbookitem": "报表簿-项目",

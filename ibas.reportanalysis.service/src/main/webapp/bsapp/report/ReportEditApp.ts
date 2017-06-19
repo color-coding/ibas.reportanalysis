@@ -9,6 +9,7 @@
 import * as ibas from "ibas/index";
 import * as bo from "../../borep/bo/index";
 import { BORepositoryReportAnalysis } from "../../borep/BORepositories";
+import { BO_CODE_SYSTEM_VARIABLE } from "../../3rdparty/initialfantasy/index";
 
 /** 应用-报表 */
 export class ReportEditApp extends ibas.BOEditApplication<IReportEditView, bo.Report> {
@@ -36,6 +37,7 @@ export class ReportEditApp extends ibas.BOEditApplication<IReportEditView, bo.Re
         this.view.addReportParameterEvent = this.addReportParameter;
         this.view.removeReportParameterEvent = this.removeReportParameter;
         this.view.chooseReportAssociatedReportEvent = this.chooseReportAssociatedReport;
+        this.view.chooseReportParameterVariableEvent = this.chooseReportParameterVariable;
     }
     /** 视图显示后 */
     protected viewShowed(): void {
@@ -214,6 +216,43 @@ export class ReportEditApp extends ibas.BOEditApplication<IReportEditView, bo.Re
             }
         });
     }
+    /** 报表参数-系统变量选择 */
+    chooseReportParameterVariable(caller: bo.ReportParameter): void {
+        if (ibas.objects.isNull(caller)) {
+            return;
+        }
+        if (caller.category !== bo.emReportParameterType.SYSTEM) {
+            return;
+        }
+        let that: this = this;
+        ibas.servicesManager.runChooseService<ibas.KeyValue>({
+            boCode: BO_CODE_SYSTEM_VARIABLE,
+            onCompleted(selecteds: ibas.List<ibas.KeyValue>): void {
+                // 获取触发的对象
+                let index: number = that.editData.reportParameters.indexOf(caller);
+                let item: bo.ReportParameter = that.editData.reportParameters[index];
+                // 选择返回数量多余触发数量时,自动创建新的项目
+                let created: boolean = false;
+                for (let selected of selecteds) {
+                    if (ibas.objects.isNull(item)) {
+                        item = that.editData.reportParameters.create();
+                        item.category = bo.emReportParameterType.SYSTEM;
+                        created = true;
+                    }
+                    if (ibas.strings.isEmpty(item.name)) {
+                        item.name = selected.key;
+                    }
+                    item.value = selected.key;
+                    item = null;
+                }
+                if (created) {
+                    // 创建了新的行项目
+                    that.view.showReportParameters(that.editData.reportParameters.filterDeleted());
+                }
+            }
+        });
+
+    }
 }
 /** 视图-报表 */
 export interface IReportEditView extends ibas.IBOEditView {
@@ -235,4 +274,6 @@ export interface IReportEditView extends ibas.IBOEditView {
     chooseReportApplicationIdEvent: Function;
     /** 报表-报表选择 */
     chooseReportAssociatedReportEvent: Function;
+    /** 报表参数-系统变量选择 */
+    chooseReportParameterVariableEvent: Function;
 }

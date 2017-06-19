@@ -30,6 +30,8 @@ export class ReportEditView extends ibas.BOEditView implements IReportEditView {
     chooseReportApplicationIdEvent: Function;
     /** 报表-报表选择 */
     chooseReportAssociatedReportEvent: Function;
+    /** 报表参数-系统变量选择 */
+    chooseReportParameterVariableEvent: Function;
 
     /** 绘制视图 */
     darw(): any {
@@ -178,6 +180,13 @@ export class ReportEditView extends ibas.BOEditView implements IReportEditView {
                     label: ibas.i18n.prop("bo_reportparameter_value"),
                     template: new sap.m.Input("", {
                         width: "100%",
+                        showValueHelp: true,
+                        valueHelpRequest: function (): void {
+                            that.fireViewEvents(that.chooseReportParameterVariableEvent,
+                                // 获取当前对象
+                                this.getBindingContext().getObject()
+                            );
+                        }
                     }).bindProperty("value", {
                         path: "value",
                     })

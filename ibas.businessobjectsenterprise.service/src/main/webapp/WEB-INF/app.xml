@@ -20,6 +20,12 @@
 		<add key="SerializationWay" value="jersey" />
 		<!--配置项目-对象删除前重新加载 -->
 		<add key="RefetchBeforeDelete" value="true" />
+        <!-- 配置项目-审批方法 -->
+		<add key="ApprovalWay" value="fantasy" />
+		<!-- 配置项目-组织方式 -->
+		<add key="OrganizationWay" value="fantasy" />
+		<!-- 配置项目-权限判断方式 -->
+		<add key="OwnershipWay" value="fantasy" />
 		<!--配置项目-BOE地址 -->
 		<add key="BOEAddress" value="192.168.0.43" />
 	</appSettings>

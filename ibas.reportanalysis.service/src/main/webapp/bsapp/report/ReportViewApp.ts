@@ -44,7 +44,14 @@ export class ReportViewApp extends ibas.BOApplicationWithServices<IReportViewVie
             this.runReport();
 
         } else {
-            // 有参数报表，显示信息
+            // 有参数报表
+            // 设置系统变量值
+            for (let item of this.report.parameters) {
+                if (item.category === bo.emReportParameterType.SYSTEM) {
+                    item.value = ibas.variablesManager.getValue(item.value);
+                }
+            }
+            // 显示信息
             this.view.showReport(this.report);
         }
     }

@@ -41,6 +41,32 @@ export module views {
                 input.bindProperty("value", {
                     path: "/value"
                 });
+            } else if (item.category === bo.emReportParameterType.SYSTEM) {
+                input = new sap.m.Input("", {
+                    width: "60%",
+                    editable: false,
+                });
+                input.bindProperty("value", {
+                    path: "/value"
+                });
+            } else if (item.category === bo.emReportParameterType.RANGE) {
+                let values: Array<sap.ui.core.Item> = new Array<sap.ui.core.Item>();
+                for (let value of item.value.split(";")) {
+                    if (ibas.strings.isEmpty(value)) {
+                        continue;
+                    }
+                    values.push(new sap.ui.core.Item("", {
+                        key: value,
+                        text: value
+                    }));
+                }
+                input = new sap.m.Select("", {
+                    width: "60%",
+                    items: values
+                });
+                input.bindProperty("selectedKey", {
+                    path: "/value"
+                });
             } else {
                 input = new sap.m.Input("", {
                     width: "60%",
