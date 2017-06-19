@@ -36,7 +36,7 @@ let createHTML: Function = function (url: string): string {
     }
     if (url.endsWith(".swf") || url.indexOf(".swf?") > 0) {
         return ibas.strings.format(
-            `<object width="{1}" height="{2}" data="{0}" type="application/x-shockwave-flash"></object>`,
+            `<html><iframe src="{0}" width="{1}" height="{2}" class='preview-iframe' frameborder="no" scrolling="no"></iframe></html>`,
             url, getWindowWidth(true), getWindowHeight(true));
     }
     return ibas.strings.format(
@@ -93,9 +93,11 @@ export class FileReportViewView extends ReportViewView {
                     ibas.emMessageType.INFORMATION,
                     ibas.i18n.prop("reportanalysis_running_report", url),
                 );
+                let html: string = createHTML(url);
+                ibas.logger.log(ibas.emMessageLevel.DEBUG, "view: {0}", html);
                 this.form.addContent(
                     new sap.ui.core.HTML("", {
-                        content: createHTML(url),
+                        content: html,
                         preferDOM: false,
                         sanitizeContent: true,
                         visible: true,
@@ -159,9 +161,11 @@ export class FileReportViewTabView extends ReportViewTabView {
                     ibas.emMessageType.INFORMATION,
                     ibas.i18n.prop("reportanalysis_running_report", url),
                 );
+                let html: string = createHTML(url);
+                ibas.logger.log(ibas.emMessageLevel.DEBUG, "view: {0}", html);
                 this.form.addContent(
                     new sap.ui.core.HTML("", {
-                        content: createHTML(url),
+                        content: html,
                         preferDOM: false,
                         sanitizeContent: true,
                         visible: true,
