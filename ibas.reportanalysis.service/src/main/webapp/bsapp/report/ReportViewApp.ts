@@ -84,7 +84,6 @@ export abstract class ReportViewApp<T extends IReportViewView> extends ibas.Appl
                         throw new Error(ibas.i18n.prop("reportanalysis_report_no_data"));
                     }
                     that.view.showResults(table);
-                    that.proceeding(ibas.emMessageType.SUCCESS, ibas.i18n.prop("sys_shell_sucessful"));
                 } catch (error) {
                     that.messages(error);
                 }

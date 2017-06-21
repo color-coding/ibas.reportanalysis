@@ -25,6 +25,10 @@ public class FileReporter extends Reporter {
 			StringBuilder stringBuilder = new StringBuilder();
 			stringBuilder.append(this.getAddress());
 			int length = stringBuilder.length();
+			if (this.getAddress().indexOf("?") > 0) {
+				// 存在地址参数
+				length = 0;
+			}
 			for (ExecuteReportParameter item : this.getReport().getParameters()) {
 				if (item.getCategory() == emReportParameterType.PRESET
 						&& (item.getName().equalsIgnoreCase(PARAMETER_NAME_ADDRESS)
