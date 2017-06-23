@@ -1,6 +1,6 @@
 {
   "businessobjectsenterprise": "BOE服务",
-  "businessobjectsenterprise_icon": "sap-icon://wrench",
+  "businessobjectsenterprise_icon": "sap-icon://bbyd-dashboard",
   "businessobjectsenterprise_func_report_import": "报表导入",
   "businessobjectsenterprise_app_report_import": "报表导入",
   "businessobjectsenterprise_import_boe": "服务信息",
