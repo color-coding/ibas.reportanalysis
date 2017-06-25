@@ -4,10 +4,10 @@
      a. ./ibas：下载地址（https://github.com/color-coding/ibas-typescript/ibas/）
      b. ./openui5： 下载地址（https://github.com/color-coding/ibas-typescript/openui5/）
      c. ./openui5/resources: 下载地址（http://openui5.org/download.html）
-  3. 此模块使用报表模块，需要映射reportanalysis目录到报表模块api。
-     例：mklink /d reportanalysis ..\..\..\..\..\ibas.reportanalysis.service\src\main\webapp\api
 
   * 以上建议通过操作系统文件链接指令映射，不要拷贝物理文件。
   * 链接指令示例：
-      windows: mklink /d ibas E:\MyWorks\ColorCoding\ibas-typescript\ibas
-      linux： ln -s ibas /mnt/e/MyWorks/ColorCoding/ibas-typescript/ibas
+      windows: mklink /d ibas ..\..\..\..\..\..\ibas-typescript\ibas
+               mklink /d openui5 ..\..\..\..\..\..\ibas-typescript\openui5
+      linux： ln -s ../../../../../../ibas-typescript/ibas ibas
+              ln -s ../../../../../../ibas-typescript/openui5 openui5
