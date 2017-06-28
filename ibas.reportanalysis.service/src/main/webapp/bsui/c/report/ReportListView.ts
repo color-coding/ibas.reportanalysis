@@ -223,4 +223,8 @@ export class ReportListView extends ibas.BOListView implements IReportListView {
             this.table.setModel(null);
         }
     }
+    /** 获取选择的数据 */
+    getSelecteds(): bo.Report[] {
+        return utils.getTableSelecteds<bo.Report>(this.table);
+    }
 }

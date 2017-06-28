@@ -9,6 +9,7 @@
 import * as ibas from "ibas/index";
 import * as bo from "../../borep/bo/index";
 import { BORepositoryReportAnalysis } from "../../borep/BORepositories";
+import { DataConverter4ra } from "../../borep/DataConverters";
 import { ReportBookViewApp } from "./ReportBookViewApp";
 import { ReportBookEditApp } from "./ReportBookEditApp";
 
@@ -168,7 +169,12 @@ export class ReportBookListApp extends ibas.BOListApplication<IReportBookListVie
     }
     /** 获取服务的契约 */
     protected getServiceProxies(): ibas.IServiceProxy<ibas.IServiceContract>[] {
-        return [];
+        return [
+            new ibas.BOListServiceProxy({
+                data: this.view.getSelecteds(),
+                converter: new DataConverter4ra(),
+            })
+        ];
     }
 }
 /** 视图-报表簿 */
@@ -179,4 +185,6 @@ export interface IReportBookListView extends ibas.IBOListView {
     deleteDataEvent: Function;
     /** 显示数据 */
     showData(datas: bo.ReportBook[]): void;
+    /** 获取选择的数据 */
+    getSelecteds(): bo.ReportBook[];
 }

@@ -225,4 +225,8 @@ export class ReportBookListView extends ibas.BOListView implements IReportBookLi
             this.table.setModel(null);
         }
     }
+    /** 获取选择的数据 */
+    getSelecteds(): bo.ReportBook[] {
+        return utils.getTableSelecteds<bo.ReportBook>(this.table);
+    }
 }
