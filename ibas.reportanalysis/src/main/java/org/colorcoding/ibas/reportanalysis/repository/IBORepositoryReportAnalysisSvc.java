@@ -1,7 +1,6 @@
 package org.colorcoding.ibas.reportanalysis.repository;
 
 import org.colorcoding.ibas.bobas.common.ICriteria;
-import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.data.DataTable;
 import org.colorcoding.ibas.bobas.repository.IBORepositorySmartService;
@@ -24,7 +23,7 @@ public interface IBORepositoryReportAnalysisSvc extends IBORepositorySmartServic
 	 *            口令
 	 * @return 操作结果
 	 */
-	IOperationResult<UserReport> fetchUserReports(String user, String token);
+	OperationResult<UserReport> fetchUserReports(String user, String token);
 
 	/**
 	 * 运行-用户报表
@@ -35,7 +34,7 @@ public interface IBORepositoryReportAnalysisSvc extends IBORepositorySmartServic
 	 *            口令
 	 * @return 操作结果
 	 */
-	IOperationResult<DataTable> runUserReport(UserReport report, String token);
+	OperationResult<DataTable> runUserReport(UserReport report, String token);
 
 	// --------------------------------------------------------------------------------------------//
 	/**

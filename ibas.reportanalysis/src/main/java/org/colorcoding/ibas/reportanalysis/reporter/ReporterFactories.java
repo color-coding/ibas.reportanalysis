@@ -8,10 +8,6 @@ import org.colorcoding.ibas.bobas.messages.RuntimeLog;
 import org.colorcoding.ibas.reportanalysis.MyConfiguration;
 
 public final class ReporterFactories {
-	/**
-	 * 配置项目-报表工厂，多个时“;”分隔
-	 */
-	public final static String CONFIG_ITEM_REPORTER_FACTORIES = "ReporterFactories";
 
 	public static final String MSG_REGISTER_REPORTER_FACTORY = "reporter: register report factory [%s].";
 	public static final String MSG_NOT_FOUND_REPORTER = "reporter: not found [%s|%s]'s reporter.";
@@ -35,8 +31,7 @@ public final class ReporterFactories {
 	}
 
 	protected void init() {
-		this.getFactories().add(new ReporterFactory());
-		String factories = MyConfiguration.getConfigValue(CONFIG_ITEM_REPORTER_FACTORIES);
+		String factories = MyConfiguration.getConfigValue(MyConfiguration.CONFIG_ITEM_REPORTER_FACTORIES);
 		if (factories != null && factories.length() > 0) {
 			for (String item : factories.split(";")) {
 				if (item != null && item.length() > 0) {
@@ -55,6 +50,7 @@ public final class ReporterFactories {
 				}
 			}
 		}
+		this.getFactories().add(new ReporterFactory());
 	}
 
 	private List<ReporterFactory> factories;

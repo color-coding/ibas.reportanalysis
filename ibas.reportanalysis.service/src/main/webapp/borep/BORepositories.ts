@@ -40,10 +40,10 @@ export class BORepositoryReportAnalysis extends ibas.BORepositoryApplication imp
                 caller.user, this.token);
         remoteRepository.callRemoteMethod(method, undefined, caller);
     }
-	/**
-	 * 运行用户报表
-	 * @param listener 用户检索监听者
-	 */
+    /**
+     * 运行用户报表
+     * @param listener 用户检索监听者
+     */
     runUserReport(caller: IRunUserReportCaller): void {
         let remoteRepository: ibas.IRemoteRepository = this.createRemoteRepository();
         if (ibas.objects.isNull(remoteRepository)) {
