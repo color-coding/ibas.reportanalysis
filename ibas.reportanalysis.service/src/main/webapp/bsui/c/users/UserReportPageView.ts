@@ -28,7 +28,35 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
         });
         this.page = new sap.m.Page("", {
             showHeader: false,
-            content: [this.container],
+            content: [
+                new sap.ui.layout.VerticalLayout("", {
+                    class: "",
+                    width: "100%",
+                    content: [
+                        new sap.m.Button("", {
+                            text: ibas.i18n.prop("bo_reportbookitem_group"),
+                            press: "showReportGroup",
+                        }),
+                    ]
+                }),
+                new sap.m.Popover("", {
+                    title: bo.ReportBookItem.PROPERTY_REPORT_NAME,
+                    footer: [
+                        new sap.m.ToolbarSpacer("", {
+                            Button: new sap.m.Button("", {
+                                text: ibas.i18n.prop("bo_reportbookitem_name"),
+                                template: new sap.m.Text("", {
+                                    wrapping: false
+                                }).bindProperty("text", {
+                                    path: "name",
+                                })
+                            })
+                        }),
+                    ],
+                    text: ibas.i18n.prop("bo_reportbookitem_group"),
+                }),
+                this.container
+            ],
             footer: new sap.m.Toolbar("", {
                 content: [
                     new sap.m.ToolbarSpacer(""),
@@ -85,6 +113,7 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
     }
     private page: sap.m.Page;
     private container: sap.m.TileContainer;
+    private popover: sap.m.Popover;
 
     /** 显示数据 */
     showReports(reports: bo.UserReport[]): void {
@@ -102,6 +131,22 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
                 })
             );
         }
+    }
+    /** 显示报表分组 */
+    showReportGroup(oEvent): void {
+        // create popover
+        if (!this.popover) {
+            let popover = sap.ui.xmlfragment("sap.m.sample.Popover.Popover", this);
+            this.container.addDependent(this.popover);
+            //this.getView().addDependent(this.popover);
+            this.popover.bindElement("/ProductCollection/0");
+        }
+
+        // delay because addDependent will do a async rerendering and the actionSheet will immediately close without it.
+        var oButton = oEvent.getSource();
+        jQuery.sap.delayedCall(0, this, function () {
+            this._oPopover.openBy(oButton);
+        });
     }
     private getIcon(type: bo.emReportType): string {
         if (type === bo.emReportType.BOE) {
