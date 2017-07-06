@@ -183,10 +183,16 @@ export class ReportImportView extends ibas.View implements IReportImportView {
                             icon: "sap-icon://refresh",
                             type: sap.m.ButtonType.Transparent,
                             press(): void {
-                                that.fireViewEvents(that.fetchReportEvent,
-                                    // 获取表格选中的对象
-                                    utils.getTableSelecteds<bo.BOEFolder>(that.tableFolders)
-                                );
+                                let treeNodes: TreeNode[] = utils.getTableSelecteds<TreeNode>(that.tableFolders);
+                                let sltFolders: ibas.ArrayList<bo.BOEFolder> = new ibas.ArrayList<bo.BOEFolder>();
+                                for (let node of treeNodes) {
+                                    for (let folder of that.folders) {
+                                        if (node.id === folder.id) {
+                                            sltFolders.add(folder);
+                                        }
+                                    }
+                                }
+                                that.fireViewEvents(that.fetchReportEvent, sltFolders);
                             }
                         }),
                     ]
@@ -227,6 +233,8 @@ export class ReportImportView extends ibas.View implements IReportImportView {
     }
     /** 显示目录 */
     showFolders(datas: bo.BOEFolder[]): void {
+        // 记录临时变量
+        this.folders = datas;
         let parentNode: Function = function (node: TreeNode, parentId: number): TreeNode {
             //判断该分支是否为空
             if (ibas.objects.isNull(node)) {
@@ -269,6 +277,7 @@ export class ReportImportView extends ibas.View implements IReportImportView {
         }
         this.tableFolders.setModel(new sap.ui.model.json.JSONModel({ rows: trees }));
     }
+    private folders: bo.BOEFolder[];
     /** 显示报表 */
     showReports(datas: bo.BOEReport[]): void {
         this.tableReports.setModel(new sap.ui.model.json.JSONModel({ rows: datas }));
