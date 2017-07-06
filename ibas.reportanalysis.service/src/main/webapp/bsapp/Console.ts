@@ -145,4 +145,13 @@ export class ConsoleUsers extends ibas.ModuleConsole {
         // 保留基类方法
         super.run();
     }
+    /** 设置报表仓库地址 */
+    setRepository(address: string): boolean {
+        address = ibas.urls.normalize(address);
+        let repositoryName: string = ibas.strings.format(ibas.MODULE_REPOSITORY_NAME_TEMPLATE, Console.CONSOLE_NAME);
+        let configName: string = ibas.strings.format(ibas.CONFIG_ITEM_TEMPLATE_REMOTE_REPOSITORY_ADDRESS, repositoryName);
+        ibas.config.set(configName, address);
+        ibas.logger.log(ibas.emMessageLevel.DEBUG, "repository: register [{0}]'s default address [{1}].", repositoryName, address);
+        return super.setRepository(address);
+    }
 }
