@@ -10,7 +10,7 @@ import * as ibas from "ibas/index";
 import { utils } from "openui5/typings/ibas.utils";
 import * as bo from "../../../borep/bo/index";
 import { IUserReportPageView } from "../../../bsapp/users/index";
-
+import { BORepositoryReportAnalysis } from "../../../borep/BORepositories";
 /**
  * 视图-Report
  */
@@ -18,56 +18,69 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
     private page: sap.m.Page;
     private container: sap.m.TileContainer;
     /** 页面头部 */
-    private mainHeader:sap.tnt.ToolHeader;
+    private mainHeader: sap.tnt.ToolHeader;
     /** 报表分组框 */
-    private popover: sap.m.Popover;
+    private showReportsByGroup: sap.m.Button;
     /** 激活报表 */
     activeReportEvent: Function;
     /** 刷新报表 */
     refreshReportsEvent: Function;
-
+    /** 根据报表分组显示 */
+    showReportsByGroupEvent: Function;
+    /**  */
     /** 绘制视图 */
     darw(): any {
         let that: this = this;
+        this.showReportsByGroup = new sap.m.Button("", {
+            text: "选择报表组别显示",
+            type: sap.m.ButtonType.Transparent,
+            defaultAction: function (): void {
+                that.fireViewEvents(that.refreshReportsEvent);
+            },
+            press: function (event: any): void {
+                let popover: sap.m.Popover = new sap.m.Popover("", {
+                    showHeader: false,
+                    placement: sap.m.PlacementType.Bottom,
+                    content: [
+                        /*new sap.m.Button("", {
+                            text: ibas.i18n.prop("businessobjectsenterprise_import_refresh"),
+                            icon: "sap-icon://refresh",
+                            type: sap.m.ButtonType.Transparent,
+                            press: "",
+                        }),*/
+                        this.tableReportShowByGroup = new sap.ui.table.Table("", {
+                            visiableRowCount: 5,
+                            width: "150px",
+                            enableSelectAll: true,
+                            columnHeaderHeight: 22,
+                            columns: [
+                                new sap.ui.table.Column("", {
+                                    width: "auto",
+                                    label: ibas.i18n.prop("bo_reportbookitem_group"),
+                                    template: new sap.m.Text("", {
+                                        wrapping: false
+                                    }).bindProperty("text", {
+                                        path: "group"
+                                    })
+                                })
+                            ]
+                        }),
+                        new sap.m.Button({
+                            text: "选择",
+                            type: sap.m.ButtonType.Transparent,
+                        })
+                    ]
+                });
+                popover.openBy(event.getSource(), true);
+            }
+        });
         this.container = new sap.m.TileContainer("", {
         });
         this.page = new sap.m.Page("", {
             showHeader: false,
             content: [
-                new sap.ui.layout.VerticalLayout("", {
-                    class: "",
-                    width: "100%",
-                    content: [
-                        new sap.m.Button("", {
-                            text: ibas.i18n.prop("bo_reportbookitem_group"),
-                            press: "showReportGroup",
-                        }),
-                    ],
-                    press: function (oEvent): void {
-                       // this.mainHeader.addContent(
-                           let popover: sap.m.Popover = new sap.m.Popover("", {
-                                //title: bo.ReportBookItem.PROPERTY_REPORT_NAME,
-                                showHeader:false,
-                                placement: sap.m.PlacementType.Bottom,
-                                content: [
-                                    new sap.m.ToolbarSpacer("", {
-                                        Button: new sap.m.Button("", {
-                                            text: ibas.i18n.prop("bo_reportbookitem_name"),
-                                            template: new sap.m.Text("", {
-                                                wrapping: false
-                                            }).bindProperty("text", {
-                                                path: "name",
-                                            })
-                                        })
-                                    }),
-                                ],
-                                text: ibas.i18n.prop("bo_reportbookitem_group"),
-                            })
-                     //   )
-                    },
-                }),
-
-                this.container
+                this.showReportsByGroup,
+                this.container,
             ],
             footer: new sap.m.Toolbar("", {
                 content: [
@@ -123,7 +136,7 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
         this.id = this.page.getId();
         return this.page;
     }
-
+    private tableReportShowByGroup: sap.ui.table.Table;
     /** 显示数据 */
     showReports(reports: bo.UserReport[]): void {
         this.container.destroyTiles();
@@ -140,40 +153,6 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
                 })
             );
         }
-    }
-    /** 显示报表分组 */
-    showReportGroup(oEvent): void {
-        // create popover
-        //if (!this.popover) {
-        //  let popover = sap.ui.xmlfragment("sap.m.sample.Popover.Popover", this);
-        this.popover.addContent(
-            new sap.m.Popover("", {
-                title: bo.ReportBookItem.PROPERTY_REPORT_NAME,
-                footer: [
-                    new sap.m.ToolbarSpacer("", {
-                        Button: new sap.m.Button("", {
-                            text: ibas.i18n.prop("bo_reportbookitem_name"),
-                            template: new sap.m.Text("", {
-                                wrapping: false
-                            }).bindProperty("text", {
-                                path: "name",
-                            })
-                        })
-                    }),
-                ],
-                text: ibas.i18n.prop("bo_reportbookitem_group"),
-            })
-        );
-
-        //this.getView().addDependent(this.popover);
-        this.popover.bindElement("/ProductCollection/0");
-        //  }
-
-        // delay because addDependent will do a async rerendering and the actionSheet will immediately close without it.
-        var oButton = oEvent.getSource();
-        jQuery.sap.delayedCall(0, this, function () {
-            this._oPopover.openBy(oButton);
-        });
     }
     private getIcon(type: bo.emReportType): string {
         if (type === bo.emReportType.BOE) {
