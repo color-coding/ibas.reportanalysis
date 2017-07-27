@@ -36,6 +36,7 @@ export class UserReportPageApp extends ibas.Application<IUserReportPageView> {
         // 其他事件
         this.view.activeReportEvent = this.activeReport;
         this.view.refreshReportsEvent = this.refreshReports;
+        this.view.refreshReportsByGroup = this.refreshReportsByGroup;
     }
     /** 视图显示后 */
     protected viewShowed(): void {
@@ -109,6 +110,46 @@ export class UserReportPageApp extends ibas.Application<IUserReportPageView> {
         });
         this.busy(true);
     }
+    private refreshReportsByGroup(groups): void {
+        let that: this = this;
+        let boRepository: BORepositoryReportAnalysis = new BORepositoryReportAnalysis();
+        boRepository.fetchUserReports({
+            user: ibas.variablesManager.getValue(ibas.VARIABLE_NAME_USER_CODE),
+            onCompleted(opRslt: ibas.IOperationResult<bo.UserReport>): void {
+                try {
+                    if (opRslt.resultCode !== 0) {
+                        throw new Error(opRslt.message);
+                    }
+                    that.reports = new ibas.ArrayList<bo.UserReport>();
+                    that.reports.add(opRslt.resultObjects);
+                    var group;
+                    let beShowed: bo.UserReport[];
+                    for (var i = 0; i < groups.length; i++) {
+                        
+                        beShowed = that.reports.where((item: bo.UserReport) => {
+                            for (var i = 0; i < groups.length; i++) {
+                                group = groups[i];
+                            }
+                            return group === undefined ? true : item.group === group;
+                        });
+                    }
+                    that.view.showReports(beShowed);
+                    that.busy(false);
+                    // 激活kpi类型报表
+                    for (let item of beShowed) {
+                        if (item.category !== bo.emReportType.KPI) {
+                            continue;
+                        }
+                        this.runReportKpi(item);
+                    }
+                } catch (error) {
+                    //this.messages(error);
+                    alert(error);
+                }
+            }
+        });
+        // this.busy(true);
+    }
     private runReportKpi(kpiReport: bo.UserReport): void {
         if (!ibas.objects.instanceOf(kpiReport, bo.UserReport)) {
             return;
@@ -136,6 +177,8 @@ export interface IUserReportPageView extends ibas.IView {
     activeReportEvent: Function;
     /** 刷新报表 */
     refreshReportsEvent: Function;
+
+    refreshReportsByGroup: Function;
     /** 更新KPI */
     updateKPI(report: bo.UserReport, table: ibas.DataTable): void;
 }

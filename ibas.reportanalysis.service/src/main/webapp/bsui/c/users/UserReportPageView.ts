@@ -17,8 +17,6 @@ import { BORepositoryReportAnalysis } from "../../../borep/BORepositories";
 export class UserReportPageView extends ibas.View implements IUserReportPageView {
     private page: sap.m.Page;
     private container: sap.m.TileContainer;
-    private tableReportShowByGroup: sap.ui.table.Table;
-    private comboboxReportGroupShow: sap.ui.core.ComponentContainer;
     /** 页面头部 */
     private mainHeader: sap.tnt.ToolHeader;
     /** 报表分组框 */
@@ -27,48 +25,67 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
     activeReportEvent: Function;
     /** 刷新报表 */
     refreshReportsEvent: Function;
-    /** 根据报表分组显示 */
-    showReportsByGroupEvent: Function;
+
+    refreshReportsByGroup: Function;
     /** 绘制视图 */
     darw(): any {
         let that: this = this;
         this.showReportsByGroup = new sap.m.Button("", {
             text: "选择报表组别显示",
             type: sap.m.ButtonType.Transparent,
+            placement: sap.m.PlacementType.Auto,
             press: function (event: any): void {
                 let popover: sap.m.Popover = new sap.m.Popover("", {
                     showHeader: false,
-                    placement: sap.m.PlacementType.Bottom,
+                    placement: sap.m.PlacementType.Top,
                     content: [
-                        /*this.tableReportShowByGroup = new sap.ui.table.Table("", {
-                            visiableRowCount: 5,
-                            width: "150px",
-                            enableSelectAll: true,
-                            columnHeaderHeight: 22,
-                            columns: [
-                                new sap.ui.table.Column("", {
-                                    width: "auto",
-                                    label: ibas.i18n.prop("bo_reportbookitem_group"),
-                                    template: new sap.m.Text("", {
-                                        wrapping: false
-                                    }).bindProperty("text", {
-                                        path: "group"
-                                    })
-                                })
-                            ]
-                        }),*/
-                        this.comboboxReportGroupShow = new sap.ui.core.ComponentContainer("", {
-                            ComboBox: new sap.m.ComboBox("", {
-                                items: utils.createComboBoxItems(ibas.emConditionRelationship)
-                            })
-                        }),
-                        new sap.m.Button({
-                            text: "选择",
-                            type: sap.m.ButtonType.Transparent,
+                        new sap.m.MultiComboBox("", {
+                            filterSecondaryValues: false,
+                            showSecondaryValues: true,
+                            placement: sap.m.PlacementType.Auto,
+                            selectionFinish: function (oEvent) {
+                                var selectedItems = oEvent.getParameter("selectedItems");
+                                var messageText :any[] = [];
+                                //var messageText = "Event 'selectionFinished': [";
+                                for (var i = 0; i < selectedItems.length; i++) {
+                                    messageText.push(selectedItems[i].getText());
+                                    //messageText += "'" + selectedItems[i].getText() + "'";
+                                    //if (i != selectedItems.length - 1) {
+                                    //    messageText[i] += ",";
+                                    //}
+                                }
+                                //messageText += "]";
+                                that.fireViewEvents(that.refreshReportsByGroup, messageText);
+                                //alert(messageText);
+                            },
+                            selectionChange: function (oEvent) {
+                                var changedItem = oEvent.getParameter("changedItem");
+                                var isSelected = oEvent.getParameter("selected");
+                                var state = "Selected";
+                                if (!isSelected) {
+                                    state = "Deselected"
+                                }
+                            },
+                            width: "100%",
+                            items: [utils.createComboBoxItems(reportgroups)],
                         })
-                    ]
+                        /* new sap.m.ComboBox("", {
+                            filterSecondaryValues: false,
+                            placement: sap.m.PlacementType.Auto,
+                            change: function (event: any): void {
+                                that.fireViewEvents(that.refreshReportsEvent, Selection);
+                            },
+                            items: [
+                                utils.createComboBoxItems(reportgroups),
+                            ],
+                        }),
+                        new sap.m.Button("", {
+                            text: "选择"
+                        }) */
+                    ],
                 });
                 popover.openBy(event.getSource(), true);
+                //popover.close();
             }
         });
         this.container = new sap.m.TileContainer("", {
@@ -133,14 +150,12 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
         this.id = this.page.getId();
         return this.page;
     }
-    //private reportgroup: any[];
     /** 显示数据 */
     showReports(reports: bo.UserReport[]): void {
         let i = 0;
         this.container.destroyTiles();
         let that: this = this;
         //reportgroup == null;
-        let reportgroups: Array<reportgroup> = new Array<reportgroup>();
         for (let item of reports) {
             this.container.addTile(
                 new sap.m.StandardTile("", {
@@ -162,8 +177,6 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
                 reportgroups.push(item.group);
             }
         }
-        this.comboboxReportGroupShow = new sap.ui.core.ComponentContainer("",{});
-        this.comboboxReportGroupShow.setModel(new sap.ui.model.json.JSONModel({ rows: reportgroups }))
     }
     private getIcon(type: bo.emReportType): string {
         if (type === bo.emReportType.BOE) {
@@ -191,5 +204,8 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
     }
 }
 class reportgroup {
-
 }
+/** 当前用户报表集合 */
+var reports: ibas.ArrayList<bo.UserReport>;
+/** 存放报表组别 */
+var reportgroups: Array<reportgroup> = new Array<reportgroup>()
