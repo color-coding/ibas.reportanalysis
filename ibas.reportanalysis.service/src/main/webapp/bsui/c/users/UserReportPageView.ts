@@ -19,13 +19,15 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
     private container: sap.m.TileContainer;
     /** 页面头部 */
     private mainHeader: sap.tnt.ToolHeader;
-    /** 报表分组框 */
+    /** 报表筛选按钮 */
     private showReportsByGroup: sap.m.Button;
+    /** 报表筛选条件下拉菜单 */
+    private multicombobox: sap.m.MultiComboBox;
     /** 激活报表 */
     activeReportEvent: Function;
     /** 刷新报表 */
     refreshReportsEvent: Function;
-
+    /** 根据用户筛选条件刷新报表 */
     refreshReportsByGroup: Function;
     /** 绘制视图 */
     darw(): any {
@@ -39,53 +41,34 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
                     showHeader: false,
                     placement: sap.m.PlacementType.Top,
                     content: [
-                        new sap.m.MultiComboBox("", {
-                            filterSecondaryValues: false,
-                            showSecondaryValues: true,
+                        this.multicombobox = new sap.m.MultiComboBox("", {
+                            //宽度写成100%选择一个条件后下拉框关闭？
+                            width: "400px",
+                            Deselected: true,
+                            filterSecondaryValues: false,//显示一个默认的元素
+                            showSecondaryValues: true,//查询功能
                             placement: sap.m.PlacementType.Auto,
+                            items: [utils.createComboBoxItems(reportgroups)],
                             selectionFinish: function (oEvent) {
                                 var selectedItems = oEvent.getParameter("selectedItems");
-                                var messageText :any[] = [];
-                                //var messageText = "Event 'selectionFinished': [";
+                                var messageText: any[] = [];
                                 for (var i = 0; i < selectedItems.length; i++) {
                                     messageText.push(selectedItems[i].getText());
-                                    //messageText += "'" + selectedItems[i].getText() + "'";
-                                    //if (i != selectedItems.length - 1) {
-                                    //    messageText[i] += ",";
-                                    //}
                                 }
-                                //messageText += "]";
                                 that.fireViewEvents(that.refreshReportsByGroup, messageText);
-                                //alert(messageText);
                             },
-                            selectionChange: function (oEvent) {
+                            /* selectionChange: function (oEvent) {
                                 var changedItem = oEvent.getParameter("changedItem");
                                 var isSelected = oEvent.getParameter("selected");
                                 var state = "Selected";
                                 if (!isSelected) {
                                     state = "Deselected"
-                                }
-                            },
-                            width: "100%",
-                            items: [utils.createComboBoxItems(reportgroups)],
+                                };
+                            }, */
                         })
-                        /* new sap.m.ComboBox("", {
-                            filterSecondaryValues: false,
-                            placement: sap.m.PlacementType.Auto,
-                            change: function (event: any): void {
-                                that.fireViewEvents(that.refreshReportsEvent, Selection);
-                            },
-                            items: [
-                                utils.createComboBoxItems(reportgroups),
-                            ],
-                        }),
-                        new sap.m.Button("", {
-                            text: "选择"
-                        }) */
                     ],
                 });
                 popover.openBy(event.getSource(), true);
-                //popover.close();
             }
         });
         this.container = new sap.m.TileContainer("", {
@@ -152,10 +135,12 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
     }
     /** 显示数据 */
     showReports(reports: bo.UserReport[]): void {
-        let i = 0;
         this.container.destroyTiles();
         let that: this = this;
-        //reportgroup == null;
+        //防止重复加载
+        if (reportgroups.length > 0) {
+            reportgroups = [];
+        }
         for (let item of reports) {
             this.container.addTile(
                 new sap.m.StandardTile("", {
@@ -167,6 +152,7 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
                     }
                 })
             );
+            //将用户选定的内容添加进reportgroups
             if (reportgroup.length > 0) {
                 for (let group of reportgroups) {
                     if (group !== item.group) {
