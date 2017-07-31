@@ -36,7 +36,6 @@ export class UserReportPageApp extends ibas.Application<IUserReportPageView> {
         // 其他事件
         this.view.activeReportEvent = this.activeReport;
         this.view.refreshReportsEvent = this.refreshReports;
-        this.view.refreshReportsByGroup = this.refreshReportsByGroup;
     }
     /** 视图显示后 */
     protected viewShowed(): void {
@@ -110,44 +109,6 @@ export class UserReportPageApp extends ibas.Application<IUserReportPageView> {
         });
         this.busy(true);
     }
-    /** 根据用户筛选条件刷新报表 */
-    private refreshReportsByGroup(groups): void {
-        let that: this = this;
-        if (groups.length > 0) {
-            let boRepository: BORepositoryReportAnalysis = new BORepositoryReportAnalysis();
-            boRepository.fetchUserReports({
-                user: ibas.variablesManager.getValue(ibas.VARIABLE_NAME_USER_CODE),
-                onCompleted(opRslt: ibas.IOperationResult<bo.UserReport>): void {
-                    try {
-                        if (opRslt.resultCode !== 0) {
-                            throw new Error(opRslt.message);
-                        }
-                        that.reports = new ibas.ArrayList<bo.UserReport>();
-                        that.reports.add(opRslt.resultObjects);
-                        let group;//存放筛选条件组中的元素
-                        let beShowed: bo.UserReport[];//选中条件元素
-                        let beShowedes: bo.UserReport[] = [];//选中条件组
-                        for (var i = 0; i < groups.length; i++) {
-                            beShowed = that.reports.where((item: bo.UserReport) => {
-                                group = groups[i];
-                                return group === undefined ? true : item.group === group;
-                            });
-                            beShowedes.push(beShowed[0]);
-                        }
-                        that.view.showReports(beShowedes);
-                        that.busy(false);
-                    } catch (error) {
-                        that.messages(error);
-                    }
-                }
-            });
-            this.busy(true);
-        }
-        //当用户清空筛选条件，加载全部报表 
-        else {
-            that.view.showReports(this.reports);
-        }
-    }
     private runReportKpi(kpiReport: bo.UserReport): void {
         if (!ibas.objects.instanceOf(kpiReport, bo.UserReport)) {
             return;
@@ -175,8 +136,6 @@ export interface IUserReportPageView extends ibas.IView {
     activeReportEvent: Function;
     /** 刷新报表 */
     refreshReportsEvent: Function;
-    /** 根据用户筛选条件刷新报表 */
-    refreshReportsByGroup: Function;
     /** 更新KPI */
     updateKPI(report: bo.UserReport, table: ibas.DataTable): void;
 }
