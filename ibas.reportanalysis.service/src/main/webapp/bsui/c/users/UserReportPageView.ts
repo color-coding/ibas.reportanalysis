@@ -20,7 +20,7 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
     /** 页面头部 */
     private mainHeader: sap.tnt.ToolHeader;
     /** 报表筛选按钮 */
-    private showReportsByGroup: sap.m.Button;
+    //private showReportsByGroup: sap.m.Button;
     /** 报表筛选条件下拉菜单 */
     private multicombobox: sap.m.MultiComboBox;
     /** 激活报表 */
@@ -32,44 +32,21 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
     /** 绘制视图 */
     darw(): any {
         let that: this = this;
-        this.showReportsByGroup = new sap.m.Button("", {
-            text: "选择报表组别显示",
-            type: sap.m.ButtonType.Transparent,
+        this.multicombobox = new sap.m.MultiComboBox("", {
+            width: "20%",
+            Deselected: true,
+            filterSecondaryValues: false,
+            showSecondaryValues: true,
             placement: sap.m.PlacementType.Auto,
-            press: function (event: any): void {
-                let popover: sap.m.Popover = new sap.m.Popover("", {
-                    showHeader: false,
-                    placement: sap.m.PlacementType.Top,
-                    content: [
-                        this.multicombobox = new sap.m.MultiComboBox("", {
-                            //宽度写成100%选择一个条件后下拉框关闭？
-                            width: "400px",
-                            Deselected: true,
-                            filterSecondaryValues: false,//显示一个默认的元素
-                            showSecondaryValues: true,//查询功能
-                            placement: sap.m.PlacementType.Auto,
-                            items: [utils.createComboBoxItems(reportgroups)],
-                            selectionFinish: function (oEvent) {
-                                var selectedItems = oEvent.getParameter("selectedItems");
-                                var messageText: any[] = [];
-                                for (var i = 0; i < selectedItems.length; i++) {
-                                    messageText.push(selectedItems[i].getText());
-                                }
-                                that.fireViewEvents(that.refreshReportsByGroup, messageText);
-                            },
-                            /* selectionChange: function (oEvent) {
-                                var changedItem = oEvent.getParameter("changedItem");
-                                var isSelected = oEvent.getParameter("selected");
-                                var state = "Selected";
-                                if (!isSelected) {
-                                    state = "Deselected"
-                                };
-                            }, */
-                        })
-                    ],
-                });
-                popover.openBy(event.getSource(), true);
-            }
+            items: [utils.createComboBoxItems(reportgroups)],
+            selectionFinish: function (oEvent) {
+                var selectedItems = oEvent.getParameter("selectedItems");
+                var messageText: any[] = [];
+                for (var i = 0; i < selectedItems.length; i++) {
+                    messageText.push(selectedItems[i].getText());
+                }
+                that.fireViewEvents(that.refreshReportsByGroup, messageText);
+            },
         });
         this.container = new sap.m.TileContainer("", {
         });
@@ -89,6 +66,7 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
                         buttonMode: sap.m.MenuButtonMode.Split,
                         defaultAction: function (): void {
                             that.fireViewEvents(that.refreshReportsEvent);
+                            this.showMulticomboboxItem(reportgroups);
                         },
                         menu: new sap.m.Menu("", {
                             items: [
@@ -125,7 +103,7 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
                             }
                         })
                     }),
-                    this.showReportsByGroup,
+                    this.multicombobox,
                     new sap.m.ToolbarSpacer(""),
                 ]
             })
@@ -137,7 +115,7 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
     showReports(reports: bo.UserReport[]): void {
         this.container.destroyTiles();
         let that: this = this;
-        //防止重复加载
+        //防止重复加载，每次刷新后下拉框出现多条重复记录
         if (reportgroups.length > 0) {
             reportgroups = [];
         }
@@ -162,6 +140,20 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
             } else {
                 reportgroups.push(item.group);
             }
+        };
+        //解决选择筛选后下拉框元素重组
+        if (this.multicombobox.getFirstItem() == null) {
+            this.initMulticomboboxItem(reportgroups);
+        }
+
+    }
+    /** 初始化下拉框 */
+    initMulticomboboxItem(list): void {
+        this.multicombobox.destroyItems();
+        for (let item of list) {
+            this.multicombobox.addItem(new sap.ui.core.Item("", {
+                text: item
+            }));
         }
     }
     private getIcon(type: bo.emReportType): string {
