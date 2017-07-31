@@ -36,7 +36,7 @@ let createHTML: Function = function (url: string): string {
     }
     return ibas.strings.format(
         `<iframe src="{0}" width="{1}" height="{2}" frameborder="no" border="0" scrolling="no"></iframe>`,
-        url, getWindowWidth(true), getWindowHeight(true));
+        encodeURI(url), getWindowWidth(true), getWindowHeight(true));
 };
 /**
  * 视图-Report
