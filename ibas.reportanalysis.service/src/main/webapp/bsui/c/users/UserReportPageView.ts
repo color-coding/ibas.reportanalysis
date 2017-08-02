@@ -15,16 +15,16 @@ import { BORepositoryReportAnalysis } from "../../../borep/BORepositories";
  * 视图-Report
  */
 export class UserReportPageView extends ibas.View implements IUserReportPageView {
+    /** 激活报表 */
+    activeReportEvent: Function;
+    /** 刷新报表 */
+    refreshReportsEvent: Function;
     private page: sap.m.Page;
     private container: sap.m.TileContainer;
     /** 页面头部 */
     private mainHeader: sap.tnt.ToolHeader;
     /** 报表筛选条件下拉菜单 */
     private multicombobox: sap.m.MultiComboBox;
-    /** 激活报表 */
-    activeReportEvent: Function;
-    /** 刷新报表 */
-    refreshReportsEvent: Function;
     /** 绘制视图 */
     darw(): any {
         let that: this = this;
@@ -36,9 +36,9 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
             placement: sap.m.PlacementType.Auto,
             items: [utils.createComboBoxItems(reportgroups)],
             selectionFinish: function (oEvent) {
-                var selectedItems = oEvent.getParameter("selectedItems");
-                var messageText: any[] = [];
-                for (var i = 0; i < selectedItems.length; i++) {
+                let selectedItems = oEvent.getParameter("selectedItems");
+                let messageText: any[] = [];
+                for (let i = 0; i < selectedItems.length; i++) {
                     messageText.push(selectedItems[i].getText());
                 };
                 that.refreshReportsByGroup(messageText);
@@ -145,6 +145,8 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
             this.initMulticomboboxItem(reportgroups);
         }
     }
+    /** 当前用户报表集合 */
+    private reports: ibas.ArrayList<bo.UserReport>;
     /** 获取用户筛选条件作为参数传给showReports函数 */
     refreshReportsByGroup(groups): void {
         let that: this = this;
@@ -182,8 +184,6 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
             that.showReports(that.reports);
         }
     }
-    /** 当前用户报表集合 */
-    private reports: ibas.ArrayList<bo.UserReport>;
     /** 初始化筛选条件下拉框 */
     initMulticomboboxItem(list): void {
         this.multicombobox.destroyItems();
@@ -218,7 +218,7 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
         }
     }
 }
-class reportgroup {
+class reportGroup {
 }
 /** 存放报表组别 */
-var reportgroups: Array<reportgroup> = new Array<reportgroup>();
+let reportgroups: Array<reportGroup> = new Array<reportGroup>();
