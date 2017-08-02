@@ -126,10 +126,14 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
                 })
             );
             //将用户选定的内容添加进reportgroups
-            if (reportgroup.length > 0) {
-                for (let group of reportgroups) {
-                    if (group !== item.group) {
-                        reportgroups.push(item.group);
+            if (reportgroups.length > 0) {
+                let status = false;
+                for (let i = 0; i < reportgroups.length; i++) {
+                    if (reportgroups[i] == item.group) {
+                        status = true;
+                    }
+                    if (i == reportgroups.length - 1 && status == false) {
+                        reportgroups.push(item.group)
                     }
                 }
             } else {
@@ -155,26 +159,27 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
                         }
                         that.reports = new ibas.ArrayList<bo.UserReport>();
                         that.reports.add(opRslt.resultObjects);
-                        let group;//存放筛选条件组中的元素
+                        //let group;//存放筛选条件组中的元素
                         let beShowed: bo.UserReport[];//选中条件元素
                         let beShowedes: bo.UserReport[] = [];//选中条件组
-                        for (var i = 0; i < groups.length; i++) {
-                            beShowed = that.reports.where((item: bo.UserReport) => {
-                                group = groups[i];
-                                return group === undefined ? true : item.group === group;
-                            });
-                            beShowedes.push(beShowed[0]);
+                        //在用户报表集合中找出所有符合条件的报表
+                        for (let i = 0; i <= that.reports.length; i++) {
+                            for (let item of that.reports) {
+                                if (groups[i] == item.group) {
+                                    beShowedes.push(item)
+                                }
+                            }
                         };
                         that.showReports(beShowedes);
                     } catch (error) {
-                        alert(error);
+                        alert(error)
                     }
                 }
             });
         }
-        //当用户清空筛选条件，加载全部报表 
+        //当用户清空筛选条件，加载全部报表
         else {
-            that.showReports(reportsList);
+            that.showReports(that.reports);
         }
     }
     /** 当前用户报表集合 */
@@ -215,7 +220,5 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
 }
 class reportgroup {
 }
-/** 当前用户报表集合 */
-var reportsList: ibas.ArrayList<bo.UserReport>;
 /** 存放报表组别 */
 var reportgroups: Array<reportgroup> = new Array<reportgroup>();
