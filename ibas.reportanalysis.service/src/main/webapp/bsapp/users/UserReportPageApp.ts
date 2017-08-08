@@ -93,6 +93,7 @@ export class UserReportPageApp extends ibas.Application<IUserReportPageView> {
                     let beShowed: bo.UserReport[] = that.reports.where((item: bo.UserReport) => {
                         return type === undefined ? true : item.category === type;
                     });
+                    that.view.reports = that.reports;
                     that.view.showReports(beShowed);
                     that.busy(false);
                     // 激活kpi类型报表
@@ -138,4 +139,6 @@ export interface IUserReportPageView extends ibas.IView {
     refreshReportsEvent: Function;
     /** 更新KPI */
     updateKPI(report: bo.UserReport, table: ibas.DataTable): void;
+
+    reports: bo.UserReport[];
 }
