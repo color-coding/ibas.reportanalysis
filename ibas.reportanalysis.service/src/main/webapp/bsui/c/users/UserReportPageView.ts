@@ -140,7 +140,7 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
         if (this.multicombobox.getItems().length === 0) {
             this.initMulticomboboxItem(reportgroups);
             //将第一次获取到的当前用户报表保存
-            that.reports = reports;
+            this.reports = reports;
         }
     }
     /** 当前用户报表集合 */
