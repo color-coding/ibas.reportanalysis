@@ -148,8 +148,8 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
     /** 将用户选择的条件转化为具体哪些报表作为参数传给showReports函数 */
     groupsTranslateReports(groups): void {
         let that: this = this;
-        let beShowed: bo.UserReport[];//选中条件元素
-        let beShowedes: bo.UserReport[] = [];//选中条件组
+        let beShowed: bo.UserReport[];
+        let beShowedes: bo.UserReport[] = [];
         //在用户报表集合中找出所有符合用户选定条件的报表
         if (groups.length > 0) {
             for (let i = 0; i < that.reports.length; i++) {
