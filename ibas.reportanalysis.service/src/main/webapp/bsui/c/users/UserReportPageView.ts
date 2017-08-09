@@ -139,10 +139,12 @@ export class UserReportPageView extends ibas.View implements IUserReportPageView
         //解决选择筛选条件后下拉框元素重组
         if (this.multicombobox.getItems().length === 0) {
             this.initMulticomboboxItem(reportgroups);
+            //将第一次获取到的当前用户报表保存
+            that.reports = reports;
         }
     }
     /** 当前用户报表集合 */
-    reports: ibas.ArrayList<bo.UserReport>;
+    reports: bo.UserReport[];
     /** 将用户选择的条件转化为具体哪些报表作为参数传给showReports函数 */
     groupsTranslateReports(groups): void {
         let that: this = this;
