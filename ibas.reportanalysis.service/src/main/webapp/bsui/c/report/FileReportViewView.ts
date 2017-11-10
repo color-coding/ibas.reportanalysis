@@ -47,31 +47,38 @@ let showResults: Function = function (table: ibas.DataTable, form: sap.ui.layout
                 onCompleted(opRslt: ibas.IOperationResult<any>): void {
                     let blob: Blob = opRslt.resultObjects.firstOrDefault();
                     if (!ibas.objects.isNull(blob)) {
-                        // 成功获取
-                        let dataUrl: string = window.URL.createObjectURL(blob);
                         if (data.Value.endsWith(".swf")) {
-                            let id: string = ibas.uuids.random();
-                            form.addContent(
-                                new sap.ui.core.HTML("", {
-                                    content: ibas.strings.format(`<div id="{0}" />`, id),
-                                    preferDOM: false,
-                                    sanitizeContent: true,
-                                    visible: true,
-                                })
-                            );
-                            require([
-                                "../../../3rdparty/swfobject"
-                            ], function (): void {
-                                swfobject.embedSWF(dataUrl, id,
-                                    getWindowWidth(true), getWindowHeight(true),
-                                    "10");
-                            });
+                            let fileReader: FileReader = new FileReader();
+                            fileReader.onload = function (e: ProgressEvent): void {
+                                let dataUrl: string = (<any>e.target).result;
+                                let datas: string[] = dataUrl.split(","),
+                                    mime: string = "data:application/x-shockwave-flash",
+                                    // atob() 函数用来解码一个已经被base-64编码过的数据
+                                    decodedDatas: string = atob(datas[1]),
+                                    length: number = decodedDatas.length,
+                                    uint8Array: Uint8Array = new Uint8Array(length);
+                                while (length--) {
+                                    uint8Array[length] = decodedDatas.charCodeAt(length);
+                                }
+                                let newBlob: Blob = new Blob([uint8Array], { type: mime });
+                                // 成功获取
+                                let url: string = window.URL.createObjectURL(newBlob);
+                                form.addContent(new sap.ui.core.HTML("", {
+                                    content: ibas.strings.format("<embed src='{0}' type='application/x-shockwave-flash' \
+                                    style= 'width:100%; \
+                                    height:-webkit-fill-available;height: -moz-fill-available; \
+                                    height: -moz-available;height: fill-available;' />", url)
+                                }));
+                            };
+                            fileReader.readAsDataURL(blob);
                         } else {
+                            // 成功获取
+                            let url: string = window.URL.createObjectURL(blob);
                             form.addContent(
                                 new sap.ui.core.HTML("", {
                                     content: ibas.strings.format(
                                         `<iframe src="{0}" width="{1}" height="{2}" frameborder="no" border="0" scrolling="no"></iframe>`,
-                                        dataUrl,
+                                        url,
                                         getWindowWidth(true),
                                         getWindowHeight(true)),
                                     preferDOM: false,
