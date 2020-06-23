@@ -631,18 +631,6 @@ namespace reportanalysis {
                                                         icon: "sap-icon://collections-management",
                                                         text: ibas.i18n.prop("reportanalysis_ui_calculation_total"),
                                                         select(): void {
-                                                            let total: number = 0;
-                                                            let decimalPlaces: number =
-                                                                col.definedDataType() === ibas.emTableDataType.NUMERIC ? 0 : ibas.config.get(ibas.CONFIG_ITEM_DECIMAL_PLACES, 6);
-                                                            let binding: sap.ui.model.Binding = tableResult.getBinding(undefined);
-                                                            if (binding instanceof sap.ui.model.ListBinding) {
-                                                                for (let context of binding.getCurrentContexts()) {
-                                                                    let data: any = context.getObject();
-                                                                    if (!!data[index.toString()] && typeof data[index.toString()] === "number") {
-                                                                        total += data[index.toString()];
-                                                                    }
-                                                                }
-                                                            }
                                                             let multiLabels: sap.ui.core.Control[] = column.getMultiLabels();
                                                             let totalLabel: sap.m.Label = null;
                                                             if (multiLabels.length > 1 && multiLabels[1] instanceof sap.m.Label) {
@@ -652,10 +640,12 @@ namespace reportanalysis {
                                                                 });
                                                                 column.addMultiLabel(totalLabel);
                                                             }
-                                                            totalLabel.setText(ibas.i18n.prop("reportanalysis_ui_total", total.toFixed(decimalPlaces)));
+                                                            let binding: sap.ui.model.Binding = tableResult.getBinding(undefined);
                                                             if (!!binding) {
                                                                 binding.attachChange(refreshBinding);
                                                             }
+                                                            // 立即刷新
+                                                            refreshBinding();
                                                             menu.close();
                                                             totalItem.setVisible(false);
                                                             hideTotalItem.setVisible(true);
