@@ -6,6 +6,8 @@
  * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
  */
 /// <reference path="../../index.d.ts" />
+/// <reference path="./report/index.ts" />
+/// <reference path="./users/index.ts" />
 namespace reportanalysis {
     export namespace ui {
         /**
@@ -20,6 +22,12 @@ namespace reportanalysis {
             protected newView(id: string): ibas.IView {
                 let view: ibas.IView = null;
                 switch (id) {
+                    case app.ReportViewerApp.APPLICATION_ID:
+                        view = new m.ReportViewerView();
+                        break;
+                    case app.UserReportPageApp.APPLICATION_ID:
+                        view = new m.UserReportPageView();
+                        break;
                     default:
                         break;
                 }

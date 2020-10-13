@@ -482,6 +482,9 @@ namespace reportanalysis {
                             input.bindProperty("value", {
                                 path: "/value"
                             });
+                            if (ibas.strings.equalsIgnoreCase(item.value, "today")) {
+                                item.value = ibas.dates.toString(ibas.dates.today(), "yyyyMMdd");
+                            }
                         } else if (item.category === bo.emReportParameterType.SYSTEM) {
                             input = new sap.m.Input("", {
                                 width: "260px",
@@ -510,7 +513,7 @@ namespace reportanalysis {
                         } else if (item.category === bo.emReportParameterType.CHOOSE_LIST && !ibas.strings.isEmpty(value)) {
                             value = ibas.config.applyVariables(value);
                             if (ibas.strings.isWith(value, "#{", "}")) {
-                                value = ibas.strings.remove(value, "#", "{", "}")
+                                value = ibas.strings.remove(value, "#", "{", "}");
                             }
                             let criteria: ibas.ICriteria, property: string;
                             if (ibas.strings.isWith(value, "{", "}")) {
