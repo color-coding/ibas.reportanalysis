@@ -47,10 +47,10 @@ namespace reportanalysis {
                         view = new c.UserReportPageView();
                         break;
                     case app.ReportViewerApp.APPLICATION_ID:
-                        view = new c.ReportViewerView();
+                        view = new c.ReportViewView();
                         break;
                     case app.ReportTabViewerApp.APPLICATION_ID:
-                        view = new c.ReportTabViewerView();
+                        view = new c.ReportTabViewView();
                         break;
                     case app.ReportDataChooseApp.APPLICATION_ID:
                         view = new c.ReportDataChooseView();

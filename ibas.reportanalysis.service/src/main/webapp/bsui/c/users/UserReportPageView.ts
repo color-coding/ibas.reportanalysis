@@ -59,7 +59,6 @@ namespace reportanalysis {
                                     text: ibas.i18n.prop("shell_refresh"),
                                     type: sap.m.ButtonType.Transparent,
                                     icon: "sap-icon://refresh",
-                                    width: "150px",
                                     buttonMode: sap.m.MenuButtonMode.Split,
                                     textDirection: sap.ui.core.TextDirection.Inherit,
                                     useDefaultActionOnly: true,
