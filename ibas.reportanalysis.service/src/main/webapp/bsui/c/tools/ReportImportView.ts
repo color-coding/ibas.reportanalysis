@@ -275,7 +275,7 @@ namespace reportanalysis {
                         serverInfo.user = "admin";
                         serverInfo.password = "1q2w3e";
                     }
-                    let dialog: sap.m.Dialog = new sap.extension.m.Dialog("", {
+                    let dialog: sap.m.Dialog = new sap.m.Dialog("", {
                         title: ibas.i18n.prop("reportanalysis_remote_service"),
                         type: sap.m.DialogType.Standard,
                         state: sap.ui.core.ValueState.None,
@@ -329,7 +329,7 @@ namespace reportanalysis {
                                 }
                             }
                         }
-                    });
+                    }).addStyleClass("sapUiNoContentPadding");
                     dialog.setModel(new sap.ui.model.json.JSONModel(serverInfo));
                     dialog.open();
                 }

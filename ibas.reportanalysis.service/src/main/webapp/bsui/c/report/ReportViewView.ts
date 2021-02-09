@@ -331,7 +331,7 @@ namespace reportanalysis {
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;
-                    return new sap.extension.m.Dialog("", {
+                    return new sap.m.Dialog("", {
                         title: this.title,
                         type: sap.m.DialogType.Standard,
                         state: sap.ui.core.ValueState.None,
@@ -366,7 +366,7 @@ namespace reportanalysis {
                                 that.fireViewEvents(that.closeEvent);
                             }
                         }),
-                    });
+                    }).addStyleClass("sapUiNoContentPadding");
                 }
                 /** 显示报表 */
                 showReport(report: bo.UserReport): void {
@@ -393,7 +393,7 @@ namespace reportanalysis {
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;
-                    return new sap.extension.m.Dialog("", {
+                    return new sap.m.Dialog("", {
                         title: this.title,
                         type: sap.m.DialogType.Standard,
                         state: sap.ui.core.ValueState.None,
@@ -419,7 +419,7 @@ namespace reportanalysis {
                                 that.fireViewEvents(that.closeEvent);
                             }
                         }),
-                    });
+                    }).addStyleClass("sapUiNoContentPadding");
                 }
                 private button: sap.m.Button;
                 /** 显示报表结果 */

@@ -157,7 +157,7 @@ namespace reportanalysis {
                                         return;
                                     }
                                     jQuery.sap.require("sap.ui.codeeditor.CodeEditor");
-                                    let dialog: sap.m.Dialog = new sap.extension.m.Dialog("", {
+                                    let dialog: sap.m.Dialog = new sap.m.Dialog("", {
                                         title: ibas.i18n.prop("reportanalysis_sql_code_edit"),
                                         type: sap.m.DialogType.Standard,
                                         state: sap.ui.core.ValueState.None,
@@ -194,7 +194,7 @@ namespace reportanalysis {
                                                 }
                                             }),
                                         ]
-                                    });
+                                    }).addStyleClass("sapUiNoContentPadding");
                                     dialog.setModel(new sap.extension.model.JSONModel(data));
                                     dialog.open();
                                 }
