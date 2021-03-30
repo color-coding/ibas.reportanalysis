@@ -58,6 +58,9 @@ namespace reportanalysis {
                     case app.ReportDataService.APPLICATION_ID:
                         view = new c.ReporDataServiceView();
                         break;
+                    case app.BOReportService.APPLICATION_ID:
+                        view = new c.BOReportServiceView();
+                        break;
                     case app.ReportImportApp.APPLICATION_ID:
                         view = new c.ReportImportView();
                         break;

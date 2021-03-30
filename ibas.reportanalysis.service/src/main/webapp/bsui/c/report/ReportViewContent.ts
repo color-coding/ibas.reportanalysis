@@ -90,7 +90,7 @@ namespace reportanalysis {
                                 }
                             });
                             if (ibas.strings.equalsIgnoreCase(item.value, "today")) {
-                                item.value = ibas.dates.toString(ibas.dates.today(), "yyyyMMdd");
+                                item.value = ibas.dates.toString(ibas.dates.today(), "yyyy-MM-dd");
                             }
                         } else if (item.category === bo.emReportParameterType.SYSTEM) {
                             input = new sap.m.Input("", {
@@ -196,10 +196,10 @@ namespace reportanalysis {
                     return emResultType.TABLE;
                 }
                 protected createHTML(url: string): sap.ui.core.HTML {
+                    let boRepository: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
+                    url = boRepository.toUrl(url);
                     let html: ibas.StringBuilder = new ibas.StringBuilder();
                     if (ibas.strings.isWith(url, undefined, ".swf")) {
-                        let boRepository: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
-                        url = boRepository.toUrl(url);
                         html.append("<embed");
                         html.append(" ");
                         html.append("src=\"");

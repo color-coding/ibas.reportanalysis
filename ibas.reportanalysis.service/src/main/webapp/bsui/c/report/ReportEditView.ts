@@ -257,22 +257,50 @@ namespace reportanalysis {
                                 }
                             }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_report_address") }),
-                            new sap.extension.m.Input("", {
-                            }).bindProperty("bindingValue", {
-                                path: "address",
-                                type: new sap.extension.data.Alphanumeric({
-                                    maxLength: 250
-                                })
-                            }).bindProperty("editable", {
-                                path: "category",
-                                formatter(data: bo.emReportType): any {
-                                    if (data === bo.emReportType.SERVICE) {
-                                        return true;
-                                    } else if (data === bo.emReportType.THIRD_APP) {
-                                        return true;
-                                    }
-                                    return false;
-                                }
+                            new sap.m.FlexBox("", {
+                                width: "100%",
+                                justifyContent: sap.m.FlexJustifyContent.Start,
+                                renderType: sap.m.FlexRendertype.Bare,
+                                items: [
+                                    new sap.extension.m.Input("", {
+                                    }).bindProperty("bindingValue", {
+                                        path: "address",
+                                        type: new sap.extension.data.Alphanumeric({
+                                            maxLength: 250
+                                        })
+                                    }).bindProperty("editable", {
+                                        path: "category",
+                                        formatter(data: bo.emReportType): any {
+                                            if (data === bo.emReportType.SERVICE) {
+                                                return true;
+                                            } else if (data === bo.emReportType.THIRD_APP) {
+                                                return true;
+                                            }
+                                            return false;
+                                        }
+                                    }),
+                                    new sap.m.Button("", {
+                                        icon: "sap-icon://upload-to-cloud",
+                                        width: "auto",
+                                        press: function (): void {
+                                            ibas.files.open((files) => {
+                                                if (files.length > 0) {
+                                                    let fileData: FormData = new FormData();
+                                                    fileData.append("file", files[0], encodeURI(files[0].name));
+                                                    that.fireViewEvents(that.uploadReportEvent, fileData);
+                                                }
+                                            }, { accept: "application/x-shockwave-flash,text/csv,application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+                                        }
+                                    }).addStyleClass("sapUiSmallMarginBegin").bindProperty("visible", {
+                                        path: "category",
+                                        formatter(data: bo.emReportType): any {
+                                            if (data === bo.emReportType.FILE) {
+                                                return true;
+                                            }
+                                            return false;
+                                        }
+                                    }),
+                                ]
                             }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_report_thirdpartyapp") }),
                             new sap.extension.m.RepositoryInput("", {
@@ -295,43 +323,6 @@ namespace reportanalysis {
                                 path: "category",
                                 formatter(data: bo.emReportType): any {
                                     if (data === bo.emReportType.THIRD_APP) {
-                                        return true;
-                                    }
-                                    return false;
-                                }
-                            }),
-                            new sap.m.Label("", { text: ibas.i18n.prop("reportanalysis_report_file") }),
-                            new sap.ui.unified.FileUploader("", {
-                                name: "file",
-                                width: "100%",
-                                placeholder: ibas.i18n.prop("shell_browse"),
-                                change(event: sap.ui.base.Event): void {
-                                    if (ibas.objects.isNull(event.getParameters())
-                                        || ibas.objects.isNull(event.getParameters().files)
-                                        || event.getParameters().files.length === 0) {
-                                        return;
-                                    }
-                                    let fileData: FormData = new FormData();
-                                    fileData.append("file", event.getParameters().files[0], encodeURI(event.getParameters().newValue));
-                                    that.application.viewShower.messages({
-                                        type: ibas.emMessageType.QUESTION,
-                                        title: that.application.description,
-                                        actions: [
-                                            ibas.emMessageAction.YES,
-                                            ibas.emMessageAction.NO
-                                        ],
-                                        message: ibas.i18n.prop("reportanalysis_upload_report"),
-                                        onCompleted(action: ibas.emMessageAction): void {
-                                            if (action === ibas.emMessageAction.YES) {
-                                                that.fireViewEvents(that.uploadReportEvent, fileData);
-                                            }
-                                        }
-                                    });
-                                }
-                            }).bindProperty("enabled", {
-                                path: "category",
-                                formatter(data: bo.emReportType): any {
-                                    if (data === bo.emReportType.FILE) {
                                         return true;
                                     }
                                     return false;

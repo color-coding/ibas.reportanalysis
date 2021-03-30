@@ -140,6 +140,7 @@ namespace reportanalysis {
                                     if (opRslt.resultCode !== 0) {
                                         ibas.logger.log(ibas.emMessageLevel.ERROR, opRslt.message);
                                     }
+                                    this.register(new BOReportServiceMapping());
                                     this.register(new UserReportPageFunc());
                                     for (let item of opRslt.resultObjects) {
                                         this.register(new UserReportBookFunc(item));
@@ -150,6 +151,7 @@ namespace reportanalysis {
                             });
                         } else {
                             // 不加载用户报表菜单
+                            this.register(new BOReportServiceMapping());
                             this.register(new UserReportPageFunc());
                             // 通知初始化完成
                             this.fireInitialized();

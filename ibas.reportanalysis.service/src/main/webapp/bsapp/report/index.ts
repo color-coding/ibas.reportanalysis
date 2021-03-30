@@ -11,3 +11,4 @@
 /// <reference path="./ReportFunc.ts" />
 /// <reference path="./ReportListApp.ts" />
 /// <reference path="./ReportDataService.ts" />
+/// <reference path="./BOReportService.ts" />

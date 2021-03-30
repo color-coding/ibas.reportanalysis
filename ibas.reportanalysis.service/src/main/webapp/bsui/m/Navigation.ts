@@ -28,6 +28,9 @@ namespace reportanalysis {
                     case app.UserReportPageApp.APPLICATION_ID:
                         view = new m.UserReportPageView();
                         break;
+                    case app.BOReportService.APPLICATION_ID:
+                        view = new m.BOReportServiceView();
+                        break;
                     default:
                         break;
                 }

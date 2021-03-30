@@ -142,7 +142,7 @@ namespace reportanalysis {
             /** 显示数据 */
             showData(datas: bo.Report[]): void;
         }
-        /** 规格模板连接服务映射 */
+        /** 报表数据服务映射 */
         export class ReportDataServiceMapping extends ibas.ServiceMapping {
             /** 构造函数 */
             constructor() {

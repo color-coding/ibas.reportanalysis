@@ -7,4 +7,5 @@
  */
 /// <reference path="../../c/report/index.ts" />
 /// <reference path="./ReportViewView.ts" />
+/// <reference path="./BOReportServiceView.ts" />
 /// <reference path="./ReportViewContent.ts" />
