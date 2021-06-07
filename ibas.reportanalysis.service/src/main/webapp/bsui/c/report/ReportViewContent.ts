@@ -184,10 +184,43 @@ namespace reportanalysis {
                     if (table.rows.length === 1 && table.columns.length === 2) {
                         let data: ibas4j.IKeyValue = table.convert()[0];
                         if (!ibas.objects.isNull(data) && data.Key === PARAMETER_NAME_URL) {
-                            this.parent.proceeding(
-                                ibas.emMessageType.INFORMATION,
-                                ibas.i18n.prop("reportanalysis_running_report", data.Value),
-                            );
+                            if (ibas.strings.isWith(data.Value, undefined, ".xls")
+                                || ibas.strings.isWith(data.Value, undefined, ".xlsx")
+                                || ibas.strings.isWith(data.Value, undefined, ".csv")) {
+                                let criteria: ibas.ICriteria = new ibas.Criteria();
+                                let condition: ibas.ICondition = criteria.conditions.create();
+                                condition.alias = ibas.CRITERIA_CONDITION_ALIAS_FILE_NAME;
+                                condition.value = data.Value;
+                                let boRepository: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
+                                boRepository.download({
+                                    criteria: criteria,
+                                    onCompleted: (opRslt) => {
+                                        try {
+                                            if (opRslt.resultCode !== 0) {
+                                                throw new Error(opRslt.message);
+                                            }
+                                            if (opRslt.resultObjects.length === 0) {
+                                                throw new Error(ibas.i18n.prop("reportanalysis_not_found_report_file", data.Value));
+                                            }
+                                            ibas.servicesManager.runApplicationService<any, ibas.DataTable>({
+                                                proxy: new importexport.app.FileParsingServiceProxy({
+                                                    file: opRslt.resultObjects.firstOrDefault(),
+                                                    outType: "table"
+                                                }),
+                                                onCompleted: (result) => {
+                                                    this.form.addItem(this.createTable(result));
+                                                }
+                                            });
+                                        } catch (error) {
+                                            this.parent.messages({
+                                                type: ibas.emMessageType.ERROR,
+                                                message: error.message,
+                                            });
+                                        }
+                                    }
+                                });
+                                return emResultType.TABLE;
+                            }
                             this.form.addItem(this.createHTML(data.Value));
                             return emResultType.HTML;
                         }
@@ -196,6 +229,10 @@ namespace reportanalysis {
                     return emResultType.TABLE;
                 }
                 protected createHTML(url: string): sap.ui.core.HTML {
+                    this.parent.proceeding(
+                        ibas.emMessageType.INFORMATION,
+                        ibas.i18n.prop("reportanalysis_running_report", url),
+                    );
                     let boRepository: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
                     url = boRepository.toUrl(url);
                     let html: ibas.StringBuilder = new ibas.StringBuilder();

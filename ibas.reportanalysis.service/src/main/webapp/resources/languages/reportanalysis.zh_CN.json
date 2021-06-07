@@ -31,6 +31,7 @@
   "reportanalysis_title_others": "其他信息",
   "reportanalysis_someone_report": "{0}的报表簿",
   "reportanalysis_report_file": "报表文件",
+  "reportanalysis_not_found_report_file": "没有找到报表文件[{0}]",
   "reportanalysis_upload_report": "是否上传报表文件？",
   "reportanalysis_func_report_import": "报表导入",
   "reportanalysis_app_report_import": "报表导入",

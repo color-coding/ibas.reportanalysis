@@ -59,23 +59,37 @@ namespace reportanalysis {
                                                 if (ibas.objects.isNull(services) || services.length === 0) {
                                                     return;
                                                 }
-                                                let popover: sap.m.Popover = new sap.m.Popover("", {
-                                                    showHeader: false,
+                                                let actionSheet: sap.m.ActionSheet = new sap.m.ActionSheet("", {
                                                     placement: sap.m.PlacementType.Bottom,
+                                                    buttons: {
+                                                        path: "/",
+                                                        template: new sap.m.Button("", {
+                                                            type: sap.m.ButtonType.Transparent,
+                                                            text: {
+                                                                path: "name",
+                                                                type: new sap.extension.data.Alphanumeric(),
+                                                                formatter(data: string): string {
+                                                                    return data ? ibas.i18n.prop(data) : "";
+                                                                }
+                                                            },
+                                                            icon: {
+                                                                path: "icon",
+                                                                type: new sap.extension.data.Alphanumeric(),
+                                                                formatter(data: string): string {
+                                                                    return data ? data : "sap-icon://e-care";
+                                                                }
+                                                            },
+                                                            press(this: sap.m.Button): void {
+                                                                let service: ibas.IServiceAgent = this.getBindingContext().getObject();
+                                                                if (service) {
+                                                                    service.run();
+                                                                }
+                                                            }
+                                                        })
+                                                    }
                                                 });
-                                                for (let service of services) {
-                                                    popover.addContent(new sap.m.Button("", {
-                                                        text: ibas.i18n.prop(service.name),
-                                                        type: sap.m.ButtonType.Transparent,
-                                                        icon: service.icon,
-                                                        press: function (): void {
-                                                            service.run();
-                                                            popover.close();
-                                                        }
-                                                    }));
-                                                }
-                                                popover.addStyleClass("sapMOTAPopover sapTntToolHeaderPopover");
-                                                popover.openBy(event.getSource(), true);
+                                                actionSheet.setModel(new sap.extension.model.JSONModel(services));
+                                                actionSheet.openBy(event.getSource());
                                             }
                                         });
                                     }
@@ -221,6 +235,9 @@ namespace reportanalysis {
                     this.application.viewShower.proceeding(this, type, msg);
                 }
                 messages(caller: ibas.IMessgesCaller): void {
+                    if (ibas.strings.isEmpty(caller.title)) {
+                        caller.title = ibas.i18n.prop("reportanalysis_app_report_view");
+                    }
                     this.application.viewShower.messages(caller);
                 }
                 protected viewContent: ReportViewContent = new ReportViewContent(this);
@@ -269,23 +286,37 @@ namespace reportanalysis {
                                                 if (ibas.objects.isNull(services) || services.length === 0) {
                                                     return;
                                                 }
-                                                let popover: sap.m.Popover = new sap.m.Popover("", {
-                                                    showHeader: false,
+                                                let actionSheet: sap.m.ActionSheet = new sap.m.ActionSheet("", {
                                                     placement: sap.m.PlacementType.Bottom,
+                                                    buttons: {
+                                                        path: "/",
+                                                        template: new sap.m.Button("", {
+                                                            type: sap.m.ButtonType.Transparent,
+                                                            text: {
+                                                                path: "name",
+                                                                type: new sap.extension.data.Alphanumeric(),
+                                                                formatter(data: string): string {
+                                                                    return data ? ibas.i18n.prop(data) : "";
+                                                                }
+                                                            },
+                                                            icon: {
+                                                                path: "icon",
+                                                                type: new sap.extension.data.Alphanumeric(),
+                                                                formatter(data: string): string {
+                                                                    return data ? data : "sap-icon://e-care";
+                                                                }
+                                                            },
+                                                            press(this: sap.m.Button): void {
+                                                                let service: ibas.IServiceAgent = this.getBindingContext().getObject();
+                                                                if (service) {
+                                                                    service.run();
+                                                                }
+                                                            }
+                                                        })
+                                                    }
                                                 });
-                                                for (let service of services) {
-                                                    popover.addContent(new sap.m.Button("", {
-                                                        text: ibas.i18n.prop(service.name),
-                                                        type: sap.m.ButtonType.Transparent,
-                                                        icon: service.icon,
-                                                        press: function (): void {
-                                                            service.run();
-                                                            popover.close();
-                                                        }
-                                                    }));
-                                                }
-                                                popover.addStyleClass("sapMOTAPopover sapTntToolHeaderPopover");
-                                                popover.openBy(event.getSource(), true);
+                                                actionSheet.setModel(new sap.extension.model.JSONModel(services));
+                                                actionSheet.openBy(event.getSource());
                                             }
                                         });
                                     }
@@ -316,6 +347,9 @@ namespace reportanalysis {
                     this.application.viewShower.proceeding(this, type, msg);
                 }
                 messages(caller: ibas.IMessgesCaller): void {
+                    if (ibas.strings.isEmpty(caller.title)) {
+                        caller.title = ibas.i18n.prop("reportanalysis_app_report_view");
+                    }
                     this.application.viewShower.messages(caller);
                 }
                 protected viewContent: ReportViewContent = new ReportViewContent(this);
@@ -380,6 +414,9 @@ namespace reportanalysis {
                     this.application.viewShower.proceeding(this, type, msg);
                 }
                 messages(caller: ibas.IMessgesCaller): void {
+                    if (ibas.strings.isEmpty(caller.title)) {
+                        caller.title = ibas.i18n.prop("reportanalysis_app_report_view");
+                    }
                     this.application.viewShower.messages(caller);
                 }
                 protected viewContent: ReportViewContent = new ReportViewContent(this);
