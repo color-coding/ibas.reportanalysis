@@ -25,6 +25,8 @@ declare namespace importexport {
         const BO_REPOSITORY_IMPORTEXPORT: string;
         /** 业务对象编码-数据导出模板 */
         const BO_CODE_EXPORTTEMPLATE: string;
+        /** 业务对象编码-数据表格对象 */
+        const BO_CODE_DATA_TABLE: string;
         enum emAreaType {
             /**
              * 页眉
@@ -257,6 +259,13 @@ declare namespace importexport {
          * 文件导入调用者
          */
         interface IImportFileCaller extends ibas.IUploadFileCaller<string> {
+        }
+        /**
+         * 文件解析调用者
+         */
+        interface IParseFileCaller<T> extends ibas.IUploadFileCaller<T> {
+            /** 数据转换者 */
+            converter: ibas.IDataConverter;
         }
         /**
          * 数据导出调用者
@@ -1646,6 +1655,11 @@ declare namespace importexport {
              * @param caller 调用者
              */
             export(caller: IExportFileCaller): void;
+            /**
+             * 解析
+             * @param caller 调用者
+             */
+            parse<T>(caller: IParseFileCaller<T>): void;
             /**
              * 获取业务对象架构
              * @param caller 调用者

@@ -265,9 +265,7 @@ namespace reportanalysis {
                                     new sap.extension.m.Input("", {
                                     }).bindProperty("bindingValue", {
                                         path: "address",
-                                        type: new sap.extension.data.Alphanumeric({
-                                            maxLength: 250
-                                        })
+                                        type: new sap.extension.data.Alphanumeric()
                                     }).bindProperty("editable", {
                                         path: "category",
                                         formatter(data: bo.emReportType): any {

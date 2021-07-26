@@ -1,7 +1,7 @@
 package org.colorcoding.ibas.thirdpartyapp.client;
 
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
@@ -41,7 +41,7 @@ public class ReportAnalysis extends ApplicationClient {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <P> IOperationResult<P> execute(String instruct, Map<String, Object> params) throws NotImplementedException {
+	public <P> IOperationResult<P> execute(String instruct, Properties params) throws NotImplementedException {
 		if (EXECUT_NAME_RUN_REPORT.equalsIgnoreCase(instruct)) {
 			return (IOperationResult<P>) this.runReport(params);
 		} else {
@@ -50,11 +50,11 @@ public class ReportAnalysis extends ApplicationClient {
 	}
 
 	@Override
-	public User authenticate(Map<String, Object> params) throws AuthenticationException {
+	public User authenticate(Properties params) throws AuthenticationException {
 		throw new AuthenticationException(new NotImplementedException());
 	}
 
-	protected IOperationResult<IDataTable> runReport(Map<String, Object> params) {
+	protected IOperationResult<IDataTable> runReport(Properties params) {
 		try {
 			OperationResult<IDataTable> opRslt = new OperationResult<IDataTable>();
 			String report = this.paramValue(PARAM_NAME_REPORT, "", params);
@@ -91,21 +91,21 @@ public class ReportAnalysis extends ApplicationClient {
 			exeParameter.setValue(report);
 			exeReport.getParameters().add(exeParameter);
 			// 设置其他参数
-			for (Entry<String, Object> item : params.entrySet()) {
-				if (PARAM_NAME_ADDRESS.equalsIgnoreCase(item.getKey())) {
+			for (Entry<Object, Object> item : params.entrySet()) {
+				if (PARAM_NAME_ADDRESS.equalsIgnoreCase(String.valueOf(item.getKey()))) {
 					continue;
 				}
-				if (PARAM_NAME_USER.equalsIgnoreCase(item.getKey())) {
+				if (PARAM_NAME_USER.equalsIgnoreCase(String.valueOf(item.getKey()))) {
 					continue;
 				}
-				if (PARAM_NAME_PASSWORD.equalsIgnoreCase(item.getKey())) {
+				if (PARAM_NAME_PASSWORD.equalsIgnoreCase(String.valueOf(item.getKey()))) {
 					continue;
 				}
-				if (PARAM_NAME_REPORT.equalsIgnoreCase(item.getKey())) {
+				if (PARAM_NAME_REPORT.equalsIgnoreCase(String.valueOf(item.getKey()))) {
 					continue;
 				}
 				exeParameter = new ExecuteReportParameter();
-				exeParameter.setName(item.getKey());
+				exeParameter.setName(String.valueOf(item.getKey()));
 				exeParameter.setValue(String.valueOf(item.getValue()));
 				exeReport.getParameters().add(exeParameter);
 			}

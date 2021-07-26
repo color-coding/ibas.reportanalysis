@@ -1,7 +1,6 @@
 package org.colorcoding.ibas.reportanalysis.reporter;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Properties;
 
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.data.IDataTable;
@@ -44,7 +43,7 @@ public class ThirdAppReporter extends Reporter {
 			throw new ReporterException(I18N.prop("msg_ra_invaild_third_party_app"));
 		}
 		try {
-			Map<String, Object> params = new HashMap<String, Object>();
+			Properties params = new Properties();
 			params.put(PARAM_NAME_REPORT, this.getAddress());
 			for (ExecuteReportParameter item : this.getReport().getParameters()) {
 				if (item.getName() == null) {

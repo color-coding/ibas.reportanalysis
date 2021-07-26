@@ -25,8 +25,8 @@ declare namespace thirdpartyapp {
         const BO_REPOSITORY_THIRDPARTYAPP: string;
         /** 业务对象编码-应用 */
         const BO_CODE_APPLICATION: string;
-        /** 业务对象编码-用户 */
-        const BO_CODE_USER: string;
+        /** 业务对象编码-用户映射 */
+        const BO_CODE_USERMAPPING: string;
         /** 业务对象编码-应用配置 */
         const BO_CODE_APPLICATIONCONFIG: string;
         enum emConfigItemCategory {
@@ -45,6 +45,16 @@ declare namespace thirdpartyapp {
         }
     }
     namespace app {
+        /** 应用设置服务契约 */
+        interface IApplicationSettingContract extends ibas.IServiceContract {
+            /** 应用 */
+            application: string;
+            /** 用户 */
+            user?: number | string;
+        }
+        /** 应用设置服务代理 */
+        class ApplicationSettingServiceProxy extends ibas.ServiceProxy<IApplicationSettingContract> {
+        }
     }
 }
 /**
@@ -68,6 +78,8 @@ declare namespace thirdpartyapp {
             category: string;
             /** 配置 */
             config: string;
+            /** 图片 */
+            picture: string;
             /** 设置 */
             settings: string;
             /** 备注 */
@@ -190,6 +202,8 @@ declare namespace thirdpartyapp {
             category: emConfigItemCategory;
             /** 值 */
             value: string;
+            /** 用户的 */
+            forUser: ibas.emYesNo;
         }
     }
 }
@@ -202,20 +216,18 @@ declare namespace thirdpartyapp {
  */
 declare namespace thirdpartyapp {
     namespace bo {
-        /** 用户 */
-        interface IUser extends ibas.IBOSimple {
-            /** 用户 */
-            user: string;
+        /** 用户映射 */
+        interface IUserMapping extends ibas.IBOSimple {
             /** 应用 */
             application: string;
-            /** 激活 */
-            activated: ibas.emYesNo;
-            /** 映射标记 */
-            mappedId: string;
-            /** 映射用户 */
-            mappedUser: string;
-            /** 映射密码 */
-            mappedPassword: string;
+            /** 用户 */
+            user: string;
+            /** 应用账户 */
+            account: string;
+            /** 访问数据 */
+            accessData: string;
+            /** 备注 */
+            remarks: string;
             /** 对象编号 */
             objectKey: number;
             /** 对象类型 */
@@ -277,16 +289,6 @@ declare namespace thirdpartyapp {
              */
             saveApplication(saver: ibas.ISaveCaller<bo.IApplication>): void;
             /**
-             * 查询 用户
-             * @param fetcher 查询者
-             */
-            fetchUser(fetcher: ibas.IFetchCaller<bo.IUser>): void;
-            /**
-             * 保存 用户
-             * @param saver 保存者
-             */
-            saveUser(saver: ibas.ISaveCaller<bo.IUser>): void;
-            /**
              * 查询 应用配置
              * @param fetcher 查询者
              */
@@ -296,6 +298,11 @@ declare namespace thirdpartyapp {
              * @param saver 保存者
              */
             saveApplicationConfig(saver: ibas.ISaveCaller<bo.IApplicationConfig>): void;
+            /**
+             * 查询 用户映射
+             * @param fetcher 查询者
+             */
+            fetchUserMapping(fetcher: ibas.IFetchCaller<bo.IUserMapping>): void;
         }
     }
 }
@@ -351,6 +358,12 @@ declare namespace thirdpartyapp {
             get config(): string;
             /** 设置-配置 */
             set config(value: string);
+            /** 映射的属性名称-图片 */
+            static PROPERTY_PICTURE_NAME: string;
+            /** 获取-图片 */
+            get picture(): string;
+            /** 设置-图片 */
+            set picture(value: string);
             /** 映射的属性名称-设置 */
             static PROPERTY_SETTINGS_NAME: string;
             /** 获取-设置 */
@@ -683,6 +696,12 @@ declare namespace thirdpartyapp {
             get value(): string;
             /** 设置-值 */
             set value(value: string);
+            /** 映射的属性名称-用户的 */
+            static PROPERTY_FORUSER_NAME: string;
+            /** 获取-用户的 */
+            get forUser(): ibas.emYesNo;
+            /** 设置-用户的 */
+            set forUser(value: ibas.emYesNo);
             /** 初始化数据 */
             protected init(): void;
         }
@@ -697,48 +716,42 @@ declare namespace thirdpartyapp {
  */
 declare namespace thirdpartyapp {
     namespace bo {
-        /** 用户 */
-        class User extends ibas.BOSimple<User> implements IUser {
+        /** 用户映射 */
+        class UserMapping extends ibas.BOSimple<UserMapping> implements IUserMapping {
             /** 业务对象编码 */
             static BUSINESS_OBJECT_CODE: string;
             /** 构造函数 */
             constructor();
-            /** 映射的属性名称-用户 */
-            static PROPERTY_USER_NAME: string;
-            /** 获取-用户 */
-            get user(): string;
-            /** 设置-用户 */
-            set user(value: string);
             /** 映射的属性名称-应用 */
             static PROPERTY_APPLICATION_NAME: string;
             /** 获取-应用 */
             get application(): string;
             /** 设置-应用 */
             set application(value: string);
-            /** 映射的属性名称-激活 */
-            static PROPERTY_ACTIVATED_NAME: string;
-            /** 获取-激活 */
-            get activated(): ibas.emYesNo;
-            /** 设置-激活 */
-            set activated(value: ibas.emYesNo);
-            /** 映射的属性名称-映射标记 */
-            static PROPERTY_MAPPEDID_NAME: string;
-            /** 获取-映射标记 */
-            get mappedId(): string;
-            /** 设置-映射标记 */
-            set mappedId(value: string);
-            /** 映射的属性名称-映射用户 */
-            static PROPERTY_MAPPEDUSER_NAME: string;
-            /** 获取-映射用户 */
-            get mappedUser(): string;
-            /** 设置-映射用户 */
-            set mappedUser(value: string);
-            /** 映射的属性名称-映射密码 */
-            static PROPERTY_MAPPEDPASSWORD_NAME: string;
-            /** 获取-映射密码 */
-            get mappedPassword(): string;
-            /** 设置-映射密码 */
-            set mappedPassword(value: string);
+            /** 映射的属性名称-用户 */
+            static PROPERTY_USER_NAME: string;
+            /** 获取-用户 */
+            get user(): string;
+            /** 设置-用户 */
+            set user(value: string);
+            /** 映射的属性名称-应用账户 */
+            static PROPERTY_ACCOUNT_NAME: string;
+            /** 获取-应用账户 */
+            get account(): string;
+            /** 设置-应用账户 */
+            set account(value: string);
+            /** 映射的属性名称-访问数据 */
+            static PROPERTY_ACCESSDATA_NAME: string;
+            /** 获取-访问数据 */
+            get accessData(): string;
+            /** 设置-访问数据 */
+            set accessData(value: string);
+            /** 映射的属性名称-备注 */
+            static PROPERTY_REMARKS_NAME: string;
+            /** 获取-备注 */
+            get remarks(): string;
+            /** 设置-备注 */
+            set remarks(value: string);
             /** 映射的属性名称-对象编号 */
             static PROPERTY_OBJECTKEY_NAME: string;
             /** 获取-对象编号 */
@@ -854,8 +867,8 @@ declare namespace thirdpartyapp {
             get description(): string;
             set description(value: string);
             /** 子项 */
-            get settingItems(): string;
-            set settingItems(value: string);
+            get settingItems(): ibas.IList<ApplicationSettingItem>;
+            set settingItems(value: ibas.IList<ApplicationSettingItem>);
         }
         /** 应用设置项目 */
         class ApplicationSettingItem extends ibas.Bindable {
@@ -916,7 +929,7 @@ declare namespace thirdpartyapp {
                 User: string;
             }
             /** 应用设置 */
-            interface IApplicationSetting {
+            interface IApplicationSetting extends IDataDeclaration {
                 /** 名称 */
                 Name: string;
                 /** 组 */
@@ -927,7 +940,7 @@ declare namespace thirdpartyapp {
                 SettingItems: ibas.IList<IApplicationSettingItem>;
             }
             /** 应用设置项目 */
-            interface IApplicationSettingItem {
+            interface IApplicationSettingItem extends IDataDeclaration {
                 /** 名称 */
                 Name: string;
                 /** 类型 */
@@ -953,6 +966,10 @@ declare namespace thirdpartyapp {
         class BORepositoryThirdPartyApp extends ibas.BORepositoryApplication implements IBORepositoryThirdPartyApp {
             /** 创建此模块的后端与前端数据的转换者 */
             protected createConverter(): ibas.IDataConverter;
+            /**
+             * 获取地址
+             */
+            toUrl(filename: string): string;
             /**
              * 上传文件
              * @param caller 调用者
@@ -984,16 +1001,6 @@ declare namespace thirdpartyapp {
              */
             saveApplicationConfig(saver: ibas.ISaveCaller<bo.ApplicationConfig>): void;
             /**
-             * 查询 用户
-             * @param fetcher 查询者
-             */
-            fetchUser(fetcher: ibas.IFetchCaller<bo.User>): void;
-            /**
-             * 保存 用户
-             * @param saver 保存者
-             */
-            saveUser(saver: ibas.ISaveCaller<bo.User>): void;
-            /**
              * 查询 用户应用
              * @param caller 查询者
              */
@@ -1003,6 +1010,21 @@ declare namespace thirdpartyapp {
              * @param caller 查询者
              */
             saveApplicationSetting(caller: IApplicationSettingSaver): void;
+            /**
+             * 查询 应用配置
+             * @param caller 查询者
+             */
+            fetchApplicationSetting(caller: IApplicationSettingFetcher): void;
+            /**
+             * 移除 用户应用配置
+             * @param caller 查询者
+             */
+            removeApplicationSetting(caller: IApplicationSettingRemover): void;
+            /**
+             * 查询 用户映射
+             * @param fetcher 查询者
+             */
+            fetchUserMapping(fetcher: ibas.IFetchCaller<bo.UserMapping>): void;
         }
         /**
          * 用户相关调用者
@@ -1016,11 +1038,31 @@ declare namespace thirdpartyapp {
         /**
          * 应用配置保存者
          */
-        interface IApplicationSettingSaver extends ibas.IMethodCaller<IApplication> {
+        interface IApplicationSettingSaver extends ibas.IMethodCaller<ApplicationSetting> {
             /** 应用 */
             application: string;
+            /** 用户 */
+            user?: string;
             /** 提交数据 */
             formData: FormData;
+        }
+        /**
+         * 应用配置查询者
+         */
+        interface IApplicationSettingFetcher extends ibas.IMethodCaller<ApplicationSetting> {
+            /** 应用 */
+            application: string;
+            /** 用户 */
+            user?: string;
+        }
+        /**
+         * 应用配置查询者
+         */
+        interface IApplicationSettingRemover extends ibas.IMethodCaller<void> {
+            /** 应用 */
+            application: string;
+            /** 用户 */
+            user: string;
         }
     }
 }
@@ -1178,6 +1220,8 @@ declare namespace thirdpartyapp {
             /** 新建数据，参数1：是否克隆 */
             protected createData(clone: boolean): void;
             private chooseApplicationConfig;
+            /** 上传图片事件 */
+            private uploadPicture;
         }
         /** 视图-应用 */
         interface IApplicationEditView extends ibas.IBOEditView {
@@ -1191,6 +1235,8 @@ declare namespace thirdpartyapp {
             chooseApplicationConfigEvent: Function;
             /** 显示可用配置 */
             showApplicationSettingItems(datas: bo.ApplicationSettingItem[]): void;
+            /** 上传图片事件 */
+            uploadPictureEvent: Function;
         }
     }
 }
@@ -1378,7 +1424,7 @@ declare namespace thirdpartyapp {
  */
 declare namespace thirdpartyapp {
     namespace app {
-        class UserFunc extends ibas.ModuleFunction {
+        class UserMappingFunc extends ibas.ModuleFunction {
             /** 功能标识 */
             static FUNCTION_ID: string;
             /** 功能名称 */
@@ -1399,8 +1445,13 @@ declare namespace thirdpartyapp {
  */
 declare namespace thirdpartyapp {
     namespace app {
-        /** 列表应用-用户 */
-        class UserListApp extends ibas.BOListApplication<IUserListView, bo.User> {
+        class MappingData {
+            constructor(mapping: bo.UserMapping, app: bo.Application);
+            app: bo.Application;
+            mapping: bo.UserMapping;
+        }
+        /** 列表应用-用户映射 */
+        class UserMappingListApp extends ibas.BOListApplication<IUserMappingListView, initialfantasy.bo.User> {
             /** 应用标识 */
             static APPLICATION_ID: string;
             /** 应用名称 */
@@ -1417,114 +1468,22 @@ declare namespace thirdpartyapp {
             protected fetchData(criteria: ibas.ICriteria): void;
             /** 新建数据 */
             protected newData(): void;
+            private appMaps;
             /** 查看数据，参数：目标数据 */
-            protected viewData(data: bo.User): void;
-            /** 编辑数据，参数：目标数据 */
-            protected editData(data: bo.User): void;
-            /** 删除数据，参数：目标数据集合 */
-            protected deleteData(data: bo.User | bo.User[]): void;
+            protected viewData(data: initialfantasy.bo.User | string): void;
+            private connectApplication;
+            private disconnectApplication;
         }
-        /** 视图-用户 */
-        interface IUserListView extends ibas.IBOListView {
-            /** 编辑数据事件，参数：编辑对象 */
-            editDataEvent: Function;
-            /** 删除数据事件，参数：删除对象集合 */
-            deleteDataEvent: Function;
+        /** 视图-用户映射 */
+        interface IUserMappingListView extends ibas.IBOListView {
             /** 显示数据 */
-            showData(datas: bo.User[]): void;
-        }
-    }
-}
-/**
- * @license
- * Copyright Color-Coding Studio. All Rights Reserved.
- *
- * Use of this source code is governed by an Apache License, Version 2.0
- * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
- */
-declare namespace thirdpartyapp {
-    namespace app {
-        /** 选择应用-用户 */
-        class UserChooseApp extends ibas.BOChooseService<IUserChooseView, bo.User> {
-            /** 应用标识 */
-            static APPLICATION_ID: string;
-            /** 应用名称 */
-            static APPLICATION_NAME: string;
-            /** 业务对象编码 */
-            static BUSINESS_OBJECT_CODE: string;
-            /** 构造函数 */
-            constructor();
-            /** 注册视图 */
-            protected registerView(): void;
-            /** 视图显示后 */
-            protected viewShowed(): void;
-            /** 查询数据 */
-            protected fetchData(criteria: ibas.ICriteria): void;
-            /** 新建数据 */
-            protected newData(): void;
-        }
-        /** 视图-用户 */
-        interface IUserChooseView extends ibas.IBOChooseView {
+            showData(datas: initialfantasy.bo.User[]): void;
             /** 显示数据 */
-            showData(datas: bo.User[]): void;
-        }
-        /** 用户选择服务映射 */
-        class UserChooseServiceMapping extends ibas.BOChooseServiceMapping {
-            /** 构造函数 */
-            constructor();
-            /** 创建服务实例 */
-            create(): ibas.IBOChooseService<bo.User>;
-        }
-    }
-}
-/**
- * @license
- * Copyright Color-Coding Studio. All Rights Reserved.
- *
- * Use of this source code is governed by an Apache License, Version 2.0
- * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
- */
-declare namespace thirdpartyapp {
-    namespace app {
-        /** 编辑应用-用户 */
-        class UserEditApp extends ibas.BOEditApplication<IUserEditView, bo.User> {
-            /** 应用标识 */
-            static APPLICATION_ID: string;
-            /** 应用名称 */
-            static APPLICATION_NAME: string;
-            /** 业务对象编码 */
-            static BUSINESS_OBJECT_CODE: string;
-            /** 构造函数 */
-            constructor();
-            /** 注册视图 */
-            protected registerView(): void;
-            /** 视图显示后 */
-            protected viewShowed(): void;
-            run(): void;
-            run(data: bo.User): void;
-            /** 保存数据 */
-            protected saveData(): void;
-            /** 删除数据 */
-            protected deleteData(): void;
-            /** 新建数据，参数1：是否克隆 */
-            protected createData(clone: boolean): void;
-            /** 选择用户事件 */
-            private chooseUser;
-            /** 选择公司事件 */
-            private chooseApplication;
-        }
-        /** 视图-用户 */
-        interface IUserEditView extends ibas.IBOEditView {
-            /** 显示数据 */
-            showUser(data: bo.User): void;
-            /** 删除数据事件 */
-            deleteDataEvent: Function;
-            /** 新建数据事件，参数1：是否克隆 */
-            createDataEvent: Function;
-            /** 选择用户事件 */
-            chooseUserEvent: Function;
-            /** 选择应用事件 */
-            chooseApplicationEvent: Function;
+            showUserMappings(datas: MappingData[]): void;
+            /** 连接应用事件 */
+            connectApplicationEvent: Function;
+            /** 断开应用事件 */
+            disconnectApplicationEvent: Function;
         }
     }
 }
@@ -1585,6 +1544,50 @@ declare namespace thirdpartyapp {
         }
         /** 视图-用户应用 */
         interface IUserApplicationView extends ibas.IUrlView {
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace thirdpartyapp {
+    namespace app {
+        /** 应用设置-应用 */
+        class ApplicationSettingService extends ibas.ServiceWithResultApplication<IApplicationSettingServiceView, IApplicationSettingContract, bo.ApplicationSetting> {
+            /** 应用标识 */
+            static APPLICATION_ID: string;
+            /** 应用名称 */
+            static APPLICATION_NAME: string;
+            /** 构造函数 */
+            constructor();
+            /** 注册视图 */
+            protected registerView(): void;
+            /** 视图显示后 */
+            protected viewShowed(): void;
+            protected applicationSetting: bo.ApplicationSetting;
+            protected user: initialfantasy.bo.User;
+            protected runService(contract: IApplicationSettingContract): void;
+            private saveData;
+        }
+        /** 视图-应用 */
+        interface IApplicationSettingServiceView extends ibas.IView {
+            /** 保存事件 */
+            saveDataEvent: Function;
+            /** 显示配置 */
+            showSetting(data: bo.ApplicationSetting): void;
+            /** 显示配置内容 */
+            showSettingItems(datas: bo.ApplicationSettingItem[]): void;
+        }
+        /** 应用配置选择服务映射 */
+        class ApplicationSettingServiceMapping extends ibas.ServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IServiceContract>;
         }
     }
 }

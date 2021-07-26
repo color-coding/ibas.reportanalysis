@@ -29,7 +29,7 @@
     <Property Name="Server" Description="服务器名称" DataType="Alphanumeric" DataSubType="Default" EditSize="200" Mapped="Server"/>
     <Property Name="User" Description="用户名" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="User"/>
     <Property Name="Password" Description="密码" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="Password"/>
-    <Property Name="Address" Description="报表地址" DataType="Alphanumeric" DataSubType="Default" EditSize="250" Mapped="Address"/>
+    <Property Name="Address" Description="报表地址" DataType="Memo" DataSubType="Default" EditSize="8" Mapped="Address"/>
     <Property Name="ThirdPartyApp" Description="第三方应用" DataType="Alphanumeric" DataSubType="Default" EditSize="20" Mapped="ThirdApp"/>
   </Model>
   <Model Name="ReportParameter" Description="报表参数" ModelType="SimpleLine" Mapped="${Company}_RA_RPT1">
