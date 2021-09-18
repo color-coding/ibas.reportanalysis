@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE BOInformation>
+<ns2:BOInformation
+	xmlns:ns2="http://colorcoding.org/ibas/initialfantasy/bo">
+	<Code>${Company}_RA_RPTRESULT</Code>
+	<Description>报表结果</Description>
+	<Name>ReportResult</Name>
+	<BOPropertyInformations>
+		<BOPropertyInformation>
+			<Property>ObjectKey</Property>
+			<Description>报表编号</Description>
+			<Mapped>ObjectKey</Mapped>
+			<DataType>Numeric</DataType>
+			<EditType>Default</EditType>
+			<EditSize>8</EditSize>
+			<Systemed>YES</Systemed>
+		</BOPropertyInformation>
+		<BOPropertyInformation>
+			<Property>Name</Property>
+			<Description>报表名称</Description>
+			<Mapped>Name</Mapped>
+			<DataType>Alphanumeric</DataType>
+			<EditType>Default</EditType>
+			<EditSize>180</EditSize>
+			<Systemed>YES</Systemed>
+		</BOPropertyInformation>
+	</BOPropertyInformations>
+</ns2:BOInformation>

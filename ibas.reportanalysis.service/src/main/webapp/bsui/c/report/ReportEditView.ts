@@ -287,9 +287,9 @@ namespace reportanalysis {
                                                     fileData.append("file", files[0], encodeURI(files[0].name));
                                                     that.fireViewEvents(that.uploadReportEvent, fileData);
                                                 }
-                                            }, { accept: "application/x-shockwave-flash,text/csv,application/excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+                                            }, { accept: "application/x-shockwave-flash,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
                                         }
-                                    }).addStyleClass("sapUiSmallMarginBegin").bindProperty("visible", {
+                                    }).addStyleClass("sapUiTinyMarginBegin").bindProperty("visible", {
                                         path: "category",
                                         formatter(data: bo.emReportType): any {
                                             if (data === bo.emReportType.FILE) {

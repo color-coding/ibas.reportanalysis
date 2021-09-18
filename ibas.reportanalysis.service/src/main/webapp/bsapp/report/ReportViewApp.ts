@@ -44,7 +44,20 @@ namespace reportanalysis {
                     for (let item of this.report.parameters) {
                         if (item.category === bo.emReportParameterType.SYSTEM) {
                             if (ibas.strings.isWith(item.value, "${", "}")) {
-                                item.value = ibas.variablesManager.getValue(item.value);
+                                let value: any = ibas.variablesManager.getValue(item.value);
+                                if (value instanceof Array) {
+                                    let builder: ibas.StringBuilder = new ibas.StringBuilder();
+                                    builder.map(undefined, "");
+                                    builder.map(null, "");
+                                    for (let item of value) {
+                                        if (builder.length > 0) {
+                                            builder.append(ibas.DATA_SEPARATOR);
+                                        }
+                                        builder.append(item);
+                                    }
+                                    value = builder.toString();
+                                }
+                                item.value = value;
                             }
                         }
                     }

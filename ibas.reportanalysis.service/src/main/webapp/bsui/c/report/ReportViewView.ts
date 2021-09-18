@@ -19,7 +19,7 @@ namespace reportanalysis {
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;
-                    this.page = new sap.m.Page("", {
+                    return this.viewContainer = new sap.m.Page("", {
                         showHeader: false,
                         subHeader: new sap.m.Toolbar("", {
                             content: [
@@ -28,7 +28,6 @@ namespace reportanalysis {
                                     type: sap.m.ButtonType.Transparent,
                                     icon: "sap-icon://begin",
                                     press: function (): void {
-                                        (<any>that.page.getFooter()).setVisible(false);
                                         that.fireViewEvents(that.runReportEvent);
                                     }
                                 }),
@@ -37,8 +36,7 @@ namespace reportanalysis {
                                     type: sap.m.ButtonType.Transparent,
                                     icon: "sap-icon://reset",
                                     press: function (): void {
-                                        (<any>that.page.getFooter()).setVisible(false);
-                                        for (let item of (<any>that.page.getFooter()).getContent()) {
+                                        for (let item of (<any>that.viewContainer.getFooter()).getContent()) {
                                             if (item instanceof sap.m.Input) {
                                                 item.setValue(null);
                                             }
@@ -53,7 +51,7 @@ namespace reportanalysis {
                                     press: function (event: any): void {
                                         ibas.servicesManager.showServices({
                                             proxy: new ibas.DataTableServiceProxy({
-                                                data: that.viewContent.dataTable,
+                                                data: that.viewData,
                                             }),
                                             displayServices(services: ibas.IServiceAgent[]): void {
                                                 if (ibas.objects.isNull(services) || services.length === 0) {
@@ -97,11 +95,10 @@ namespace reportanalysis {
                             ]
                         }),
                         content: [
-                            this.viewContent.draw()
                         ],
                         floatingFooter: true,
+                        showFooter: false,
                         footer: new sap.m.Toolbar("", {
-                            visible: false,
                             content: [
                                 new sap.m.MenuButton("", {
                                     text: ibas.i18n.prop("shell_data_choose"),
@@ -113,7 +110,7 @@ namespace reportanalysis {
                                                 text: ibas.i18n.prop("shell_all"),
                                                 icon: "sap-icon://multiselect-all",
                                                 press: function (): void {
-                                                    let table: sap.ui.table.Table = (<any>that.page.getContent()[0])?.getItems()[0];
+                                                    let table: sap.ui.table.Table = (<any>that.viewContainer.getContent()[0]);
                                                     if (table instanceof sap.ui.table.Table) {
                                                         let model: any = table.getModel();
                                                         if (model instanceof sap.extension.model.JSONModel) {
@@ -130,7 +127,7 @@ namespace reportanalysis {
                                                 text: ibas.i18n.prop("shell_reverse"),
                                                 icon: "sap-icon://multi-select",
                                                 press: function (): void {
-                                                    let table: sap.ui.table.Table = (<any>that.page.getContent()[0])?.getItems()[0];
+                                                    let table: sap.ui.table.Table = (<any>that.viewContainer.getContent()[0]);
                                                     if (table instanceof sap.ui.table.Table) {
                                                         let model: any = table.getModel();
                                                         if (model instanceof sap.extension.model.JSONModel) {
@@ -149,7 +146,7 @@ namespace reportanalysis {
                                                 text: ibas.enums.describe(ibas.emAuthoriseType, ibas.emAuthoriseType.NONE),
                                                 icon: "sap-icon://multiselect-none",
                                                 press: function (): void {
-                                                    let table: sap.ui.table.Table = (<any>that.page.getContent()[0])?.getItems()[0];
+                                                    let table: sap.ui.table.Table = (<any>that.viewContainer.getContent()[0]);
                                                     if (table instanceof sap.ui.table.Table) {
                                                         table.clearSelection();
                                                     }
@@ -183,7 +180,7 @@ namespace reportanalysis {
                                     text: ibas.i18n.prop("shell_apply"),
                                     type: sap.m.ButtonType.Success,
                                     press: function (event: sap.ui.base.Event): void {
-                                        let table: sap.ui.table.Table = (<any>that.page.getContent()[0])?.getItems()[0];
+                                        let table: sap.ui.table.Table = (<any>that.viewContainer.getContent()[0]);
                                         if (table instanceof sap.ui.table.Table) {
                                             let source: any = event.getSource();
                                             if (source instanceof sap.m.Button) {
@@ -214,22 +211,16 @@ namespace reportanalysis {
                             ]
                         }),
                     });
-                    return this.page;
                 }
-                private page: sap.m.Page;
+                viewContainer: sap.m.Page;
                 /** 显示报表 */
                 showReport(report: bo.UserReport): void {
                     this.viewContent.showReport(report);
                 }
+                viewData: ibas.DataTable;
                 /** 显示报表结果 */
                 showResults(table: ibas.DataTable): void {
-                    let type: emResultType = this.viewContent.showResults(table);
-                    if (type === emResultType.HTML) {
-                        this.page.setShowSubHeader(false);
-                    } else {
-                        this.page.setShowSubHeader(true);
-                        (<any>this.page.getFooter()).setVisible(true);
-                    }
+                    this.viewContent.showResults(this.viewData = table);
                 }
                 proceeding(type: ibas.emMessageType, msg: string): void {
                     this.application.viewShower.proceeding(this, type, msg);
@@ -253,7 +244,7 @@ namespace reportanalysis {
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;
-                    return this.page = new sap.m.Page("", {
+                    return this.viewContainer = new sap.m.Page("", {
                         showHeader: false,
                         subHeader: new sap.m.Toolbar("", {
                             content: [
@@ -280,7 +271,7 @@ namespace reportanalysis {
                                     press: function (event: any): void {
                                         ibas.servicesManager.showServices({
                                             proxy: new ibas.DataTableServiceProxy({
-                                                data: that.viewContent.dataTable,
+                                                data: that.viewData,
                                             }),
                                             displayServices(services: ibas.IServiceAgent[]): void {
                                                 if (ibas.objects.isNull(services) || services.length === 0) {
@@ -324,24 +315,18 @@ namespace reportanalysis {
                             ]
                         }),
                         content: [
-                            this.viewContent.draw()
                         ]
                     });
                 }
-                private page: sap.m.Page;
+                viewContainer: sap.m.Page;
                 /** 显示报表 */
                 showReport(report: bo.UserReport): void {
                     this.viewContent.showReport(report);
                 }
+                viewData: ibas.DataTable;
                 /** 显示报表结果 */
                 showResults(table: ibas.DataTable): void {
-                    let type: emResultType = this.viewContent.showResults(table);
-                    if (type === emResultType.HTML) {
-                        this.page.setShowSubHeader(false);
-                    } else {
-                        this.page.setShowSubHeader(true);
-                        (<any>this.page.getFooter()).setVisible(true);
-                    }
+                    this.viewContent.showResults(this.viewData = table);
                 }
                 proceeding(type: ibas.emMessageType, msg: string): void {
                     this.application.viewShower.proceeding(this, type, msg);
@@ -365,7 +350,7 @@ namespace reportanalysis {
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;
-                    return new sap.m.Dialog("", {
+                    return this.viewContainer = new sap.m.Dialog("", {
                         title: this.title,
                         type: sap.m.DialogType.Standard,
                         state: sap.ui.core.ValueState.None,
@@ -391,24 +376,27 @@ namespace reportanalysis {
                             ]
                         }),
                         content: [
-                            this.viewContent.draw()
                         ],
-                        endButton: new sap.m.Button("", {
-                            text: ibas.i18n.prop("shell_exit"),
-                            type: sap.m.ButtonType.Transparent,
-                            press: function (): void {
-                                that.fireViewEvents(that.closeEvent);
-                            }
-                        }),
+                        buttons: [
+                            new sap.m.Button("", {
+                                text: ibas.i18n.prop("shell_exit"),
+                                type: sap.m.ButtonType.Transparent,
+                                press: function (): void {
+                                    that.fireViewEvents(that.closeEvent);
+                                }
+                            }),
+                        ]
                     }).addStyleClass("sapUiNoContentPadding");
                 }
+                viewContainer: sap.m.Dialog;
                 /** 显示报表 */
                 showReport(report: bo.UserReport): void {
                     this.viewContent.showReport(report);
                 }
+                viewData: ibas.DataTable;
                 /** 显示报表结果 */
                 showResults(table: ibas.DataTable): void {
-                    this.viewContent.showResults(table);
+                    this.viewContent.showResults(this.viewData = table);
                 }
                 proceeding(type: ibas.emMessageType, msg: string): void {
                     this.application.viewShower.proceeding(this, type, msg);
@@ -430,51 +418,54 @@ namespace reportanalysis {
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;
-                    return new sap.m.Dialog("", {
+                    return this.viewContainer = new sap.m.Dialog("", {
                         title: this.title,
                         type: sap.m.DialogType.Standard,
                         state: sap.ui.core.ValueState.None,
                         stretch: ibas.config.get(ibas.CONFIG_ITEM_PLANTFORM) === ibas.emPlantform.PHONE ? true : false,
                         content: [
-                            this.dataContainer = this.viewContent.draw()
                         ],
-                        beginButton: this.button = new sap.m.Button("", {
-                            text: ibas.i18n.prop("shell_run"),
-                            type: sap.m.ButtonType.Transparent,
-                            press: function (this: sap.m.Button): void {
-                                if (this.getType() === sap.m.ButtonType.Accept) {
-                                    that.fireViewEvents(that.chooseDataEvent, that.selectedDataTable());
-                                } else {
+                        buttons: [
+                            new sap.m.Button("", {
+                                text: ibas.i18n.prop("shell_run"),
+                                type: sap.m.ButtonType.Transparent,
+                                press: function (this: sap.m.Button): void {
                                     that.fireViewEvents(that.runReportEvent);
                                 }
-                            }
-                        }),
-                        endButton: new sap.m.Button("", {
-                            text: ibas.i18n.prop("shell_exit"),
-                            type: sap.m.ButtonType.Transparent,
-                            press: function (): void {
-                                that.fireViewEvents(that.closeEvent);
-                            }
-                        }),
+                            }),
+                            new sap.m.Button("", {
+                                visible: false,
+                                text: ibas.i18n.prop("shell_confirm"),
+                                type: sap.m.ButtonType.Transparent,
+                                press: function (this: sap.m.Button): void {
+                                    that.fireViewEvents(that.chooseDataEvent, that.selectedDataTable());
+                                }
+                            }),
+                            new sap.m.Button("", {
+                                text: ibas.i18n.prop("shell_exit"),
+                                type: sap.m.ButtonType.Transparent,
+                                press: function (): void {
+                                    that.fireViewEvents(that.closeEvent);
+                                }
+                            }),
+                        ]
                     }).addStyleClass("sapUiNoContentPadding");
                 }
-                private button: sap.m.Button;
+                viewContainer: sap.m.Dialog;
                 /** 显示报表结果 */
                 showResults(table: ibas.DataTable): void {
+                    this.viewContainer.getButtons()[0].setVisible(false);
+                    this.viewContainer.getButtons()[1].setVisible(true);
                     super.showResults.apply(this, arguments);
-                    this.button.setType(sap.m.ButtonType.Accept);
-                    this.button.setText(ibas.i18n.prop("shell_confirm"));
                 }
-                private dataContainer: any;
-                protected viewContent: ReportViewContent = new ReportViewContent(this);
                 /** 获取选择的数据 */
                 selectedDataTable(): ibas.DataTable {
-                    if (this.dataContainer instanceof sap.ui.layout.cssgrid.CSSGrid) {
-                        for (let item of this.dataContainer.getItems()) {
+                    if (this.viewContainer instanceof sap.m.Dialog) {
+                        for (let item of this.viewContainer.getContent()) {
                             if (item instanceof sap.ui.table.Table) {
                                 let indices: number[] = item.getSelectedIndices();
                                 if ((indices instanceof Array) && indices.length > 0) {
-                                    return this.viewContent.dataTable.clone(indices);
+                                    return this.viewData.clone(indices);
                                 }
                             }
                         }

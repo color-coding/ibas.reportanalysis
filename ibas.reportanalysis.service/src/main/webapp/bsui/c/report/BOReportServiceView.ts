@@ -17,21 +17,18 @@ namespace reportanalysis {
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;
-                    return this.dialog = new sap.m.Dialog("", {
-                        title: this.title,
-                        type: sap.m.DialogType.Standard,
-                        state: sap.ui.core.ValueState.None,
-                        stretch: ibas.config.get(ibas.CONFIG_ITEM_PLANTFORM) === ibas.emPlantform.PHONE ? true : false,
-                        content: [
-                        ],
-                        endButton: new sap.m.Button("", {
+                    this.dialog = super.draw();
+                    if (this.dialog instanceof sap.m.Dialog) {
+                        this.dialog.destroyButtons();
+                        this.dialog.addButton(new sap.m.Button("", {
                             text: ibas.i18n.prop("shell_exit"),
                             type: sap.m.ButtonType.Transparent,
                             press: function (): void {
                                 that.fireViewEvents(that.closeEvent);
                             }
-                        }),
-                    }).addStyleClass("sapUiNoContentPadding");
+                        }));
+                    }
+                    return this.dialog;
                 }
                 private dialog: sap.m.Dialog;
                 /** 显示报表 */
@@ -84,8 +81,6 @@ namespace reportanalysis {
                             }),
                         ]
                     }));
-                    this.dialog.destroyContent();
-                    this.dialog.addContent(this.viewContent.draw());
                     super.showReport(report);
                 }
             }

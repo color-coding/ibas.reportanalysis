@@ -52,9 +52,8 @@ namespace reportanalysis {
                     criteria.conditions.lastOrDefault().bracketClose++;
                 }
                 let condition: ibas.ICondition = criteria.conditions.create();
-                condition.alias = bo.Report.PROPERTY_CATEGORY_NAME;
-                condition.value = bo.emReportType.REPORT.toString();
-                condition.relationship = ibas.emConditionRelationship.AND;
+                condition.alias = bo.Report.PROPERTY_ACTIVATED_NAME;
+                condition.value = ibas.emYesNo.YES.toString();
                 // 修正查询数量
                 ibas.criterias.resultCount(criteria);
                 // 根据对象类型，修正排序条件
@@ -151,6 +150,21 @@ namespace reportanalysis {
                 this.name = ReportDataService.APPLICATION_NAME;
                 this.description = ibas.i18n.prop(this.name);
                 this.proxy = ReportDataServiceProxy;
+            }
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IServiceContract> {
+                return new ReportDataService();
+            }
+        }
+        /** 报表结果服务映射 */
+        export class ReportResultServiceMapping extends ibas.BOChooseServiceMapping {
+            /** 构造函数 */
+            constructor() {
+                super();
+                this.id = "1d853094-b1de-4343-a773-e2f015793610";
+                this.name = ReportDataService.APPLICATION_NAME;
+                this.description = ibas.i18n.prop(this.name);
+                this.boCode = bo.BO_CODE_REPORTRESULT;
             }
             /** 创建服务实例 */
             create(): ibas.IService<ibas.IServiceContract> {

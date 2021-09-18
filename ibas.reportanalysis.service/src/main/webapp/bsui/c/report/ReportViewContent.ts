@@ -12,12 +12,12 @@ namespace reportanalysis {
             export const CONFIG_ITEM_FULL_SCREEN: string = "fullScreen";
             /** 参数，地址 */
             export const PARAMETER_NAME_URL: string = "${Url}";
-            /** 结果类型 */
-            export enum emResultType {
-                HTML,
-                TABLE
-            }
+            /** 视图 */
             export interface IReportViewView extends app.IReportViewView {
+                /** 视图数据 */
+                viewData: ibas.DataTable;
+                /** 视图容器 */
+                viewContainer: sap.m.Page | sap.m.Dialog;
                 /** 进程消息 */
                 proceeding(type: ibas.emMessageType, msg: string): void;
                 /** 对话消息 */
@@ -28,35 +28,27 @@ namespace reportanalysis {
                     this.parent = parent;
                 }
                 private valuesMap: Map<bo.UserReportParameter, string>;
-                private parent: IReportViewView;
+                protected parent: IReportViewView;
                 /** 显示报表 */
                 showReport(report: bo.UserReport): void {
-                    let form: sap.ui.layout.form.SimpleForm;
-                    this.form.destroyItems();
-                    if (ibas.config.get(ibas.CONFIG_ITEM_PLANTFORM) === ibas.emPlantform.PHONE
-                        || this.parent instanceof ibas.DialogView) {
-                        this.form.addItem(form = new sap.ui.layout.form.SimpleForm("", {
-                            editable: true,
-                            content: [
-                            ]
-                        }));
-                    } else {
-                        this.form.setGridTemplateColumns("35% 30% 35%");
-                        this.form.addItem(new sap.ui.layout.form.SimpleForm("", {
-                        }));
-                        this.form.addItem(form = new sap.ui.layout.form.SimpleForm("", {
-                            editable: true,
-                            content: [
-                            ]
-                        }));
-                        this.form.addItem(new sap.ui.layout.form.SimpleForm("", {
-                        }));
+                    this.parent.viewData = undefined;
+                    this.parent.viewContainer.destroyContent();
+                    if (this.parent.viewContainer instanceof sap.m.Page) {
+                        this.parent.viewContainer.setShowSubHeader(true);
+                        this.parent.viewContainer.setShowFooter(false);
+                        this.parent.viewContainer.setEnableScrolling(true);
+                    } else if (this.parent.viewContainer instanceof sap.m.Dialog) {
+                        this.parent.viewContainer.setVerticalScrolling(true);
                     }
-                    this.dataTable = undefined;
                     // 显示报表参数
                     if (ibas.objects.isNull(report.parameters) || report.parameters.length === 0) {
                         return;
                     }
+                    let form: sap.ui.layout.form.SimpleForm = new sap.ui.layout.form.SimpleForm("", {
+                        editable: true,
+                        content: [
+                        ]
+                    });
                     form.addContent(new sap.m.Title("", {
                         level: sap.ui.core.TitleLevel.H3,
                         titleStyle: sap.ui.core.TitleLevel.H3,
@@ -175,12 +167,32 @@ namespace reportanalysis {
                         input.setModel(new sap.ui.model.json.JSONModel(item));
                         form.addContent(input);
                     }
+                    this.parent.viewContainer.addContent(new sap.m.FlexBox("", {
+                        width: "100%",
+                        height: "100%",
+                        fitContainer: true,
+                        direction: sap.m.FlexDirection.RowReverse,
+                        alignItems: sap.m.FlexAlignItems.Start,
+                        justifyContent: sap.m.FlexJustifyContent.Center,
+                        alignContent: sap.m.FlexAlignContent.SpaceBetween,
+                        renderType: sap.m.FlexRendertype.Div,
+                        wrap: sap.m.FlexWrap.NoWrap,
+                        items: [
+                            form
+                        ]
+                    }));
                 }
                 /** 显示报表结果 */
-                showResults(table: ibas.DataTable): emResultType {
-                    this.form.destroyItems();
-                    this.form.setGridTemplateColumns("100%");
-                    this.dataTable = table;
+                showResults(table: ibas.DataTable): void {
+                    this.parent.viewData = table;
+                    this.parent.viewContainer.destroyContent();
+                    if (this.parent.viewContainer instanceof sap.m.Page) {
+                        this.parent.viewContainer.setShowSubHeader(true);
+                        this.parent.viewContainer.setShowFooter(true);
+                        this.parent.viewContainer.setEnableScrolling(false);
+                    } else if (this.parent.viewContainer instanceof sap.m.Dialog) {
+                        this.parent.viewContainer.setVerticalScrolling(false);
+                    }
                     if (table.rows.length === 1 && table.columns.length === 2) {
                         let data: ibas4j.IKeyValue = table.convert()[0];
                         if (!ibas.objects.isNull(data) && data.Key === PARAMETER_NAME_URL) {
@@ -208,7 +220,8 @@ namespace reportanalysis {
                                                     outType: "table"
                                                 }),
                                                 onCompleted: (result) => {
-                                                    this.form.addItem(this.createTable(result));
+                                                    this.parent.viewContainer.addContent(this.createTable(result));
+                                                    this.parent.viewData = result;
                                                 }
                                             });
                                         } catch (error) {
@@ -218,15 +231,18 @@ namespace reportanalysis {
                                             });
                                         }
                                     }
-                                });
-                                return emResultType.TABLE;
+                                }); return;
+                            } else {
+                                this.parent.viewContainer.addContent(this.createHTML(data.Value));
+                                if (this.parent.viewContainer instanceof sap.m.Page) {
+                                    this.parent.viewContainer.setShowSubHeader(false);
+                                    this.parent.viewContainer.setShowFooter(false);
+                                } return;
                             }
-                            this.form.addItem(this.createHTML(data.Value));
-                            return emResultType.HTML;
                         }
                     }
-                    this.form.addItem(this.createTable(table));
-                    return emResultType.TABLE;
+                    this.parent.viewContainer.addContent(this.createTable(table));
+
                 }
                 protected createHTML(url: string): sap.ui.core.HTML {
                     this.parent.proceeding(
@@ -313,7 +329,6 @@ namespace reportanalysis {
                         selectionBehavior: sap.ui.table.SelectionBehavior.Row,
                         visibleRowCount: ibas.config.get(openui5.utils.CONFIG_ITEM_LIST_TABLE_VISIBLE_ROW_COUNT, 15),
                         visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive,
-                        editable: false,
                         rows: "{/rows}",
                     });
                     for (let index: number = 0; index < table.columns.length; index++) {
@@ -463,18 +478,7 @@ namespace reportanalysis {
                     // 设置集合长度限制,默认100
                     model.setSizeLimit(modelData.length);
                     tableResult.setModel(model);
-                    return tableResult.addStyleClass("sapUiSizeCompact");
-                }
-                private form: sap.ui.layout.cssgrid.CSSGrid;
-                public dataTable: ibas.DataTable;
-                /** 绘制视图 */
-                draw(): any {
-                    return this.form = new sap.ui.layout.cssgrid.CSSGrid("", {
-                        gridTemplateRows: "1fr",
-                        gridGap: "1rem",
-                        items: [
-                        ]
-                    });
+                    return tableResult;
                 }
             }
         }
