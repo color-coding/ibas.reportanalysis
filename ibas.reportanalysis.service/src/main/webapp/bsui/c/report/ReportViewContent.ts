@@ -324,7 +324,7 @@ namespace reportanalysis {
                     });
                 }
                 protected createTable(table: ibas.DataTable): sap.ui.core.Control {
-                    let tableResult: sap.ui.table.Table = new sap.ui.table.Table("", {
+                    let tableResult: sap.ui.table.Table = new sap.extension.table.Table("", {
                         enableSelectAll: true,
                         selectionBehavior: sap.ui.table.SelectionBehavior.Row,
                         visibleRowCount: ibas.config.get(openui5.utils.CONFIG_ITEM_LIST_TABLE_VISIBLE_ROW_COUNT, 15),
@@ -333,33 +333,49 @@ namespace reportanalysis {
                     });
                     for (let index: number = 0; index < table.columns.length; index++) {
                         let col: ibas.DataTableColumn = table.columns[index];
-                        if (ibas.strings.isEmpty(col.description)) {
-                            col.description = ibas.i18n.prop(col.name);
-                            if (col.description.startsWith("[") && col.description.endsWith("]")) {
-                                col.description = col.name;
-                            }
+                        let info: { objectCode?: string } = {};
+                        let description: string = col.description;
+                        if (ibas.strings.isEmpty(description)) {
+                            description = col.name;
+                        }
+                        if (description.indexOf("#{") > 0 && description.endsWith("}")) {
+                            let value: string = description.substring(description.indexOf("#{"));
+                            info.objectCode = value.substring(2, value.length - 1);
+                            description = description.substring(0, description.indexOf("#{"));
+                        }
+                        if (!ibas.strings.isEmpty(col.description)) {
+                            col.description = description;
                         } else {
-                            let value: string = col.description;
-                            col.description = ibas.i18n.prop(col.description);
-                            if (col.description.startsWith("[") && col.description.endsWith("]")) {
-                                col.description = value;
-                            }
+                            col.name = description;
                         }
                         if (col.definedDataType() === ibas.emTableDataType.DATE) {
                             tableResult.addColumn(
                                 new sap.ui.table.Column("", {
                                     label: ibas.strings.isEmpty(col.description) ? col.name : col.description,
-                                    width: "100px",
-                                    autoResizable: true,
                                     sortProperty: index.toString(),
                                     filterProperty: index.toString(),
-                                    template: new sap.m.Text("", {
-                                        wrapping: false
-                                    }).bindProperty("text", {
+                                    template: new sap.extension.m.Text("", {
+                                    }).bindProperty("bindingValue", {
                                         path: index.toString(),
-                                        formatter(data: any): any {
-                                            return ibas.dates.toString(data);
-                                        }
+                                        type: new sap.extension.data.Date()
+                                    })
+                                })
+                            );
+                        } else if (!ibas.objects.isNull(info) && !ibas.strings.isEmpty(info.objectCode)) {
+                            tableResult.addColumn(
+                                new sap.ui.table.Column("", {
+                                    label: ibas.strings.isEmpty(col.description) ? col.name : col.description,
+                                    multiLabels: [
+                                        new sap.m.Label("", {
+                                            text: ibas.strings.isEmpty(col.description) ? col.name : col.description
+                                        })
+                                    ],
+                                    sortProperty: index.toString(),
+                                    filterProperty: index.toString(),
+                                    template: new sap.extension.m.DataLink("", {
+                                        objectCode: info.objectCode,
+                                    }).bindProperty("bindingValue", {
+                                        path: index.toString(),
                                     })
                                 })
                             );
@@ -372,8 +388,6 @@ namespace reportanalysis {
                                             text: ibas.strings.isEmpty(col.description) ? col.name : col.description
                                         })
                                     ],
-                                    width: "100px",
-                                    autoResizable: true,
                                     sortProperty: index.toString(),
                                     filterProperty: index.toString(),
                                     columnMenuOpen(e: sap.ui.base.Event): boolean {
@@ -464,9 +478,8 @@ namespace reportanalysis {
                                         }
                                         return true;
                                     },
-                                    template: new sap.m.Text("", {
-                                        wrapping: false
-                                    }).bindProperty("text", {
+                                    template: new sap.extension.m.Text("", {
+                                    }).bindProperty("bindingValue", {
                                         path: index.toString(),
                                     })
                                 })
