@@ -382,8 +382,6 @@ namespace reportanalysis {
             showReportParameters(datas: bo.ReportParameter[]): void;
             /** 报表-业务对象选择 */
             chooseReportBusinessObjectEvent: Function;
-            /** 报表-应用选择 */
-            chooseReportApplicationEvent: Function;
             /** 报表-第三方应用选择 */
             chooseReportThirdPartyAppEvent: Function;
             /** 报表-报表选择 */

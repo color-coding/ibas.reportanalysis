@@ -22,8 +22,6 @@ namespace reportanalysis {
                 removeReportParameterEvent: Function;
                 /** 报表-业务对象选择 */
                 chooseReportBusinessObjectEvent: Function;
-                /** 报表-应用选择 */
-                chooseReportApplicationEvent: Function;
                 /** 报表-报表选择 */
                 chooseReportAssociatedReportEvent: Function;
                 /** 报表-第三方应用选择 */
@@ -83,17 +81,22 @@ namespace reportanalysis {
                                 })
                             }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_report_applicationid") }),
-                            new sap.extension.m.RepositoryInput("", {
+                            new sap.extension.m.SelectionInput("", {
                                 showValueHelp: true,
+                                valueHelpOnly: false,
                                 repository: initialfantasy.bo.BORepositoryInitialFantasy,
                                 dataInfo: {
                                     type: initialfantasy.bo.ApplicationElement,
                                     key: initialfantasy.bo.ApplicationElement.PROPERTY_ELEMENTID_NAME,
                                     text: initialfantasy.bo.ApplicationElement.PROPERTY_ELEMENTNAME_NAME
                                 },
-                                valueHelpRequest: function (): void {
-                                    that.fireViewEvents(that.chooseReportApplicationEvent);
-                                }
+                                criteria: [
+                                    new ibas.Condition(
+                                        initialfantasy.bo.ApplicationElement.PROPERTY_ELEMENTTYPE_NAME,
+                                        ibas.emConditionOperation.NOT_EQUAL,
+                                        initialfantasy.bo.emElementType.MODULE
+                                    )
+                                ],
                             }).bindProperty("bindingValue", {
                                 path: "applicationId",
                                 type: new sap.extension.data.Alphanumeric({

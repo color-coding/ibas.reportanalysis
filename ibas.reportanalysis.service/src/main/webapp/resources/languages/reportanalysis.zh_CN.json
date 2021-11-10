@@ -53,6 +53,7 @@
   "reportanalysis_ui_hide_total": "隐藏合计",
   "reportanalysis_ui_total": "合计：{0}",
   "reportanalysis_fixed_table": "锁定：列/上行/下行",
+  "reportanalysis_resize_column": "调整列宽",
   "reportanalysisusers": "我的报表",
   "reportanalysisusers_icon": "sap-icon://opportunity",
   "reportanalysisusers_refresh_all": "全部",
