@@ -80,8 +80,6 @@ namespace reportanalysis {
                                         formatter(data: any): any {
                                             if (data === bo.emAssignedType.USER) {
                                                 return true;
-                                            } else if (data === bo.emAssignedType.ROLE) {
-                                                return false;
                                             }
                                             return false;
                                         }
@@ -109,9 +107,27 @@ namespace reportanalysis {
                                     }).bindProperty("visible", {
                                         path: "assignedType",
                                         formatter(data: any): any {
-                                            if (data === bo.emAssignedType.USER) {
-                                                return false;
-                                            } else if (data === bo.emAssignedType.ROLE) {
+                                            if (data === bo.emAssignedType.ROLE) {
+                                                return true;
+                                            }
+                                            return false;
+                                        }
+                                    }).bindProperty("bindingValue", {
+                                        path: "assigned",
+                                        type: new sap.extension.data.Alphanumeric({
+                                            maxLength: 20
+                                        })
+                                    }),
+                                    new sap.extension.m.Input("", {
+                                        editable: false,
+                                        width: "100%",
+                                        layoutData: new sap.m.FlexItemData("", {
+                                            growFactor: 1,
+                                        }),
+                                    }).bindProperty("visible", {
+                                        path: "assignedType",
+                                        formatter(data: any): any {
+                                            if (data === bo.emAssignedType.ALL) {
                                                 return true;
                                             }
                                             return false;

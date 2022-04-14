@@ -247,6 +247,13 @@ namespace reportanalysis {
                 this.setProperty(ReportBook.PROPERTY_REPORTBOOKITEMS_NAME, value);
             }
 
+            protected onPropertyChanged(name: string): void {
+                if (ibas.strings.equalsIgnoreCase(ReportBook.PROPERTY_ASSIGNEDTYPE_NAME, name)) {
+                    if (this.assignedType === emAssignedType.ALL) {
+                        this.assigned = "";
+                    }
+                }
+            }
 
             /** 初始化数据 */
             protected init(): void {
@@ -432,6 +439,7 @@ namespace reportanalysis {
             /** 初始化数据 */
             protected init(): void {
             }
+
         }
 
         /** 报表簿-项目 集合 */

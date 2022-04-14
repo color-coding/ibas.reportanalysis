@@ -15,6 +15,7 @@ import org.colorcoding.ibas.bobas.mapping.BusinessObjectUnit;
 import org.colorcoding.ibas.bobas.mapping.DbField;
 import org.colorcoding.ibas.bobas.mapping.DbFieldType;
 import org.colorcoding.ibas.bobas.ownership.IDataOwnership;
+import org.colorcoding.ibas.initialfantasy.data.DataConvert;
 import org.colorcoding.ibas.reportanalysis.MyConfiguration;
 import org.colorcoding.ibas.reportanalysis.data.emAssignedType;
 
@@ -78,8 +79,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-对象编号
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setObjectKey(Integer value) {
 		this.setProperty(PROPERTY_OBJECTKEY, value);
@@ -110,8 +110,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-对象类型
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setObjectCode(String value) {
 		this.setProperty(PROPERTY_OBJECTCODE, value);
@@ -142,8 +141,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-实例号
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setLogInst(Integer value) {
 		this.setProperty(PROPERTY_LOGINST, value);
@@ -174,8 +172,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-服务系列
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setSeries(Integer value) {
 		this.setProperty(PROPERTY_SERIES, value);
@@ -206,8 +203,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-数据源
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setDataSource(String value) {
 		this.setProperty(PROPERTY_DATASOURCE, value);
@@ -238,8 +234,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-创建日期
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setCreateDate(DateTime value) {
 		this.setProperty(PROPERTY_CREATEDATE, value);
@@ -270,8 +265,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-创建时间
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setCreateTime(Short value) {
 		this.setProperty(PROPERTY_CREATETIME, value);
@@ -302,8 +296,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-更新日期
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setUpdateDate(DateTime value) {
 		this.setProperty(PROPERTY_UPDATEDATE, value);
@@ -334,8 +327,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-更新时间
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setUpdateTime(Short value) {
 		this.setProperty(PROPERTY_UPDATETIME, value);
@@ -366,8 +358,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-创建用户
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setCreateUserSign(Integer value) {
 		this.setProperty(PROPERTY_CREATEUSERSIGN, value);
@@ -398,8 +389,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-更新用户
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setUpdateUserSign(Integer value) {
 		this.setProperty(PROPERTY_UPDATEUSERSIGN, value);
@@ -430,8 +420,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-创建动作标识
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setCreateActionId(String value) {
 		this.setProperty(PROPERTY_CREATEACTIONID, value);
@@ -462,8 +451,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-更新动作标识
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setUpdateActionId(String value) {
 		this.setProperty(PROPERTY_UPDATEACTIONID, value);
@@ -494,8 +482,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-数据所有者
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setDataOwner(Integer value) {
 		this.setProperty(PROPERTY_DATAOWNER, value);
@@ -526,8 +513,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-团队成员
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setTeamMembers(String value) {
 		this.setProperty(PROPERTY_TEAMMEMBERS, value);
@@ -558,8 +544,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-数据所属组织
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setOrganization(String value) {
 		this.setProperty(PROPERTY_ORGANIZATION, value);
@@ -590,8 +575,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-指派类型
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setAssignedType(emAssignedType value) {
 		this.setProperty(PROPERTY_ASSIGNEDTYPE, value);
@@ -622,8 +606,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-指派目标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setAssigned(String value) {
 		this.setProperty(PROPERTY_ASSIGNED, value);
@@ -654,8 +637,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-报表名称
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setName(String value) {
 		this.setProperty(PROPERTY_NAME, value);
@@ -686,8 +668,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-激活
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setActivated(emYesNo value) {
 		this.setProperty(PROPERTY_ACTIVATED, value);
@@ -719,8 +700,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	/**
 	 * 设置-报表簿-项目集合
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	public final void setReportBookItems(IReportBookItems value) {
 		this.setProperty(PROPERTY_REPORTBOOKITEMS, value);
@@ -734,6 +714,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 		super.initialize();// 基类初始化，不可去除
 		this.setReportBookItems(new ReportBookItems(this));
 		this.setObjectCode(MyConfiguration.applyVariables(BUSINESS_OBJECT_CODE));
+		this.setAssigned(DataConvert.STRING_VALUE_EMPTY);
 
 	}
 

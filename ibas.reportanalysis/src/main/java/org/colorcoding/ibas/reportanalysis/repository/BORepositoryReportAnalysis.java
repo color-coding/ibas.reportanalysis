@@ -70,6 +70,12 @@ public class BORepositoryReportAnalysis extends BORepositoryServiceApplication
 				condition.setValue(this.getCurrentUser().getBelong());
 				condition.setBracketClose(1);
 			}
+			// 全部用户的
+			condition = criteria.getConditions().create();
+			condition.setRelationship(ConditionRelationship.OR);
+			condition.setBracketOpen(1);
+			condition.setAlias(ReportBook.PROPERTY_ASSIGNEDTYPE.getName());
+			condition.setValue(emAssignedType.ALL);
 			condition.setBracketClose(2);
 			IOperationResult<ReportBook> opRsltBook = this.fetchReportBook(criteria, token);
 			if (opRsltBook.getError() != null) {

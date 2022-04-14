@@ -70,6 +70,8 @@ namespace reportanalysis {
             USER,
             /** 角色 */
             ROLE,
+            /** 全部 */
+            ALL,
         }
     }
 
