@@ -77,6 +77,20 @@ namespace reportanalysis {
                 });
             }
         }
+        /** 模块控制台 */
+        export class ConsolePhone extends Console {
+            /** 初始化 */
+            protected registers(): void {
+                // 注册服务应用
+                this.register(new ReportChooseServiceMapping());
+                this.register(new ReportBookChooseServiceMapping());
+                this.register(new ReportDataServiceMapping());
+                this.register(new ReportResultServiceMapping());
+                // 注册常驻应用
+
+            }
+
+        }
 
         /** 配置项目-禁用报表功能 */
         export const CONFIG_ITEM_DISABLE_REPORT_FUNCTIONS: string = "disableReportFunctions";

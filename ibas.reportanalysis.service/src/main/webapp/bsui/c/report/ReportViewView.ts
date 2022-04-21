@@ -243,7 +243,7 @@ namespace reportanalysis {
                     }
                     this.application.viewShower.messages(caller);
                 }
-                protected viewContent: ReportViewContent = new ReportViewContent(this);
+                protected viewContent: ReportViewContent = new ReportViewContent(this, ibas.emChooseType.NONE);
             }
             /**
              * 视图-报表查看-页签，需要与上保持同步
@@ -349,7 +349,7 @@ namespace reportanalysis {
                     }
                     this.application.viewShower.messages(caller);
                 }
-                protected viewContent: ReportViewContent = new ReportViewContent(this);
+                protected viewContent: ReportViewContent = new ReportViewContent(this, ibas.emChooseType.NONE);
             }
             /**
              * 视图-报表查看-对话框，需要与上保持同步
@@ -419,7 +419,7 @@ namespace reportanalysis {
                     }
                     this.application.viewShower.messages(caller);
                 }
-                protected viewContent: ReportViewContent = new ReportViewContent(this);
+                protected viewContent: ReportViewContent = new ReportViewContent(this, ibas.emChooseType.MULTIPLE);
             }
             /**
              * 视图-报表查看-对话框，需要与上保持同步
@@ -474,10 +474,19 @@ namespace reportanalysis {
                 selectedDataTable(): ibas.DataTable {
                     if (this.viewContainer instanceof sap.m.Dialog) {
                         for (let item of this.viewContainer.getContent()) {
-                            if (item instanceof sap.ui.table.Table) {
-                                let indices: number[] = item.getSelectedIndices();
-                                if ((indices instanceof Array) && indices.length > 0) {
-                                    return this.viewData.clone(indices);
+                            if (item instanceof sap.extension.table.Table) {
+                                let model: any = item.getModel()?.getData("rows");
+                                if (model instanceof Array) {
+                                    let indices: number[] = [];
+                                    for (let selected of item.getSelecteds()) {
+                                        let index: number = model.indexOf(selected);
+                                        if (index >= 0) {
+                                            indices.push(index);
+                                        }
+                                    }
+                                    if (indices.length > 0) {
+                                        return this.viewData.clone(indices);
+                                    }
                                 }
                             }
                         }

@@ -26,7 +26,62 @@ namespace reportanalysis {
                 }
                 protected createTable(table: ibas.DataTable): sap.ui.core.Control {
                     let template: sap.m.ObjectListItem;
+                    let items: sap.ui.core.Item[] = [];
+                    for (let i: number = 0; i < table.columns.length; i++) {
+                        let col: ibas.DataTableColumn = table.columns[i];
+                        items.push(new sap.extension.m.SelectItem("", {
+                            key: i,
+                            text: ibas.strings.isEmpty(col.description) ? col.name : col.description,
+                            default:
+                                table.columns.length > 1 ? i === 1 :
+                                    table.columns.length > 0 ? i === 0 : false
+                        }));
+                    }
                     let tableResult: sap.extension.m.List = new sap.extension.m.List("", {
+                        chooseType: this.chooseType,
+                        growingThreshold: table.rows.length > 20 ? table.rows.length : 20,
+                        headerToolbar: new sap.m.Toolbar("", {
+                            content: [
+                                new sap.m.SearchField("", {
+                                    width: "60%",
+                                    search(event: sap.ui.base.Event): void {
+                                        let source: any = event.getSource();
+                                        if (source instanceof sap.m.SearchField) {
+                                            let parent: any = source.getParent();
+                                            if (parent instanceof sap.m.Toolbar) {
+                                                let select: any = parent.getContent()[1];
+                                                if (select instanceof sap.m.Select) {
+                                                    let search: string = source.getValue();
+                                                    let property: number = select.indexOfItem(select.getSelectedItem());
+                                                    for (let item of tableResult.getItems()) {
+                                                        let visible: boolean = true;
+                                                        if (property >= 0 && !ibas.strings.isEmpty(search)) {
+                                                            if (item instanceof sap.m.ObjectListItem) {
+                                                                let attribute: any = item.getAttributes()[property];
+                                                                if (attribute instanceof sap.m.ObjectAttribute) {
+                                                                    if (ibas.strings.isEmpty(attribute.getText())) {
+                                                                        visible = false;
+                                                                    } else {
+                                                                        if (attribute.getText().indexOf(search) < 0) {
+                                                                            visible = false;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        item.setVisible(visible);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }),
+                                new sap.extension.m.Select("", {
+                                    width: "40%",
+                                    items: items,
+                                }).addStyleClass("sapUiTinyMarginEnd"),
+                            ]
+                        }),
                         items: {
                             path: "/rows",
                             template: template = new sap.m.ObjectListItem("", {

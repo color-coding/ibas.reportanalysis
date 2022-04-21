@@ -19,7 +19,7 @@ namespace reportanalysis {
                     }
                     return page;
                 }
-                protected viewContent: ReportViewContent = new ReportViewContent(this);
+                protected viewContent: ReportViewContent = new ReportViewContent(this, ibas.emChooseType.MULTIPLE);
             }
         }
     }

@@ -24,10 +24,12 @@ namespace reportanalysis {
                 messages(caller: ibas.IMessgesCaller): void;
             }
             export class ReportViewContent {
-                constructor(parent: IReportViewView) {
+                constructor(parent: IReportViewView, chooseType: ibas.emChooseType) {
                     this.parent = parent;
+                    this.chooseType = chooseType ? chooseType : ibas.emChooseType.NONE;
                 }
                 private valuesMap: Map<bo.UserReportParameter, string>;
+                protected chooseType: ibas.emChooseType;
                 protected parent: IReportViewView;
                 /** 显示报表 */
                 showReport(report: bo.UserReport): void {
@@ -326,6 +328,7 @@ namespace reportanalysis {
                 protected createTable(table: ibas.DataTable): sap.ui.core.Control {
                     let tableResult: sap.ui.table.Table = new sap.extension.table.Table("", {
                         enableSelectAll: true,
+                        chooseType: this.chooseType,
                         selectionBehavior: sap.ui.table.SelectionBehavior.Row,
                         visibleRowCount: ibas.config.get(openui5.utils.CONFIG_ITEM_LIST_TABLE_VISIBLE_ROW_COUNT, 15),
                         visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive,
