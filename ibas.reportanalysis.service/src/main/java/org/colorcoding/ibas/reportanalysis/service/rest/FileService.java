@@ -1,6 +1,5 @@
 package org.colorcoding.ibas.reportanalysis.service.rest;
 
-import java.io.File;
 import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
@@ -21,21 +20,17 @@ import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.data.FileData;
 import org.colorcoding.ibas.bobas.repository.FileRepository;
+import org.colorcoding.ibas.bobas.repository.FileRepositoryReadonly;
 import org.colorcoding.ibas.bobas.repository.jersey.FileRepositoryService;
 import org.colorcoding.ibas.reportanalysis.MyConfiguration;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 @Path("file")
 public class FileService extends FileRepositoryService {
-	/**
-	 * 工作目录
-	 */
-	public final static String WORK_FOLDER = MyConfiguration.getConfigValue(MyConfiguration.CONFIG_ITEM_DOCUMENT_FOLDER,
-			MyConfiguration.getDataFolder() + File.separator + "reportanalysis_files");
 
 	public FileService() {
 		// 设置工作目录，资源目录下的报表目录
-		this.getRepository().setRepositoryFolder(FileService.WORK_FOLDER);
+		this.getRepository().setRepositoryFolder(MyConfiguration.getDocumetsFolder());
 	}
 
 	@POST
@@ -53,6 +48,15 @@ public class FileService extends FileRepositoryService {
 	public void download(Criteria criteria, @QueryParam("token") String token, @Context HttpServletResponse response) {
 		try {
 			// 获取文件
+			if (criteria != null) {
+				for (ICondition item : criteria.getConditions()) {
+					if (item.getAlias().equalsIgnoreCase(FileRepositoryReadonly.CRITERIA_CONDITION_ALIAS_FILE_NAME)) {
+						if (item.getValue() != null && item.getValue().startsWith("file://")) {
+							item.setValue(item.getValue().substring(7));
+						}
+					}
+				}
+			}
 			IOperationResult<FileData> operationResult = this.fetch(criteria, token);
 			if (operationResult.getError() != null) {
 				throw operationResult.getError();
@@ -88,6 +92,9 @@ public class FileService extends FileRepositoryService {
 			ICondition condition = criteria.getConditions().create();
 			condition.setAlias(FileRepository.CRITERIA_CONDITION_ALIAS_FILE_NAME);
 			condition.setValue(resource);
+			if (condition.getValue() != null && condition.getValue().startsWith("file://")) {
+				condition.setValue(condition.getValue().substring(7));
+			}
 			// 获取文件
 			IOperationResult<FileData> operationResult = this.fetch(criteria, token);
 			if (operationResult.getError() != null) {

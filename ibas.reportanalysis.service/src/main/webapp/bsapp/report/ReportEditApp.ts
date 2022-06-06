@@ -351,7 +351,7 @@ namespace reportanalysis {
                             }
                             let fileData: ibas.FileData = opRslt.resultObjects.firstOrDefault();
                             if (!ibas.objects.isNull(fileData)) {
-                                that.editData.address = fileData.fileName;
+                                that.editData.address = ibas.strings.format("file://{0}", fileData.fileName);
                                 if (ibas.strings.isEmpty(that.editData.name)) {
                                     that.editData.name = decodeURI((<any>data.get("file"))?.name);
                                 }

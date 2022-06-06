@@ -26,7 +26,7 @@ namespace reportanalysis {
             export class ReportViewContent {
                 constructor(parent: IReportViewView, chooseType: ibas.emChooseType) {
                     this.parent = parent;
-                    this.chooseType = chooseType ? chooseType : ibas.emChooseType.NONE;
+                    this.chooseType = chooseType ? chooseType : ibas.emChooseType.SINGLE;
                 }
                 private valuesMap: Map<bo.UserReportParameter, string>;
                 protected chooseType: ibas.emChooseType;
@@ -49,14 +49,32 @@ namespace reportanalysis {
                     let form: sap.ui.layout.form.SimpleForm = new sap.ui.layout.form.SimpleForm("", {
                         editable: true,
                         content: [
-                        ]
+                        ],
+                        layoutData: new sap.m.FlexItemData("", {
+                            baseSize: "100%",
+                            growFactor: 1
+                        })
                     });
-                    form.addContent(new sap.m.Title("", {
+                    let title: sap.m.Title = new sap.m.Title("", {
                         level: sap.ui.core.TitleLevel.H3,
                         titleStyle: sap.ui.core.TitleLevel.H3,
                         textAlign: sap.ui.core.TextAlign.Center,
                         text: ibas.i18n.prop("reportanalysis_running_parameters"),
-                    }));
+                    });
+                    if (ibas.config.get(ibas.CONFIG_ITEM_PLANTFORM) !== ibas.emPlantform.PHONE) {
+                        // pc端
+                        if (this.parent.viewContainer instanceof sap.m.Page) {
+                            // 正常页面
+                            form.setLayoutData(new sap.m.FlexItemData("", {
+                                baseSize: "65%",
+                                growFactor: 0.65
+                            }));
+                            form.setWidth("75%");
+                            title.setWidth("70%");
+                            title.setTextAlign(sap.ui.core.TextAlign.End);
+                        }
+                    }
+                    form.addContent(title);
                     for (let item of report.parameters) {
                         if (item.category === bo.emReportParameterType.PRESET) {
                             // 预设的不显示
@@ -251,8 +269,10 @@ namespace reportanalysis {
                         ibas.emMessageType.INFORMATION,
                         ibas.i18n.prop("reportanalysis_running_report", url),
                     );
-                    let boRepository: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
-                    url = boRepository.toUrl(url);
+                    if (!ibas.strings.isWith(url, "http://", undefined, true) && !ibas.strings.isWith(url, "https://", undefined, true)) {
+                        let boRepository: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
+                        url = boRepository.toUrl(url);
+                    }
                     let html: ibas.StringBuilder = new ibas.StringBuilder();
                     if (ibas.strings.isWith(url, undefined, ".swf")) {
                         html.append("<embed");
@@ -329,7 +349,7 @@ namespace reportanalysis {
                     let tableResult: sap.ui.table.Table = new sap.extension.table.Table("", {
                         enableSelectAll: true,
                         chooseType: this.chooseType,
-                        selectionBehavior: sap.ui.table.SelectionBehavior.Row,
+                        selectionBehavior: sap.ui.table.SelectionBehavior.RowOnly,
                         visibleRowCount: ibas.config.get(openui5.utils.CONFIG_ITEM_LIST_TABLE_VISIBLE_ROW_COUNT, 15),
                         visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive,
                         rows: "{/rows}",

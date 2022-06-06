@@ -25,7 +25,7 @@
     <Property Name="BOCode" Description="关联的业务对象" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="BOCode"/>
     <Property Name="ApplicationId" Description="关联的应用" DataType="Alphanumeric" DataSubType="Default" EditSize="36" Mapped="AppId"/>
     <Property Name="AssociatedReport" Description="关联的报表" DataType="Numeric" DataSubType="Default" EditSize="8" Mapped="Associated"/>
-    <Property Name="SqlString" Description="查询语句" DataType="Memo" DataSubType="Default" EditSize="1" Mapped="SqlString"/>
+    <Property Name="SqlString" Description="查询语句" DataType="Memo" DataSubType="Default" EditSize="8" Mapped="SqlString"/>
     <Property Name="Server" Description="服务器名称" DataType="Alphanumeric" DataSubType="Default" EditSize="200" Mapped="Server"/>
     <Property Name="User" Description="用户名" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="User"/>
     <Property Name="Password" Description="密码" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="Password"/>
@@ -49,7 +49,7 @@
     <Property Name="Name" Description="参数名称" DataType="Alphanumeric" DataSubType="Default" EditSize="30" Mapped="Name"/>
     <Property Name="Category" Description="参数类型" DataType="Alphanumeric" DataSubType="Default" EditSize="5" DeclaredType="emReportParameterType" Mapped="Category"/>
     <Property Name="Description" Description="参数说明" DataType="Alphanumeric" DataSubType="Default" EditSize="100" Mapped="Description"/>
-    <Property Name="Value" Description="参数值" DataType="Alphanumeric" DataSubType="Default" EditSize="200" Mapped="Value"/>
+    <Property Name="Value" Description="参数值" DataType="Memo" DataSubType="Default" EditSize="8" Mapped="Value"/>
   </Model>
   <BusinessObject MappedModel="Report" ShortName="${Company}_RA_REPORT">
     <RelatedBO Relation="OneToMany" MappedModel="ReportParameter"/>

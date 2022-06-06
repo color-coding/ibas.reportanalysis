@@ -280,22 +280,63 @@ namespace reportanalysis {
                                             return false;
                                         }
                                     }),
-                                    new sap.m.Button("", {
-                                        icon: "sap-icon://upload-to-cloud",
+                                    new sap.m.MenuButton("", {
+                                        icon: "sap-icon://attachment",
                                         width: "auto",
-                                        press: function (): void {
+                                        type: sap.m.ButtonType.Transparent,
+                                        menu: new sap.m.Menu("", {
+                                            items: [
+                                                new sap.m.MenuItem("", {
+                                                    text: "Excel",
+                                                    icon: "sap-icon://excel-attachment",
+                                                    press: function (): void {
+                                                        ibas.files.open((files) => {
+                                                            if (files.length > 0) {
+                                                                let fileData: FormData = new FormData();
+                                                                fileData.append("file", files[0], encodeURI(files[0].name));
+                                                                that.fireViewEvents(that.uploadReportEvent, fileData);
+                                                            }
+                                                        }, {
+                                                            multiple: false,
+                                                            accept: "text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                                        });
+                                                    }
+                                                }),
+                                                new sap.m.MenuItem("", {
+                                                    text: "Report",
+                                                    icon: "sap-icon://business-objects-experience",
+                                                    press: function (): void {
+                                                        ibas.files.open((files) => {
+                                                            if (files.length > 0) {
+                                                                let fileData: FormData = new FormData();
+                                                                fileData.append("file", files[0], encodeURI(files[0].name));
+                                                                that.fireViewEvents(that.uploadReportEvent, fileData);
+                                                            }
+                                                        }, {
+                                                            multiple: false,
+                                                            accept: "application/x-shockwave-flash,application/x-rpt"
+                                                        });
+                                                    }
+                                                }),
+                                            ],
+                                        }),
+                                        buttonMode: sap.m.MenuButtonMode.Split,
+                                        useDefaultActionOnly: true,
+                                        defaultAction: function (): void {
                                             ibas.files.open((files) => {
                                                 if (files.length > 0) {
                                                     let fileData: FormData = new FormData();
                                                     fileData.append("file", files[0], encodeURI(files[0].name));
                                                     that.fireViewEvents(that.uploadReportEvent, fileData);
                                                 }
-                                            }, { accept: "application/x-shockwave-flash,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+                                            }, { multiple: false });
                                         }
                                     }).addStyleClass("sapUiTinyMarginBegin").bindProperty("visible", {
                                         path: "category",
                                         formatter(data: bo.emReportType): any {
                                             if (data === bo.emReportType.FILE) {
+                                                return true;
+                                            } else if (data === bo.emReportType.THIRD_APP) {
                                                 return true;
                                             }
                                             return false;
@@ -403,9 +444,7 @@ namespace reportanalysis {
                                             }
                                         }).bindProperty("bindingValue", {
                                             path: "value",
-                                            type: new sap.extension.data.Alphanumeric({
-                                                maxLength: 200
-                                            })
+                                            type: new sap.extension.data.Alphanumeric()
                                         }),
                                         width: "20rem",
                                     }),

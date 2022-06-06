@@ -1,5 +1,6 @@
 package org.colorcoding.ibas.reportanalysis.reporter;
 
+import java.io.File;
 import java.util.Properties;
 
 import org.colorcoding.ibas.bobas.common.IOperationResult;
@@ -23,6 +24,9 @@ public class ThirdAppReporter extends Reporter {
 	public static final String PARAMETER_NAME_APPLICATION = String.format(MyConfiguration.VARIABLE_NAMING_TEMPLATE,
 			Report.PROPERTY_THIRDPARTYAPP.getName());
 	public static final String PARAM_NAME_REPORT = "Report";
+	public static final String PARAM_NAME_REPORT_NAME = "ReportName";
+	public static final String PARAM_NAME_REPORT_FILE = "ReportFile";
+	public static final String URL_HEAD_FILE = "file://";
 
 	public String getAddress() throws ReporterException {
 		return this.getParameterValue(PARAMETER_NAME_ADDRESS);
@@ -45,6 +49,11 @@ public class ThirdAppReporter extends Reporter {
 		try {
 			Properties params = new Properties();
 			params.put(PARAM_NAME_REPORT, this.getAddress());
+			if (this.getAddress() != null && this.getAddress().startsWith(URL_HEAD_FILE)) {
+				params.put(PARAM_NAME_REPORT_FILE, new File(MyConfiguration.getDocumetsFolder(),
+						this.getAddress().substring(URL_HEAD_FILE.length())).getPath());
+			}
+			params.put(PARAM_NAME_REPORT_NAME, this.getReport().getName());
 			for (ExecuteReportParameter item : this.getReport().getParameters()) {
 				if (item.getName() == null) {
 					continue;

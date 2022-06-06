@@ -1,5 +1,7 @@
 package org.colorcoding.ibas.reportanalysis;
 
+import java.io.File;
+
 import org.colorcoding.ibas.bobas.configuration.ConfigurationFactory;
 import org.colorcoding.ibas.bobas.configuration.IConfigurationManager;
 
@@ -64,4 +66,14 @@ public class MyConfiguration extends org.colorcoding.ibas.bobas.MyConfiguration 
 	 * 配置项目-报表工厂，多个时“;”分隔
 	 */
 	public final static String CONFIG_ITEM_REPORTER_FACTORIES = "ReporterFactories";
+
+	/**
+	 * 获取文档目录
+	 * 
+	 * @return
+	 */
+	public static String getDocumetsFolder() {
+		return MyConfiguration.getConfigValue(MyConfiguration.CONFIG_ITEM_DOCUMENT_FOLDER,
+				MyConfiguration.getDataFolder() + File.separator + "reportanalysis_files");
+	}
 }

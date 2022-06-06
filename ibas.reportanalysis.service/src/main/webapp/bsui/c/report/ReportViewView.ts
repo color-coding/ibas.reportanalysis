@@ -243,7 +243,7 @@ namespace reportanalysis {
                     }
                     this.application.viewShower.messages(caller);
                 }
-                protected viewContent: ReportViewContent = new ReportViewContent(this, ibas.emChooseType.NONE);
+                protected viewContent: ReportViewContent = new ReportViewContent(this, ibas.emChooseType.SINGLE);
             }
             /**
              * 视图-报表查看-页签，需要与上保持同步
@@ -349,7 +349,7 @@ namespace reportanalysis {
                     }
                     this.application.viewShower.messages(caller);
                 }
-                protected viewContent: ReportViewContent = new ReportViewContent(this, ibas.emChooseType.NONE);
+                protected viewContent: ReportViewContent = new ReportViewContent(this, ibas.emChooseType.SINGLE);
             }
             /**
              * 视图-报表查看-对话框，需要与上保持同步
