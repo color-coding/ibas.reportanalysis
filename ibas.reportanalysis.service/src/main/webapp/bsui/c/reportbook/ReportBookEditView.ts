@@ -199,7 +199,7 @@ namespace reportanalysis {
                                                 maxLength: 200
                                             })
                                         }),
-                                        width: "20rem",
+                                        width: "100%",
                                     }),
                                 ]
                             })

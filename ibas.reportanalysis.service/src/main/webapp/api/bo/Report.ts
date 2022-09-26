@@ -97,6 +97,9 @@ namespace reportanalysis {
             /** 第三方应用 */
             thirdPartyApp: string;
 
+            /** 备注 */
+            remarks: string;
+
             /** 报表参数集合 */
             reportParameters: IReportParameters;
 

@@ -404,6 +404,20 @@ public interface IReport extends IBOSimple {
 	void setThirdPartyApp(String value);
 
 	/**
+	 * 获取-备注
+	 * 
+	 * @return 值
+	 */
+	String getRemarks();
+
+	/**
+	 * 设置-备注
+	 * 
+	 * @param value 值
+	 */
+	void setRemarks(String value);
+
+	/**
 	 * 获取-报表参数集合
 	 * 
 	 * @return 值

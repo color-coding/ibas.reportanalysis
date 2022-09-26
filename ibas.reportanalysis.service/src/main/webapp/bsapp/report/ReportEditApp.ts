@@ -36,6 +36,7 @@ namespace reportanalysis {
                 this.view.chooseReportBusinessObjectEvent = this.chooseReportBusinessObject;
                 this.view.chooseReportThirdPartyAppEvent = this.chooseReportThirdPartyApp;
                 this.view.uploadReportEvent = this.uploadReport;
+                this.view.downloadReportEvent = this.downloadFile;
             }
             /** 视图显示后 */
             protected viewShowed(): void {
@@ -365,6 +366,38 @@ namespace reportanalysis {
                 });
                 this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("shell_uploading_file"));
             }
+            /** 下载文件 */
+            protected downloadFile(): void {
+                if (ibas.strings.isEmpty(this.editData.address)) {
+                    this.messages(ibas.emMessageType.WARNING, ibas.i18n.prop("reportanalysis_no_report_file"));
+                    return;
+                }
+                let criteria: ibas.ICriteria = new ibas.Criteria();
+                let condition: ibas.ICondition = criteria.conditions.create();
+                condition.alias = ibas.CRITERIA_CONDITION_ALIAS_FILE_NAME;
+                condition.value = this.editData.address;
+                this.busy(true);
+                let that: this = this;
+                let boRepository: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
+                boRepository.download({
+                    criteria: criteria,
+                    onCompleted(opRslt: ibas.IOperationResult<Blob>): void {
+                        try {
+                            that.busy(false);
+                            if (opRslt.resultCode !== 0) {
+                                throw new Error(opRslt.message);
+                            }
+                            let data: Blob = opRslt.resultObjects.firstOrDefault();
+                            if (!ibas.objects.isNull(data)) {
+                                ibas.files.save(data, that.editData.name);
+                            }
+                        } catch (error) {
+                            that.messages(error);
+                        }
+                    }
+                });
+                this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("shell_downloading_file"));
+            }
         }
         /** 视图-报表 */
         export interface IReportEditView extends ibas.IBOEditView {
@@ -390,6 +423,8 @@ namespace reportanalysis {
             chooseReportParameterVariableEvent: Function;
             /** 上传报表文件 */
             uploadReportEvent: Function;
+            /** 下载报表文件 */
+            downloadReportEvent: Function;
         }
     }
 }

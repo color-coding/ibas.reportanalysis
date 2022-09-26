@@ -67,13 +67,22 @@ namespace reportanalysis {
                                 }),
                             }),
                             new sap.extension.table.DataColumn("", {
-                                label: ibas.i18n.prop("bo_bocriteria_assigned"),
+                                label: ibas.i18n.prop("bo_reportbook_assigned"),
                                 template: new component.UserOrRoleText("", {
                                     typeProperty: "assignedType"
                                 }).bindProperty("bindingValue", {
                                     path: "assigned",
                                     type: new sap.extension.data.Alphanumeric()
                                 }),
+                            }),
+                            new sap.extension.table.DataColumn("", {
+                                label: ibas.i18n.prop("bo_reportbook_remarks"),
+                                template: new sap.extension.m.Text("", {
+                                }).bindProperty("bindingValue", {
+                                    path: "remarks",
+                                    type: new sap.extension.data.Alphanumeric(),
+                                }),
+                                width: "24rem",
                             }),
                         ],
                         nextDataSet(event: sap.ui.base.Event): void {

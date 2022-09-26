@@ -21,6 +21,7 @@ namespace reportanalysis {
                     this.dialog = super.draw();
                     if (this.dialog instanceof sap.m.Dialog) {
                         this.dialog.destroyButtons();
+                        this.dialog.destroySubHeader();
                         this.dialog.addButton(new sap.m.Button("", {
                             text: ibas.i18n.prop("shell_exit"),
                             type: sap.m.ButtonType.Transparent,

@@ -114,6 +114,10 @@ namespace reportanalysis {
             protected report: bo.UserReport;
             private selectReport(report: bo.UserReport): void {
                 this.view.showReport(this.report = report);
+                if (this.report.parameters.firstOrDefault(c => ibas.strings.isEmpty(c.value)) === null) {
+                    // 没有需要输入值的参数，则直接运行
+                    this.runReport();
+                }
             }
             private resetReport(): void {
                 this.view.showReport(this.report);

@@ -100,6 +100,7 @@ namespace reportanalysis {
                         showFooter: false,
                         footer: new sap.m.Toolbar("", {
                             content: [
+                                /*
                                 new sap.m.MenuButton("", {
                                     text: ibas.i18n.prop("shell_data_choose"),
                                     icon: "sap-icon://bullet-text",
@@ -155,6 +156,7 @@ namespace reportanalysis {
                                         ],
                                     })
                                 }),
+                                */
                                 new sap.m.ToolbarSpacer(""),
                                 new sap.m.ToolbarSeparator(""),
                                 new sap.m.Label("", {

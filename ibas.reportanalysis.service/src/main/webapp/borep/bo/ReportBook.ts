@@ -235,6 +235,17 @@ namespace reportanalysis {
                 this.setProperty(ReportBook.PROPERTY_ACTIVATED_NAME, value);
             }
 
+            /** 映射的属性名称-备注 */
+            static PROPERTY_REMARKS_NAME: string = "Remarks";
+            /** 获取-备注 */
+            get remarks(): string {
+                return this.getProperty<string>(ReportBook.PROPERTY_REMARKS_NAME);
+            }
+            /** 设置-备注 */
+            set remarks(value: string) {
+                this.setProperty(ReportBook.PROPERTY_REMARKS_NAME, value);
+            }
+
 
             /** 映射的属性名称-报表簿-项目集合 */
             static PROPERTY_REPORTBOOKITEMS_NAME: string = "ReportBookItems";

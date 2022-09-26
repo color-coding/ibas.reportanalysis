@@ -675,6 +675,37 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 	}
 
 	/**
+	 * 属性名称-备注
+	 */
+	private static final String PROPERTY_REMARKS_NAME = "Remarks";
+
+	/**
+	 * 备注 属性
+	 */
+	@DbField(name = "Remarks", type = DbFieldType.MEMO, table = DB_TABLE_NAME, primaryKey = false)
+	public static final IPropertyInfo<String> PROPERTY_REMARKS = registerProperty(PROPERTY_REMARKS_NAME, String.class,
+			MY_CLASS);
+
+	/**
+	 * 获取-备注
+	 * 
+	 * @return 值
+	 */
+	@XmlElement(name = PROPERTY_REMARKS_NAME)
+	public final String getRemarks() {
+		return this.getProperty(PROPERTY_REMARKS);
+	}
+
+	/**
+	 * 设置-备注
+	 * 
+	 * @param value 值
+	 */
+	public final void setRemarks(String value) {
+		this.setProperty(PROPERTY_REMARKS, value);
+	}
+
+	/**
 	 * 属性名称-报表簿-项目
 	 */
 	private static final String PROPERTY_REPORTBOOKITEMS_NAME = "ReportBookItems";

@@ -334,6 +334,17 @@ namespace reportanalysis {
                 this.setProperty(Report.PROPERTY_THIRDPARTYAPP_NAME, value);
             }
 
+            /** 映射的属性名称-备注 */
+            static PROPERTY_REMARKS_NAME: string = "Remarks";
+            /** 获取-备注 */
+            get remarks(): string {
+                return this.getProperty<string>(Report.PROPERTY_REMARKS_NAME);
+            }
+            /** 设置-备注 */
+            set remarks(value: string) {
+                this.setProperty(Report.PROPERTY_REMARKS_NAME, value);
+            }
+
 
             /** 映射的属性名称-报表参数集合 */
             static PROPERTY_REPORTPARAMETERS_NAME: string = "ReportParameters";

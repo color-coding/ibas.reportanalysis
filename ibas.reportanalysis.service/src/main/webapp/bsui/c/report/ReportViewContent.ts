@@ -361,7 +361,7 @@ namespace reportanalysis {
                         if (ibas.strings.isEmpty(description)) {
                             description = col.name;
                         }
-                        if (description.indexOf("#{") > 0 && description.endsWith("}")) {
+                        if (typeof description === "string" && description.indexOf("#{") > 0 && description.endsWith("}")) {
                             let value: string = description.substring(description.indexOf("#{"));
                             info.objectCode = value.substring(2, value.length - 1);
                             description = description.substring(0, description.indexOf("#{"));
@@ -384,7 +384,13 @@ namespace reportanalysis {
                                         type: new sap.extension.data.Date()
                                     }).bindProperty("tooltip", {
                                         path: index.toString(),
-                                        type: new sap.extension.data.Date()
+                                        type: new sap.extension.data.Date(),
+                                        formatter(data: any): string {
+                                            if (typeof data === "string") {
+                                                return data;
+                                            }
+                                            return ibas.strings.valueOf(data);
+                                        }
                                     })
                                 })
                             );
@@ -404,10 +410,26 @@ namespace reportanalysis {
                                         objectCode: info.objectCode,
                                     }).bindProperty("bindingValue", {
                                         path: index.toString(),
-                                        type: new sap.extension.data.Alphanumeric()
+                                        type: new sap.extension.data.Alphanumeric(),
+                                        formatter: function (value: string): string {
+                                            if (!ibas.strings.isEmpty(value) && typeof value === "string") {
+                                                if (value.indexOf("#{") > 0 && value.endsWith("}")) {
+                                                    let data: string = value.substring(value.indexOf("#{"));
+                                                    this.setObjectCode(data.substring(2, data.length - 1));
+                                                    return value.substring(0, value.indexOf("#{"));
+                                                }
+                                            }
+                                            return value;
+                                        }
                                     }).bindProperty("tooltip", {
                                         path: index.toString(),
-                                        type: new sap.extension.data.Alphanumeric()
+                                        type: new sap.extension.data.Alphanumeric(),
+                                        formatter(data: any): string {
+                                            if (typeof data === "string") {
+                                                return data;
+                                            }
+                                            return ibas.strings.valueOf(data);
+                                        }
                                     })
                                 })
                             );
@@ -517,7 +539,13 @@ namespace reportanalysis {
                                         type: new sap.extension.data.Alphanumeric()
                                     }).bindProperty("tooltip", {
                                         path: index.toString(),
-                                        type: new sap.extension.data.Alphanumeric()
+                                        type: new sap.extension.data.Alphanumeric(),
+                                        formatter(data: any): string {
+                                            if (typeof data === "string") {
+                                                return data;
+                                            }
+                                            return ibas.strings.valueOf(data);
+                                        }
                                     })
                                 })
                             );

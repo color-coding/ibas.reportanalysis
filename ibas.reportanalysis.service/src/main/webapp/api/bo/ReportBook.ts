@@ -71,6 +71,9 @@ namespace reportanalysis {
             /** 激活 */
             activated: ibas.emYesNo;
 
+            /** 备注 */
+            remarks: string;
+
 
             /** 报表簿-项目集合 */
             reportBookItems: IReportBookItems;

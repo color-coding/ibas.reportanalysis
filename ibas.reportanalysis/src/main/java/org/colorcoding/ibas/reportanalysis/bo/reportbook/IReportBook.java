@@ -21,8 +21,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-对象编号
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setObjectKey(Integer value);
 
@@ -36,8 +35,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-对象类型
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setObjectCode(String value);
 
@@ -51,8 +49,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-实例号
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setLogInst(Integer value);
 
@@ -66,8 +63,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-服务系列
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setSeries(Integer value);
 
@@ -81,8 +77,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-数据源
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setDataSource(String value);
 
@@ -96,8 +91,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-创建日期
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setCreateDate(DateTime value);
 
@@ -111,8 +105,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-创建时间
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setCreateTime(Short value);
 
@@ -126,8 +119,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-更新日期
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setUpdateDate(DateTime value);
 
@@ -141,8 +133,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-更新时间
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setUpdateTime(Short value);
 
@@ -156,8 +147,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-创建用户
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setCreateUserSign(Integer value);
 
@@ -171,8 +161,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-更新用户
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setUpdateUserSign(Integer value);
 
@@ -186,8 +175,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-创建动作标识
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setCreateActionId(String value);
 
@@ -201,8 +189,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-更新动作标识
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setUpdateActionId(String value);
 
@@ -216,8 +203,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-数据所有者
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setDataOwner(Integer value);
 
@@ -231,8 +217,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-团队成员
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setTeamMembers(String value);
 
@@ -246,8 +231,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-数据所属组织
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setOrganization(String value);
 
@@ -261,8 +245,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-指派类型
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setAssignedType(emAssignedType value);
 
@@ -276,8 +259,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-指派目标
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setAssigned(String value);
 
@@ -291,8 +273,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-报表名称
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setName(String value);
 
@@ -306,10 +287,23 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-激活
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setActivated(emYesNo value);
+
+	/**
+	 * 获取-备注
+	 * 
+	 * @return 值
+	 */
+	String getRemarks();
+
+	/**
+	 * 设置-备注
+	 * 
+	 * @param value 值
+	 */
+	void setRemarks(String value);
 
 	/**
 	 * 获取-报表簿-项目集合
@@ -321,8 +315,7 @@ public interface IReportBook extends IBOSimple {
 	/**
 	 * 设置-报表簿-项目集合
 	 * 
-	 * @param value
-	 *            值
+	 * @param value 值
 	 */
 	void setReportBookItems(IReportBookItems value);
 

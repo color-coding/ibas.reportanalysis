@@ -92,6 +92,14 @@ namespace reportanalysis {
                                                     that.multiCombobox.destroyItems();
                                                 }
                                             }),
+                                            new sap.m.MenuItem("", {
+                                                text: ibas.i18n.prop("reportanalysisusers_refresh_3rdparty"),
+                                                icon: that.getIcon(bo.emReportType.THIRD_APP),
+                                                press: function (): void {
+                                                    that.fireViewEvents(that.refreshReportsEvent, bo.emReportType.THIRD_APP);
+                                                    that.multiCombobox.destroyItems();
+                                                }
+                                            }),
                                         ],
                                     })
                                 }),
@@ -162,6 +170,8 @@ namespace reportanalysis {
                         return "sap-icon://bbyd-dashboard";
                     } else if (type === bo.emReportType.SERVICE) {
                         return "sap-icon://kpi-corporate-performance";
+                    } else if (type === bo.emReportType.THIRD_APP) {
+                        return "sap-icon://puzzle";
                     }
                     return "sap-icon://pie-chart";
                 }
