@@ -17,7 +17,7 @@
         "bo_report_teammembers": "团队成员",
         "bo_report_organization": "数据所属组织",
         "bo_report_name": "报表名称",
-        "bo_report_activated": "是否启用",
+        "bo_report_activated": "激活",
         "bo_report_category": "报表类型",
         "bo_report_group": "报表组别",
         "bo_report_bocode": "关联的业务对象",
