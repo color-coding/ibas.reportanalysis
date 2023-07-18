@@ -16,6 +16,12 @@ namespace reportanalysis {
                 runReportEvent: Function;
                 /** 重置报表 */
                 resetReportEvent: Function;
+                /** 值链接事件 */
+                valueLinkEvent: Function;
+                /** 触发事件 */
+                fireValueLink(objectCode: string, value: string, row?: any): void {
+                    this.fireViewEvents(this.valueLinkEvent, objectCode, value, row);
+                }
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;
@@ -232,9 +238,19 @@ namespace reportanalysis {
                     this.viewContent.showReport(report);
                 }
                 viewData: ibas.DataTable;
+                private countText: sap.extension.m.Text;
                 /** 显示报表结果 */
                 showResults(table: ibas.DataTable): void {
                     this.viewContent.showResults(this.viewData = table);
+                    let toolBar: any = this.viewContainer.getFooter();
+                    if (toolBar instanceof sap.m.Toolbar) {
+                        if (ibas.objects.isNull(this.countText)) {
+                            this.countText = new sap.extension.m.Text("", {
+                            });
+                            toolBar.insertContent(this.countText, 0);
+                        }
+                        this.countText.setText(ibas.i18n.prop("reportanalysis_ui_count", table.rows.length));
+                    }
                 }
                 proceeding(type: ibas.emMessageType, msg: string): void {
                     this.application.viewShower.proceeding(this, type, msg);
@@ -255,6 +271,12 @@ namespace reportanalysis {
                 runReportEvent: Function;
                 /** 重置报表 */
                 resetReportEvent: Function;
+                /** 值链接事件 */
+                valueLinkEvent: Function;
+                /** 触发事件 */
+                fireValueLink(objectCode: string, value: string, row?: any): void {
+                    this.fireViewEvents(this.valueLinkEvent, objectCode, value, row);
+                }
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;
@@ -361,6 +383,12 @@ namespace reportanalysis {
                 runReportEvent: Function;
                 /** 重置报表 */
                 resetReportEvent: Function;
+                /** 值链接事件 */
+                valueLinkEvent: Function;
+                /** 触发事件 */
+                fireValueLink(objectCode: string, value: string, row?: any): void {
+                    this.fireViewEvents(this.valueLinkEvent, objectCode, value, row);
+                }
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;

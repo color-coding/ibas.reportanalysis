@@ -8,6 +8,7 @@
 namespace reportanalysis {
     export namespace ui {
         export namespace c {
+            const BO_CODE_REPORT: string = ibas.config.applyVariables(bo.BO_CODE_REPORT);
             /** 配置项目-全屏模式 */
             export const CONFIG_ITEM_FULL_SCREEN: string = "fullScreen";
             /** 参数，地址 */
@@ -22,6 +23,8 @@ namespace reportanalysis {
                 proceeding(type: ibas.emMessageType, msg: string): void;
                 /** 对话消息 */
                 messages(caller: ibas.IMessgesCaller): void;
+                /** 触发值连接 */
+                fireValueLink(objectCode: string, value: string, row?: any): void;
             }
             export class ReportViewContent {
                 constructor(parent: IReportViewView, chooseType: ibas.emChooseType) {
@@ -262,7 +265,6 @@ namespace reportanalysis {
                         }
                     }
                     this.parent.viewContainer.addContent(this.createTable(table));
-
                 }
                 protected createHTML(url: string): sap.ui.core.HTML {
                     this.parent.proceeding(
@@ -346,6 +348,7 @@ namespace reportanalysis {
                     });
                 }
                 protected createTable(table: ibas.DataTable): sap.ui.core.Control {
+                    let that: this = this;
                     let tableResult: sap.ui.table.Table = new sap.extension.table.Table("", {
                         enableSelectAll: true,
                         chooseType: this.chooseType,
@@ -353,205 +356,208 @@ namespace reportanalysis {
                         visibleRowCount: ibas.config.get(openui5.utils.CONFIG_ITEM_LIST_TABLE_VISIBLE_ROW_COUNT, 15),
                         visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive,
                         rows: "{/rows}",
+                        columns: [
+                            new sap.ui.table.Column("", {
+                                label: "#",
+                                autoResizable: true,
+                                template: new sap.extension.m.Text("", {
+                                }).bindProperty("bindingValue", {
+                                    path: "#",
+                                })
+                            })
+                        ]
                     });
                     for (let index: number = 0; index < table.columns.length; index++) {
                         let col: ibas.DataTableColumn = table.columns[index];
-                        let info: { objectCode?: string } = {};
-                        let description: string = col.description;
-                        if (ibas.strings.isEmpty(description)) {
-                            description = col.name;
-                        }
-                        if (typeof description === "string" && description.indexOf("#{") > 0 && description.endsWith("}")) {
-                            let value: string = description.substring(description.indexOf("#{"));
-                            info.objectCode = value.substring(2, value.length - 1);
-                            description = description.substring(0, description.indexOf("#{"));
-                        }
-                        if (!ibas.strings.isEmpty(col.description)) {
-                            col.description = description;
-                        } else {
-                            col.name = description;
+                        let infoCol: { path: string, objectCode?: string, description: string } = {
+                            path: index.toString(),
+                            description: ibas.strings.isEmpty(col.description) ? col.name : col.description,
+                        };
+                        if (typeof infoCol.description === "string" && infoCol.description.indexOf("#{") > 0 && infoCol.description.endsWith("}")) {
+                            let value: string = infoCol.description.substring(infoCol.description.indexOf("#{"));
+                            infoCol.objectCode = value.substring(2, value.length - 1);
+                            infoCol.description = infoCol.description.substring(0, infoCol.description.indexOf("#{"));
                         }
                         if (col.definedDataType() === ibas.emTableDataType.DATE) {
-                            tableResult.addColumn(
-                                new sap.ui.table.Column("", {
-                                    label: ibas.strings.isEmpty(col.description) ? col.name : col.description,
-                                    autoResizable: true,
-                                    sortProperty: index.toString(),
-                                    filterProperty: index.toString(),
-                                    template: new sap.extension.m.Text("", {
-                                    }).bindProperty("bindingValue", {
-                                        path: index.toString(),
-                                        type: new sap.extension.data.Date()
-                                    }).bindProperty("tooltip", {
-                                        path: index.toString(),
-                                        type: new sap.extension.data.Date(),
-                                        formatter(data: any): string {
-                                            if (typeof data === "string") {
-                                                return data;
-                                            }
-                                            return ibas.strings.valueOf(data);
-                                        }
-                                    })
+                            tableResult.addColumn(new sap.ui.table.Column("", {
+                                autoResizable: true,
+                                label: infoCol.description,
+                                sortProperty: infoCol.path,
+                                filterProperty: infoCol.path,
+                                template: new sap.extension.m.Text("", {
+                                }).bindProperty("bindingValue", {
+                                    path: infoCol.path,
+                                    type: new sap.extension.data.Date(),
                                 })
-                            );
-                        } else if (!ibas.objects.isNull(info) && !ibas.strings.isEmpty(info.objectCode)) {
-                            tableResult.addColumn(
-                                new sap.ui.table.Column("", {
-                                    label: ibas.strings.isEmpty(col.description) ? col.name : col.description,
-                                    multiLabels: [
-                                        new sap.m.Label("", {
-                                            text: ibas.strings.isEmpty(col.description) ? col.name : col.description
-                                        })
-                                    ],
-                                    autoResizable: true,
-                                    sortProperty: index.toString(),
-                                    filterProperty: index.toString(),
-                                    template: new sap.extension.m.DataLink("", {
-                                        objectCode: info.objectCode,
-                                    }).bindProperty("bindingValue", {
-                                        path: index.toString(),
-                                        type: new sap.extension.data.Alphanumeric(),
-                                        formatter: function (value: string): string {
-                                            if (!ibas.strings.isEmpty(value) && typeof value === "string") {
-                                                if (value.indexOf("#{") > 0 && value.endsWith("}")) {
-                                                    let data: string = value.substring(value.indexOf("#{"));
-                                                    this.setObjectCode(data.substring(2, data.length - 1));
-                                                    return value.substring(0, value.indexOf("#{"));
+                            }));
+                        } else if (!ibas.objects.isNull(infoCol.objectCode)) {
+                            // 对象有值，""认为是任意对象，具体从值中解析
+                            tableResult.addColumn(new sap.ui.table.Column("", {
+                                autoResizable: true,
+                                label: infoCol.description,
+                                sortProperty: infoCol.path,
+                                filterProperty: infoCol.path,
+                                template: new sap.extension.m.Link("", {
+                                    press(this: sap.extension.m.Link): void {
+                                        let objectCode: string = infoCol.objectCode;
+                                        if (ibas.strings.isEmpty(objectCode)) {
+                                            // 未指定对象，从原始值中获取
+                                            let value: string = this.getTooltip()?.toString();
+                                            if (typeof value === "string" && value.endsWith("}")) {
+                                                let index: number = value.indexOf("#{");
+                                                if (index > 0) {
+                                                    let data: string = value.substring(index);
+                                                    objectCode = data.substring(2, data.length - 1);
+                                                    value = value.substring(0, index);
                                                 }
                                             }
-                                            return value;
                                         }
-                                    }).bindProperty("tooltip", {
-                                        path: index.toString(),
-                                        type: new sap.extension.data.Alphanumeric(),
-                                        formatter(data: any): string {
-                                            if (typeof data === "string") {
-                                                return data;
+                                        if (!ibas.strings.isEmpty(objectCode)) {
+                                            let linkValue: string = this.getBindingValue();
+                                            if (objectCode.indexOf(".") > 0) {
+                                                linkValue = objectCode.substring(objectCode.indexOf(".") + 1);
+                                                objectCode = objectCode.substring(0, objectCode.indexOf("."));
                                             }
-                                            return ibas.strings.valueOf(data);
+                                            let data: any = this.getBindingContext().getObject();
+                                            let rowData: any = {};
+                                            for (let item in data) {
+                                                if (ibas.objects.isNull(item)) {
+                                                    continue;
+                                                }
+                                                let name: string = table.columns[item]?.name;
+                                                if (ibas.objects.isNull(name)) {
+                                                    continue;
+                                                }
+                                                rowData[name] = data[item];
+                                            }
+                                            that.parent.fireValueLink(objectCode, linkValue, rowData);
                                         }
-                                    })
+                                    }
+                                }).bindProperty("bindingValue", {
+                                    path: infoCol.path,
+                                    type: new sap.extension.data.Alphanumeric(),
+                                    formatter: function (value: string): string {
+                                        if (typeof value === "string" && value.endsWith("}") && value.indexOf("#{") > 0) {
+                                            this.setTooltip(value);
+                                            return value.substring(0, value.indexOf("#{"));
+                                        }
+                                        return value;
+                                    }
                                 })
-                            );
+                            }));
                         } else {
-                            tableResult.addColumn(
-                                new sap.ui.table.Column("", {
-                                    label: ibas.strings.isEmpty(col.description) ? col.name : col.description,
-                                    multiLabels: [
-                                        new sap.m.Label("", {
-                                            text: ibas.strings.isEmpty(col.description) ? col.name : col.description
-                                        })
-                                    ],
-                                    autoResizable: true,
-                                    sortProperty: index.toString(),
-                                    filterProperty: index.toString(),
-                                    columnMenuOpen(e: sap.ui.base.Event): boolean {
-                                        let column: sap.ui.table.Column = this;
-                                        let menu: sap.ui.unified.Menu = e.getParameter("menu");
-                                        if (!!menu) {
-                                            let totalItem: sap.ui.unified.MenuItemBase = null;
-                                            let hideTotalItem: sap.ui.unified.MenuItemBase = null;
-                                            for (let menuItem of menu.getItems()) {
-                                                if (ibas.strings.equals(menuItem.getId(), menu.getId() + "-total")) {
-                                                    totalItem = menuItem;
-                                                }
-                                                if (ibas.strings.equals(menuItem.getId(), menu.getId() + "-hideTotal")) {
-                                                    hideTotalItem = menuItem;
-                                                }
-                                            }
-                                            // 显示合计时,监听Binding的变化,变化后刷新合计值
-                                            let refreshBinding: Function = () => {
-                                                let total: number = 0;
-                                                let decimalPlaces: number = ibas.config.get(ibas.CONFIG_ITEM_DECIMAL_PLACES, 6);
-                                                let binding: sap.ui.model.Binding = tableResult.getBinding(undefined);
-                                                if (binding instanceof sap.ui.model.json.JSONListBinding) {
-                                                    for (let context of (<any>binding).getContexts()) {
-                                                        let data: any = context.getObject();
-                                                        total += ibas.numbers.valueOf(data[index.toString()]);
-                                                    }
-                                                }
-                                                let multiLabels: sap.ui.core.Control[] = column.getMultiLabels();
-                                                let totalLabel: sap.m.Label = null;
-                                                if (multiLabels.length > 1 && multiLabels[1] instanceof sap.m.Label) {
-                                                    totalLabel = <sap.m.Label>multiLabels[1];
-                                                    totalLabel.setText(ibas.i18n.prop("reportanalysis_ui_total", total.toFixed(decimalPlaces)));
-                                                }
-                                            };
-                                            if (!totalItem) {
-                                                // 添加合计菜单项
-                                                totalItem = new sap.ui.unified.MenuItem(menu.getId() + "-total", {
-                                                    icon: "sap-icon://collections-management",
-                                                    text: ibas.i18n.prop("reportanalysis_ui_calculation_total"),
-                                                    select(): void {
-                                                        let multiLabels: sap.ui.core.Control[] = column.getMultiLabels();
-                                                        let totalLabel: sap.m.Label = null;
-                                                        if (multiLabels.length > 1 && multiLabels[1] instanceof sap.m.Label) {
-                                                            totalLabel = <sap.m.Label>multiLabels[1];
-                                                        } else {
-                                                            totalLabel = new sap.m.Label("", {
-                                                            });
-                                                            column.addMultiLabel(totalLabel);
-                                                        }
-                                                        let binding: sap.ui.model.Binding = tableResult.getBinding(undefined);
-                                                        if (!!binding) {
-                                                            binding.attachChange(refreshBinding);
-                                                        }
-                                                        // 立即刷新
-                                                        refreshBinding();
-                                                        menu.close();
-                                                        totalItem.setVisible(false);
-                                                        hideTotalItem.setVisible(true);
-                                                    }
-                                                });
-                                                setTimeout(() => {
-                                                    menu.addItem(totalItem);
-                                                }, 100);
-                                            }
-                                            if (!hideTotalItem) {
-                                                // 添加隐藏合计菜单项
-                                                hideTotalItem = new sap.ui.unified.MenuItem(menu.getId() + "-hideTotal", {
-                                                    icon: "sap-icon://hide",
-                                                    text: ibas.i18n.prop("reportanalysis_ui_hide_total"),
-                                                    visible: false,
-                                                    select(): void {
-                                                        column.removeAllMultiLabels();
-                                                        column.addMultiLabel(new sap.m.Label("", {
-                                                            text: ibas.strings.isEmpty(col.description) ? col.name : col.description
-                                                        }));
-                                                        let binding: sap.ui.model.Binding = tableResult.getBinding(undefined);
-                                                        if (!!binding) {
-                                                            binding.detachChange(refreshBinding);
-                                                        }
-                                                        totalItem.setVisible(true);
-                                                        hideTotalItem.setVisible(false);
-                                                    }
-                                                });
-                                                setTimeout(() => {
-                                                    menu.addItem(hideTotalItem);
-                                                }, 100);
-                                            }
-                                        }
-                                        return true;
-                                    },
-                                    template: new sap.extension.m.Text("", {
-                                    }).bindProperty("bindingValue", {
-                                        path: index.toString(),
-                                        type: new sap.extension.data.Alphanumeric()
-                                    }).bindProperty("tooltip", {
-                                        path: index.toString(),
-                                        type: new sap.extension.data.Alphanumeric(),
-                                        formatter(data: any): string {
-                                            if (typeof data === "string") {
-                                                return data;
-                                            }
-                                            return ibas.strings.valueOf(data);
-                                        }
+                            tableResult.addColumn(new sap.ui.table.Column("", {
+                                autoResizable: true,
+                                label: infoCol.description,
+                                multiLabels: [
+                                    new sap.m.Label("", {
+                                        text: infoCol.description,
                                     })
+                                ],
+                                sortProperty: infoCol.path,
+                                filterProperty: infoCol.path,
+                                columnMenuOpen(e: sap.ui.base.Event): boolean {
+                                    let column: sap.ui.table.Column = this;
+                                    let menu: sap.ui.unified.Menu = e.getParameter("menu");
+                                    if (!!menu) {
+                                        let totalItem: sap.ui.unified.MenuItemBase = null;
+                                        let hideTotalItem: sap.ui.unified.MenuItemBase = null;
+                                        for (let menuItem of menu.getItems()) {
+                                            if (ibas.strings.equals(menuItem.getId(), menu.getId() + "-total")) {
+                                                totalItem = menuItem;
+                                            }
+                                            if (ibas.strings.equals(menuItem.getId(), menu.getId() + "-hideTotal")) {
+                                                hideTotalItem = menuItem;
+                                            }
+                                        }
+                                        // 显示合计时,监听Binding的变化,变化后刷新合计值
+                                        let refreshBinding: Function = () => {
+                                            let total: number = 0;
+                                            let decimalPlaces: number = ibas.config.get(ibas.CONFIG_ITEM_DECIMAL_PLACES, 6);
+                                            let binding: sap.ui.model.Binding = tableResult.getBinding(undefined);
+                                            if (binding instanceof sap.ui.model.json.JSONListBinding) {
+                                                for (let context of (<any>binding).getContexts()) {
+                                                    let data: any = context.getObject();
+                                                    total += ibas.numbers.valueOf(data[index.toString()]);
+                                                }
+                                            }
+                                            let multiLabels: sap.ui.core.Control[] = column.getMultiLabels();
+                                            let totalLabel: sap.m.Label = null;
+                                            if (multiLabels.length > 1 && multiLabels[1] instanceof sap.m.Label) {
+                                                totalLabel = <sap.m.Label>multiLabels[1];
+                                                totalLabel.setText(ibas.i18n.prop("reportanalysis_ui_total", total.toFixed(decimalPlaces)));
+                                            }
+                                        };
+                                        if (!totalItem) {
+                                            // 添加合计菜单项
+                                            totalItem = new sap.ui.unified.MenuItem(menu.getId() + "-total", {
+                                                icon: "sap-icon://collections-management",
+                                                text: ibas.i18n.prop("reportanalysis_ui_calculation_total"),
+                                                select(): void {
+                                                    let multiLabels: sap.ui.core.Control[] = column.getMultiLabels();
+                                                    let totalLabel: sap.m.Label = null;
+                                                    if (multiLabels.length > 1 && multiLabels[1] instanceof sap.m.Label) {
+                                                        totalLabel = <sap.m.Label>multiLabels[1];
+                                                    } else {
+                                                        totalLabel = new sap.m.Label("", {
+                                                        });
+                                                        column.addMultiLabel(totalLabel);
+                                                    }
+                                                    let binding: sap.ui.model.Binding = tableResult.getBinding(undefined);
+                                                    if (!!binding) {
+                                                        binding.attachChange(refreshBinding);
+                                                    }
+                                                    // 立即刷新
+                                                    refreshBinding();
+                                                    menu.close();
+                                                    totalItem.setVisible(false);
+                                                    hideTotalItem.setVisible(true);
+                                                }
+                                            });
+                                            setTimeout(() => {
+                                                menu.addItem(totalItem);
+                                            }, 100);
+                                        }
+                                        if (!hideTotalItem) {
+                                            // 添加隐藏合计菜单项
+                                            hideTotalItem = new sap.ui.unified.MenuItem(menu.getId() + "-hideTotal", {
+                                                icon: "sap-icon://hide",
+                                                text: ibas.i18n.prop("reportanalysis_ui_hide_total"),
+                                                visible: false,
+                                                select(): void {
+                                                    column.removeAllMultiLabels();
+                                                    column.addMultiLabel(new sap.m.Label("", {
+                                                        text: ibas.strings.isEmpty(col.description) ? col.name : col.description
+                                                    }));
+                                                    let binding: sap.ui.model.Binding = tableResult.getBinding(undefined);
+                                                    if (!!binding) {
+                                                        binding.detachChange(refreshBinding);
+                                                    }
+                                                    totalItem.setVisible(true);
+                                                    hideTotalItem.setVisible(false);
+                                                }
+                                            });
+                                            setTimeout(() => {
+                                                menu.addItem(hideTotalItem);
+                                            }, 100);
+                                        }
+                                    }
+                                    return true;
+                                },
+                                template: new sap.extension.m.Text("", {
+                                }).bindProperty("bindingValue", {
+                                    path: infoCol.path,
+                                    type: new sap.extension.data.Alphanumeric(),
                                 })
-                            );
+                            }));
                         }
                     }
                     let modelData: any[] = table.convert({ format: true, nameAs: "index" });
+                    let index: number = 1;
+                    for (let item of modelData) {
+                        item["#"] = index;
+                        index++;
+                    }
                     let model: sap.ui.model.json.JSONModel = new sap.extension.model.JSONModel({ rows: modelData });
                     // 设置集合长度限制,默认100
                     model.setSizeLimit(modelData.length);

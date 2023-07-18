@@ -26,17 +26,9 @@ namespace reportanalysis {
                 }
                 protected createTable(table: ibas.DataTable): sap.ui.core.Control {
                     let template: sap.m.ObjectListItem;
-                    let items: sap.ui.core.Item[] = [];
-                    for (let i: number = 0; i < table.columns.length; i++) {
-                        let col: ibas.DataTableColumn = table.columns[i];
-                        items.push(new sap.extension.m.SelectItem("", {
-                            key: i,
-                            text: ibas.strings.isEmpty(col.description) ? col.name : col.description,
-                            default:
-                                table.columns.length > 1 ? i === 1 :
-                                    table.columns.length > 0 ? i === 0 : false
-                        }));
-                    }
+                    let ptySelect: sap.extension.m.Select = new sap.extension.m.Select("", {
+                        width: "40%",
+                    }).addStyleClass("sapUiTinyMarginEnd");
                     let tableResult: sap.extension.m.List = new sap.extension.m.List("", {
                         chooseType: this.chooseType,
                         growingThreshold: table.rows.length > 20 ? table.rows.length : 20,
@@ -76,23 +68,16 @@ namespace reportanalysis {
                                         }
                                     }
                                 }),
-                                new sap.extension.m.Select("", {
-                                    width: "40%",
-                                    items: items,
-                                }).addStyleClass("sapUiTinyMarginEnd"),
+                                ptySelect,
                             ]
                         }),
                         items: {
                             path: "/rows",
                             template: template = new sap.m.ObjectListItem("", {
                                 title: {
-                                    path: "",
+                                    path: "#",
                                     formatter(data: any): string {
-                                        let datas: any = tableResult.getModel().getData("rows");
-                                        if (datas instanceof Array) {
-                                            return ibas.strings.format("# {0}", datas.indexOf(data) + 1);
-                                        }
-                                        return null;
+                                        return ibas.strings.format("# {0}", data);
                                     }
                                 },
                             }),
@@ -101,33 +86,35 @@ namespace reportanalysis {
                     let maxLength: number = ibas.config.get(CONFIG_ITEM_LINE_MAX_TEXT_LENGTH, 30);
                     for (let index: number = 0; index < table.columns.length; index++) {
                         let col: ibas.DataTableColumn = table.columns[index];
-                        if (ibas.strings.isEmpty(col.description)) {
-                            col.description = ibas.i18n.prop(col.name);
-                            if (col.description.startsWith("[") && col.description.endsWith("]")) {
-                                col.description = col.name;
-                            }
-                        } else {
-                            let value: string = col.description;
-                            col.description = ibas.i18n.prop(col.description);
-                            if (col.description.startsWith("[") && col.description.endsWith("]")) {
-                                col.description = value;
-                            }
+                        let infoCol: { path: string, objectCode?: string, description: string } = {
+                            path: index.toString(),
+                            description: ibas.strings.isEmpty(col.description) ? col.name : col.description,
+                        };
+                        if (typeof infoCol.description === "string" && infoCol.description.indexOf("#{") > 0 && infoCol.description.endsWith("}")) {
+                            let value: string = infoCol.description.substring(infoCol.description.indexOf("#{"));
+                            infoCol.objectCode = value.substring(2, value.length - 1);
+                            infoCol.description = infoCol.description.substring(0, infoCol.description.indexOf("#{"));
                         }
+                        ptySelect.addItem(new sap.extension.m.SelectItem("", {
+                            key: infoCol.path,
+                            text: infoCol.description,
+                            default: table.columns.length > 1 ?
+                                index === 1 : table.columns.length > 0 ?
+                                    index === 0 : false
+                        }));
                         if (col.definedDataType() === ibas.emTableDataType.DATE) {
                             template.addAttribute(new sap.extension.m.ObjectAttribute("", {
-                                title: ibas.strings.isEmpty(col.description) ? col.name : col.description,
+                                title: infoCol.description,
                                 bindingValue: {
-                                    path: index.toString(),
-                                    formatter(data: any): any {
-                                        return ibas.dates.toString(data);
-                                    }
+                                    path: infoCol.path,
+                                    type: new sap.extension.data.Date(),
                                 }
                             }));
                         } else {
                             template.addAttribute(new sap.extension.m.ObjectAttribute("", {
-                                title: ibas.strings.isEmpty(col.description) ? col.name : col.description,
+                                title: infoCol.description,
                                 active: {
-                                    path: index.toString(),
+                                    path: infoCol.path,
                                     formatter(data: string): boolean {
                                         if (typeof data === "string") {
                                             let length: number = 0;
@@ -147,7 +134,14 @@ namespace reportanalysis {
                                     }
                                 },
                                 bindingValue: {
-                                    path: index.toString(),
+                                    path: infoCol.path,
+                                    formatter: function (value: string): string {
+                                        if (typeof value === "string" && value.endsWith("}") && value.indexOf("#{") > 0) {
+                                            this.setTooltip(value);
+                                            return value.substring(0, value.indexOf("#{"));
+                                        }
+                                        return value;
+                                    }
                                 },
                                 press: function (event: sap.ui.base.Event): void {
                                     let attribute: any = event.getSource();
@@ -162,6 +156,11 @@ namespace reportanalysis {
                         }
                     }
                     let modelData: any[] = table.convert({ format: true, nameAs: "index" });
+                    let index: number = 1;
+                    for (let item of modelData) {
+                        item["#"] = index;
+                        index++;
+                    }
                     let model: sap.extension.model.JSONModel = new sap.extension.model.JSONModel({ rows: modelData });
                     // 设置集合长度限制,默认100
                     model.setSizeLimit(modelData.length);
