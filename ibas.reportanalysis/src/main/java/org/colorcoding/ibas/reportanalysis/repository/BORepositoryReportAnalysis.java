@@ -1,5 +1,6 @@
 package org.colorcoding.ibas.reportanalysis.repository;
 
+import org.colorcoding.ibas.bobas.common.ConditionOperation;
 import org.colorcoding.ibas.bobas.common.ConditionRelationship;
 import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.ICondition;
@@ -57,7 +58,18 @@ public class BORepositoryReportAnalysis extends BORepositoryServiceApplication
 			condition = criteria.getConditions().create();
 			condition.setAlias(ReportBook.PROPERTY_ASSIGNED.getName());
 			condition.setValue(user);
-			condition.setBracketClose(1);
+			condition.setBracketOpen(1);
+			condition = criteria.getConditions().create();
+			condition.setAlias(ReportBook.PROPERTY_ASSIGNED.getName());
+			condition.setValue(String.format("%s,", user));
+			condition.setOperation(ConditionOperation.CONTAIN);
+			condition.setRelationship(ConditionRelationship.OR);
+			condition = criteria.getConditions().create();
+			condition.setAlias(ReportBook.PROPERTY_ASSIGNED.getName());
+			condition.setValue(String.format(",%s", user));
+			condition.setOperation(ConditionOperation.END);
+			condition.setRelationship(ConditionRelationship.OR);
+			condition.setBracketClose(2);
 			// 所属角色的查询
 			if (this.getCurrentUser().getBelong() != null && !this.getCurrentUser().getBelong().isEmpty()) {
 				condition = criteria.getConditions().create();
@@ -68,15 +80,25 @@ public class BORepositoryReportAnalysis extends BORepositoryServiceApplication
 				condition = criteria.getConditions().create();
 				condition.setAlias(ReportBook.PROPERTY_ASSIGNED.getName());
 				condition.setValue(this.getCurrentUser().getBelong());
-				condition.setBracketClose(1);
+				condition.setBracketOpen(1);
+				condition = criteria.getConditions().create();
+				condition.setAlias(ReportBook.PROPERTY_ASSIGNED.getName());
+				condition.setOperation(ConditionOperation.CONTAIN);
+				condition.setValue(String.format("%s,", this.getCurrentUser().getBelong()));
+				condition.setRelationship(ConditionRelationship.OR);
+				condition = criteria.getConditions().create();
+				condition.setAlias(ReportBook.PROPERTY_ASSIGNED.getName());
+				condition.setOperation(ConditionOperation.END);
+				condition.setValue(String.format(",%s", this.getCurrentUser().getBelong()));
+				condition.setRelationship(ConditionRelationship.OR);
+				condition.setBracketClose(2);
 			}
 			// 全部用户的
 			condition = criteria.getConditions().create();
 			condition.setRelationship(ConditionRelationship.OR);
-			condition.setBracketOpen(1);
 			condition.setAlias(ReportBook.PROPERTY_ASSIGNEDTYPE.getName());
 			condition.setValue(emAssignedType.ALL);
-			condition.setBracketClose(2);
+			condition.setBracketClose(1);
 			IOperationResult<ReportBook> opRsltBook = this.fetchReportBook(criteria, token);
 			if (opRsltBook.getError() != null) {
 				throw opRsltBook.getError();

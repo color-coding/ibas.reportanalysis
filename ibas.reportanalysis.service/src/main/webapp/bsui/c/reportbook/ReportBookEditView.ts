@@ -86,7 +86,7 @@ namespace reportanalysis {
                                     }).bindProperty("bindingValue", {
                                         path: "assigned",
                                         type: new sap.extension.data.Alphanumeric({
-                                            maxLength: 20
+                                            maxLength: 100
                                         })
                                     }),
                                     new sap.extension.m.RepositoryInput("", {
@@ -101,6 +101,7 @@ namespace reportanalysis {
                                             key: initialfantasy.bo.Organization.PROPERTY_CODE_NAME,
                                             text: initialfantasy.bo.Organization.PROPERTY_NAME_NAME
                                         },
+                                        dataStartMarker: "!",
                                         valueHelpRequest: function (): void {
                                             that.fireViewEvents(that.chooseUserRoleEvent);
                                         }
@@ -115,7 +116,7 @@ namespace reportanalysis {
                                     }).bindProperty("bindingValue", {
                                         path: "assigned",
                                         type: new sap.extension.data.Alphanumeric({
-                                            maxLength: 20
+                                            maxLength: 100
                                         })
                                     }),
                                     new sap.extension.m.Input("", {

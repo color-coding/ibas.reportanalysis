@@ -69,6 +69,7 @@ namespace reportanalysis {
                                     path: "assigned",
                                     type: new sap.extension.data.Alphanumeric()
                                 }),
+                                width: "14rem",
                             }),
                             new sap.extension.table.DataColumn("", {
                                 label: ibas.i18n.prop("bo_reportbook_remarks"),

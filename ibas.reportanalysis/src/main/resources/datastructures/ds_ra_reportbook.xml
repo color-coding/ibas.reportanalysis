@@ -19,7 +19,7 @@
     <Property Name="TeamMembers" Description="团队成员" DataType="Alphanumeric" DataSubType="Default" EditSize="50" Mapped="TeamMembers"/>
     <Property Name="Organization" Description="数据所属组织" DataType="Alphanumeric" DataSubType="Default" EditSize="8" Mapped="OrgCode"/>
     <Property Name="AssignedType" Description="指派类型" DataType="Alphanumeric" DataSubType="Default" EditSize="1" DeclaredType="emAssignedType" Mapped="AssignedType"/>
-    <Property Name="Assigned" Description="指派目标" DataType="Alphanumeric" DataSubType="Default" EditSize="20" Mapped="Assigned"/>
+    <Property Name="Assigned" Description="指派目标" DataType="Alphanumeric" DataSubType="Default" EditSize="100" Mapped="Assigned"/>
     <Property Name="Name" Description="报表簿名称" DataType="Alphanumeric" DataSubType="Default" EditSize="200" Mapped="Name"/>
     <Property Name="Activated" Description="激活" DataType="Alphanumeric" DataSubType="Default" EditSize="1" DeclaredType="emYesNo" Mapped="Activated"/>
     <Property Name="Remarks" Description="备注" DataType="Memo" DataSubType="Default" EditSize="8" Mapped="Remarks"/>

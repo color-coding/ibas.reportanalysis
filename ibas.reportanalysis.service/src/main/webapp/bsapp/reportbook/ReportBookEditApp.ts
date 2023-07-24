@@ -208,12 +208,19 @@ namespace reportanalysis {
                 if (this.editData.assignedType === bo.emAssignedType.ROLE) {
                     ibas.servicesManager.runChooseService<initialfantasy.bo.IRole>({
                         boCode: initialfantasy.bo.BO_CODE_ROLE,
-                        chooseType: ibas.emChooseType.SINGLE,
+                        chooseType: ibas.emChooseType.MULTIPLE,
                         criteria: [
-                            new ibas.Condition("Activated", ibas.emConditionOperation.EQUAL, ibas.emYesNo.YES)
+                            new ibas.Condition(initialfantasy.bo.User.PROPERTY_ACTIVATED_NAME, ibas.emConditionOperation.EQUAL, ibas.emYesNo.YES)
                         ],
                         onCompleted(selecteds: ibas.IList<initialfantasy.bo.IRole>): void {
-                            that.editData.assigned = selecteds.firstOrDefault().code;
+                            let builder: ibas.StringBuilder = new ibas.StringBuilder();
+                            for (let selected of selecteds) {
+                                if (builder.length > 0) {
+                                    builder.append(ibas.DATA_SEPARATOR);
+                                }
+                                builder.append(selected.code);
+                            }
+                            that.editData.assigned = builder.toString();
                             if (ibas.objects.isNull(that.editData.name)) {
                                 that.editData.name = ibas.i18n.prop("reportanalysis_someone_report", selecteds.firstOrDefault().name);
                             }
@@ -222,12 +229,19 @@ namespace reportanalysis {
                 } else if (this.editData.assignedType === bo.emAssignedType.USER) {
                     ibas.servicesManager.runChooseService<initialfantasy.bo.IUser>({
                         boCode: initialfantasy.bo.BO_CODE_USER,
-                        chooseType: ibas.emChooseType.SINGLE,
+                        chooseType: ibas.emChooseType.MULTIPLE,
                         criteria: [
-                            new ibas.Condition("Activated", ibas.emConditionOperation.EQUAL, ibas.emYesNo.YES)
+                            new ibas.Condition(initialfantasy.bo.User.PROPERTY_ACTIVATED_NAME, ibas.emConditionOperation.EQUAL, ibas.emYesNo.YES)
                         ],
                         onCompleted(selecteds: ibas.IList<initialfantasy.bo.IUser>): void {
-                            that.editData.assigned = selecteds.firstOrDefault().code;
+                            let builder: ibas.StringBuilder = new ibas.StringBuilder();
+                            for (let selected of selecteds) {
+                                if (builder.length > 0) {
+                                    builder.append(ibas.DATA_SEPARATOR);
+                                }
+                                builder.append(selected.code);
+                            }
+                            that.editData.assigned = builder.toString();
                             if (ibas.objects.isNull(that.editData.name)) {
                                 that.editData.name = ibas.i18n.prop("reportanalysis_someone_report", selecteds.firstOrDefault().name);
                             }

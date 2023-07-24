@@ -35,9 +35,17 @@ namespace reportanalysis {
                             return;
                         }
                         let criteria: ibas.ICriteria = new ibas.Criteria();
-                        let condition: ibas.ICondition = criteria.conditions.create();
-                        condition.alias = "Code";
-                        condition.value = value;
+                        for (let item of String(value).split(ibas.DATA_SEPARATOR)) {
+                            if (ibas.strings.isEmpty(item)) {
+                                continue;
+                            }
+                            let condition: ibas.ICondition = criteria.conditions.create();
+                            condition.alias = "Code";
+                            condition.value = item;
+                            if (criteria.conditions.length > 0) {
+                                condition.relationship = ibas.emConditionRelationship.OR;
+                            }
+                        }
                         let fetched: (values: ibas.IList<ibas.KeyText> | Error) => void = (values) => {
                             if (values instanceof Error) {
                                 ibas.logger.log(values);

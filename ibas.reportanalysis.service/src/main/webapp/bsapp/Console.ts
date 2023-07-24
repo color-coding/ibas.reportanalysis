@@ -157,6 +157,7 @@ namespace reportanalysis {
                                     }
                                     this.register(new BOReportServiceMapping());
                                     this.register(new UserReportPageFunc());
+                                    this.register(new ReportResultServiceMapping());
                                     for (let item of opRslt.resultObjects) {
                                         this.register(new UserReportBookFunc(item));
                                     }
@@ -168,6 +169,7 @@ namespace reportanalysis {
                             // 不加载用户报表菜单
                             this.register(new BOReportServiceMapping());
                             this.register(new UserReportPageFunc());
+                            this.register(new ReportResultServiceMapping());
                             // 通知初始化完成
                             this.fireInitialized();
                         }
