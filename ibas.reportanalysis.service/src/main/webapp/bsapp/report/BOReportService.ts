@@ -23,14 +23,13 @@ namespace reportanalysis {
             runService(contract: ibas.IBOServiceContract): void {
                 if (!ibas.objects.isNull(contract) && !ibas.objects.isNull(contract.data)) {
                     let boCode: string = null;
-                    let boData: any;
                     for (let item of ibas.arrays.create(contract.data)) {
                         if (!(item instanceof ibas.BusinessObject)) {
                             continue;
                         }
                         if (ibas.strings.isEmpty(boCode)) {
                             boCode = (<ibas.IBOStorageTag><any>item).objectCode;
-                            boData = item;
+                            break;
                         }
                     }
                     if (ibas.strings.isEmpty(boCode)) {
@@ -70,11 +69,28 @@ namespace reportanalysis {
                                             if (ibas.strings.isEmpty(property)) {
                                                 continue;
                                             } else {
-                                                let value: any = ibas.objects.propertyValue(boData, property, true);
-                                                if (ibas.objects.isNull(value)) {
-                                                    continue;
+                                                let builder: ibas.StringBuilder = new ibas.StringBuilder();
+                                                builder.map(null, "");
+                                                builder.map(undefined, "");
+                                                if (contract.data instanceof Array) {
+                                                    for (let item of contract.data) {
+                                                        let value: any = ibas.objects.propertyValue(item, property, true);
+                                                        if (ibas.objects.isNull(value)) {
+                                                            continue;
+                                                        }
+                                                        if (builder.length > 0) {
+                                                            builder.append(ibas.DATA_SEPARATOR);
+                                                        }
+                                                        builder.append(value);
+                                                    }
+                                                } else {
+                                                    let value: any = ibas.objects.propertyValue(contract.data, property, true);
+                                                    if (ibas.objects.isNull(value)) {
+                                                        continue;
+                                                    }
+                                                    builder.append(value);
                                                 }
-                                                pItem.value = ibas.strings.valueOf(value);
+                                                pItem.value = builder.toString();
                                             }
                                         }
                                         reports.add(uReport);
