@@ -39,6 +39,7 @@ namespace reportanalysis {
                 this.register(new ReportBookChooseServiceMapping());
                 this.register(new ReportDataServiceMapping());
                 this.register(new ReportResultServiceMapping());
+                this.register(new ReportEditServiceMapping());
                 // 注册常驻应用
 
             }

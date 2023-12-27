@@ -82,6 +82,8 @@ namespace reportanalysis {
             title?: string;
             /** 使用的报表查询 */
             criteria: ibas.ICriteria | ibas.ICondition[];
+            /** 报表参数 */
+            parameters?: ibas.KeyText[];
         }
         /** 报表数据服务代理 */
         export class ReportDataServiceProxy extends ibas.ServiceProxy<IReportDataServiceContract> {

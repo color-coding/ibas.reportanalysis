@@ -14,6 +14,12 @@ namespace reportanalysis {
             export class BOReportServiceView extends ReportDialogViewView implements app.IReportViewView {
                 /** 选择报表 */
                 selectReportEvent: Function;
+                /** 值链接事件 */
+                valueLinkEvent: Function;
+                /** 触发事件 */
+                fireValueLink(objectCode: string, value: string, row?: any): void {
+                    this.fireViewEvents(this.valueLinkEvent, objectCode, value, row);
+                }
                 private tableBar: sap.m.Toolbar;
                 /** 绘制视图 */
                 draw(): any {
