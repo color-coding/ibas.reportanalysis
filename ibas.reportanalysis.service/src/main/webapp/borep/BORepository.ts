@@ -18,14 +18,22 @@ namespace reportanalysis {
             /** 获取文件地址 */
             toUrl(file: string): string;
             toUrl(): string {
-                if (!this.address.endsWith("/")) { this.address += "/"; }
-                let url: string = this.address.replace("/services/rest/data/", "/services/rest/file/");
                 if (ibas.objects.instanceOf(arguments[0], bo.Report)) {
-                    url += ibas.strings.format("{0}?token={1}", arguments[0].address, this.token);
+                    return this.toUrl(arguments[0].address);
+                } else if (typeof arguments[0] === "string") {
+                    if (ibas.strings.isWith(arguments[0], ".../", undefined)) {
+                        return ibas.urls.normalize(arguments[0]);
+                    } else {
+                        if (!this.address.endsWith("/")) { this.address += "/"; }
+                        let url: string = this.address.replace("/services/rest/data/", "/services/rest/file/");
+                        url += arguments[0];
+                        url += url.indexOf("?") >= 0 ? "&" : "?";
+                        url += ibas.strings.format("token={0}", this.token);
+                        return encodeURI(url);
+                    }
                 } else {
-                    url += ibas.strings.format("{0}?token={1}", arguments[0], this.token);
+                    throw new Error(ibas.i18n.prop("sys_invalid_parameter", "urls"));
                 }
-                return encodeURI(url);
             }
             /**
              * 上传报表文件

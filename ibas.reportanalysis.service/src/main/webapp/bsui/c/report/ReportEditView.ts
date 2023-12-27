@@ -32,6 +32,8 @@ namespace reportanalysis {
                 uploadReportEvent: Function;
                 /** 下载报表文件 */
                 downloadReportEvent: Function;
+                /** 运行报表 */
+                runReportEvent: Function;
 
                 /** 绘制视图 */
                 draw(): any {
@@ -574,6 +576,15 @@ namespace reportanalysis {
                                             }),
                                         ],
                                     })
+                                }),
+                                new sap.m.ToolbarSpacer(""),
+                                new sap.m.Button("", {
+                                    text: ibas.i18n.prop("shell_run"),
+                                    type: sap.m.ButtonType.Transparent,
+                                    icon: "sap-icon://display",
+                                    press: function (): void {
+                                        that.fireViewEvents(that.runReportEvent);
+                                    }
                                 }),
                             ]
                         }),

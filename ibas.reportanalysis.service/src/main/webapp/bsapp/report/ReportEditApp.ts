@@ -8,7 +8,7 @@
 namespace reportanalysis {
     export namespace app {
         /** 应用-报表 */
-        export class ReportEditApp extends ibas.BOEditApplication<IReportEditView, bo.Report> {
+        export class ReportEditApp extends ibas.BOEditService<IReportEditView, bo.Report> {
             /** 应用标识 */
             static APPLICATION_ID: string = "f68fd50e-0055-41ad-9aaf-f08960f97511";
             /** 应用名称 */
@@ -37,6 +37,7 @@ namespace reportanalysis {
                 this.view.chooseReportThirdPartyAppEvent = this.chooseReportThirdPartyApp;
                 this.view.uploadReportEvent = this.uploadReport;
                 this.view.downloadReportEvent = this.downloadFile;
+                this.view.runReportEvent = this.runReport;
             }
             /** 视图显示后 */
             protected viewShowed(): void {
@@ -398,6 +399,16 @@ namespace reportanalysis {
                 });
                 this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("shell_downloading_file"));
             }
+            protected runReport(): void {
+                if (ibas.objects.isNull(this.editData) || this.editData.isDirty === true) {
+                    this.messages(ibas.emMessageType.WARNING, ibas.i18n.prop("shell_data_saved_first"));
+                    return;
+                }
+                let app: ReportViewerApp = new ReportViewerApp();
+                app.navigation = this.navigation;
+                app.viewShower = this.viewShower;
+                app.run(this.editData);
+            }
         }
         /** 视图-报表 */
         export interface IReportEditView extends ibas.IBOEditView {
@@ -425,6 +436,23 @@ namespace reportanalysis {
             uploadReportEvent: Function;
             /** 下载报表文件 */
             downloadReportEvent: Function;
+            /** 运行报表 */
+            runReportEvent: Function;
+        }
+        /** 报表编辑服务映射 */
+        export class ReportEditServiceMapping extends ibas.BOEditServiceMapping {
+            /** 构造函数 */
+            constructor() {
+                super();
+                this.id = ReportEditApp.APPLICATION_ID;
+                this.name = ReportEditApp.APPLICATION_NAME;
+                this.boCode = ReportEditApp.BUSINESS_OBJECT_CODE;
+                this.description = ibas.i18n.prop(this.name);
+            }
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOEditServiceCaller<bo.Report>> {
+                return new ReportEditApp();
+            }
         }
     }
 }

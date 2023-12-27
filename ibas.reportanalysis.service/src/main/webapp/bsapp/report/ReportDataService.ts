@@ -65,7 +65,10 @@ namespace reportanalysis {
                 } else {
                     this.fetchData(criteria);
                 }
+                this.parameters = contract.parameters;
             }
+
+            private parameters?: ibas.KeyText[];
 
             protected viewShowed(): void {
             }
@@ -98,6 +101,17 @@ namespace reportanalysis {
                 app.onChoosedData = function (table: ibas.DataTable): void {
                     that.fireCompleted(table);
                 };
+                if (this.parameters instanceof Array) {
+                    for (let item of this.parameters) {
+                        let rItem: bo.ReportParameter = report.reportParameters.firstOrDefault(c => ibas.strings.equalsIgnoreCase(c.name, item.key));
+                        if (!ibas.objects.isNull(rItem)) {
+                            if (rItem.category === bo.emReportParameterType.PRESET && !ibas.strings.isEmpty(rItem.value)) {
+                                continue;
+                            }
+                            rItem.value = item.text;
+                        }
+                    }
+                }
                 app.run(report);
             }
             /** 查询数据 */

@@ -7,6 +7,43 @@
  */
 namespace reportanalysis {
     export namespace ui {
+        class DataTableServiceProxy extends ibas.DataTableServiceProxy {
+            constructor(contract: ibas.IDataTableServiceContract) {
+                if (contract.data instanceof ibas.DataTable) {
+                    // 去除标记字符
+                    let data: ibas.DataTable = contract.data.clone();
+                    for (let column of data.columns) {
+                        if (typeof column.description === "string") {
+                            let index: number = column.description.indexOf("#{");
+                            if (index > 0 && ibas.strings.isWith(column.description, undefined, "}")) {
+                                column.description = column.description.substring(0, index);
+                            }
+                        } else if (typeof column.name === "string") {
+                            let index: number = column.name.indexOf("#{");
+                            if (index > 0 && ibas.strings.isWith(column.name, undefined, "}")) {
+                                column.name = column.name.substring(0, index);
+                            }
+                        }
+                    }
+                    for (let row of data.rows) {
+                        for (let i: number = 0; i < row.cells.length; i++) {
+                            let cell: any = row.cells[i];
+                            if (typeof cell === "string") {
+                                let index: number = cell.indexOf("#{");
+                                if (index > 0 && ibas.strings.isWith(cell, undefined, "}")) {
+                                    row.cells[i] = cell.substring(0, index);
+                                }
+                            }
+                        }
+                    }
+                    super({
+                        data: data,
+                    });
+                } else {
+                    super(contract);
+                }
+            }
+        }
         export namespace c {
             /**
              * 视图-Report
@@ -56,7 +93,7 @@ namespace reportanalysis {
                                     icon: "sap-icon://action",
                                     press: function (event: any): void {
                                         ibas.servicesManager.showServices({
-                                            proxy: new ibas.DataTableServiceProxy({
+                                            proxy: new DataTableServiceProxy({
                                                 data: that.viewData,
                                             }),
                                             displayServices(services: ibas.IServiceAgent[]): void {
@@ -306,7 +343,7 @@ namespace reportanalysis {
                                     icon: "sap-icon://action",
                                     press: function (event: any): void {
                                         ibas.servicesManager.showServices({
-                                            proxy: new ibas.DataTableServiceProxy({
+                                            proxy: new DataTableServiceProxy({
                                                 data: that.viewData,
                                             }),
                                             displayServices(services: ibas.IServiceAgent[]): void {

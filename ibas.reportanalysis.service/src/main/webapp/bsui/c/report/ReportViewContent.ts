@@ -359,7 +359,8 @@ namespace reportanalysis {
                         columns: [
                             new sap.ui.table.Column("", {
                                 label: "#",
-                                autoResizable: true,
+                                width: "4rem",
+                                autoResizable: false,
                                 template: new sap.extension.m.Text("", {
                                 }).bindProperty("bindingValue", {
                                     path: "#",
@@ -377,6 +378,11 @@ namespace reportanalysis {
                             let value: string = infoCol.description.substring(infoCol.description.indexOf("#{"));
                             infoCol.objectCode = value.substring(2, value.length - 1);
                             infoCol.description = infoCol.description.substring(0, infoCol.description.indexOf("#{"));
+                        } else if (ibas.strings.isWith(infoCol.description, "bo_", undefined) || ibas.strings.isWith(infoCol.description, "BO_", undefined)) {
+                            let value: string = ibas.i18n.prop(infoCol.description.toLowerCase());
+                            if (!ibas.strings.isWith(value, "[", "]")) {
+                                infoCol.description = value;
+                            }
                         }
                         if (col.definedDataType() === ibas.emTableDataType.DATE) {
                             tableResult.addColumn(new sap.ui.table.Column("", {
@@ -385,6 +391,12 @@ namespace reportanalysis {
                                 sortProperty: infoCol.path,
                                 filterProperty: infoCol.path,
                                 template: new sap.extension.m.Text("", {
+                                    tooltip: {
+                                        path: infoCol.path,
+                                        formatter(data: any): string {
+                                            return ibas.dates.toString(data);
+                                        }
+                                    }
                                 }).bindProperty("bindingValue", {
                                     path: infoCol.path,
                                     type: new sap.extension.data.Date(),
@@ -398,6 +410,12 @@ namespace reportanalysis {
                                 sortProperty: infoCol.path,
                                 filterProperty: infoCol.path,
                                 template: new sap.extension.m.Link("", {
+                                    tooltip: {
+                                        path: infoCol.path,
+                                        formatter(data: any): string {
+                                            return ibas.strings.valueOf(data);
+                                        }
+                                    },
                                     press(this: sap.extension.m.Link): void {
                                         let objectCode: string = infoCol.objectCode;
                                         if (ibas.strings.isEmpty(objectCode)) {
@@ -545,6 +563,12 @@ namespace reportanalysis {
                                     return true;
                                 },
                                 template: new sap.extension.m.Text("", {
+                                    tooltip: {
+                                        path: infoCol.path,
+                                        formatter(data: any): string {
+                                            return ibas.strings.valueOf(data);
+                                        }
+                                    }
                                 }).bindProperty("bindingValue", {
                                     path: infoCol.path,
                                     type: new sap.extension.data.Alphanumeric(),

@@ -7,6 +7,7 @@
  */
 namespace reportanalysis {
     export namespace app {
+        const BO_CODE_REPORT: string = ibas.config.applyVariables(bo.BO_CODE_REPORT);
         /** 业务对象报表服务 */
         export class BOReportService extends ibas.ServiceApplication<IBOReportServiceView, ibas.IBOServiceContract>  {
             /** 应用标识 */
@@ -122,6 +123,7 @@ namespace reportanalysis {
                 this.view.selectReportEvent = this.selectReport;
                 this.view.resetReportEvent = this.resetReport;
                 this.view.runReportEvent = this.runReport;
+                this.view.valueLinkEvent = this.valueLink;
             }
             /** 视图显示后 */
             protected viewShowed(): void {
@@ -161,6 +163,86 @@ namespace reportanalysis {
                     }
                 });
                 this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("reportanalysis_running_report", this.report.name));
+            }
+            private valueLink(objectCode: string, value: string, rowData?: any): void {
+                if (ibas.strings.isEmpty(objectCode) || ibas.objects.isNull(value)) {
+                    return;
+                }
+                if (ibas.strings.equals(objectCode, BO_CODE_REPORT)) {
+                    let condition: ibas.ICondition;
+                    let criteria: ibas.Criteria = new ibas.Criteria();
+                    criteria.result = 1;
+                    if (ibas.numbers.isNumber(value)) {
+                        condition = criteria.conditions.create();
+                        condition.alias = bo.Report.PROPERTY_OBJECTKEY_NAME;
+                        condition.value = value;
+                    } else {
+                        condition = criteria.conditions.create();
+                        condition.alias = bo.Report.PROPERTY_NAME_NAME;
+                        condition.value = value;
+                    }
+                    condition = criteria.conditions.create();
+                    condition.alias = bo.Report.PROPERTY_ACTIVATED_NAME;
+                    condition.value = ibas.emYesNo.YES.toString();
+                    let sort: ibas.ISort = criteria.sorts.create();
+                    sort.alias = bo.Report.PROPERTY_OBJECTKEY_NAME;
+                    sort.sortType = ibas.emSortType.DESCENDING;
+
+                    let boRepository: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
+                    boRepository.fetchReport({
+                        criteria: criteria,
+                        onCompleted: (opRslt) => {
+                            try {
+                                if (opRslt.resultCode !== 0) {
+                                    throw new Error(opRslt.message);
+                                }
+                                if (opRslt.resultObjects.length === 0) {
+                                    throw new Error(ibas.i18n.prop("reportanalysis_not_found_report", value));
+                                }
+                                let useReport: bo.UserReport = bo.UserReport.create(opRslt.resultObjects.firstOrDefault());
+                                if (typeof rowData === "object") {
+                                    useReport.valueParameters();
+                                    for (let item of useReport.parameters) {
+                                        if (item.category === bo.emReportParameterType.PRESET) {
+                                            continue;
+                                        }
+                                        if (item.category === bo.emReportParameterType.SYSTEM) {
+                                            item.category = bo.emReportParameterType.PRESET;
+                                            continue;
+                                        }
+                                        let name: string = item.name;
+                                        if (ibas.strings.isWith(name, "${", "}")) {
+                                            name = name.substring(2, name.length - 1);
+                                        }
+                                        let tmp: any = rowData[name];
+                                        if (ibas.objects.isNull(tmp)) {
+                                            continue;
+                                        }
+                                        item.value = tmp;
+                                        item.category = bo.emReportParameterType.PRESET;
+                                    }
+                                }
+                                let app: ReportViewerApp = new ReportViewerApp();
+                                app.navigation = this.navigation;
+                                app.viewShower = this.viewShower;
+                                app.run(useReport);
+                                this.proceeding(ibas.emMessageType.SUCCESS, ibas.i18n.prop("reportanalysis_link_to_object_value", objectCode, value));
+                            } catch (error) {
+                                this.proceeding(ibas.emMessageType.ERROR, ibas.i18n.prop("reportanalysis_found_object_value", objectCode));
+                            }
+                        }
+                    });
+
+                } else {
+                    if (ibas.servicesManager.runLinkService({
+                        boCode: objectCode,
+                        linkValue: value.toString()
+                    })) {
+                        this.proceeding(ibas.emMessageType.SUCCESS, ibas.i18n.prop("reportanalysis_link_to_object_value", objectCode, value));
+                    } else {
+                        this.proceeding(ibas.emMessageType.ERROR, ibas.i18n.prop("reportanalysis_found_object_value", objectCode));
+                    }
+                }
             }
         }
         /** 业务对象报表服务-视图 */
