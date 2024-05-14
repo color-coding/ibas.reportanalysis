@@ -39,17 +39,29 @@ public class ReportService {
 
 	protected String token(@Context HttpServletRequest request) throws Exception {
 		String encoded = request.getHeader("Authorization");
-		if (encoded != null && encoded.startsWith("Basic")) {
-			Decoder decoder = Base64.getDecoder();
-			String info = new String(decoder.decode(encoded.substring(6)), "utf-8");
-			if (info != null && info.indexOf(":") > 0) {
-				int index = info.indexOf(":");
-				String user = info.substring(0, index).trim();
-				String password = info.substring(index + 1).trim();
-				BORepositoryInitialFantasyShell boRepository = new BORepositoryInitialFantasyShell();
-				User sUser = boRepository.userConnect(user, password).getResultObjects().firstOrDefault();
-				if (sUser != null) {
-					return sUser.getToken();
+		if (encoded != null) {
+			if (encoded.startsWith("Basic")) {
+				Decoder decoder = Base64.getDecoder();
+				String info = new String(decoder.decode(encoded.substring(6)), "utf-8");
+				if (info != null && info.indexOf(":") > 0) {
+					int index = info.indexOf(":");
+					String user = info.substring(0, index).trim();
+					String password = info.substring(index + 1).trim();
+					BORepositoryInitialFantasyShell boRepository = new BORepositoryInitialFantasyShell();
+					User sUser = boRepository.userConnect(user, password).getResultObjects().firstOrDefault();
+					if (sUser != null) {
+						return sUser.getToken();
+					}
+				}
+			} else if (encoded.startsWith("Bearer")) {
+				String[] values = encoded.split(" ");
+				if (values.length > 1) {
+					BORepositoryInitialFantasyShell boRepository = new BORepositoryInitialFantasyShell();
+					User sUser = boRepository.tokenConnect(values[values.length - 1]).getResultObjects()
+							.firstOrDefault();
+					if (sUser != null) {
+						return sUser.getToken();
+					}
 				}
 			}
 		}

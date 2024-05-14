@@ -28,7 +28,7 @@ namespace reportanalysis {
                         let url: string = this.address.replace("/services/rest/data/", "/services/rest/file/");
                         url += arguments[0];
                         url += url.indexOf("?") >= 0 ? "&" : "?";
-                        url += ibas.strings.format("token={0}", this.token);
+                        url += ibas.strings.format("token={0}", ibas.tokens.content(this.token));
                         return encodeURI(url);
                     }
                 } else {
@@ -73,7 +73,7 @@ namespace reportanalysis {
                 }
                 let method: string =
                     ibas.strings.format("fetchUserReports?user={0}&token={1}",
-                        caller.user, this.token);
+                        caller.user, ibas.tokens.content(this.token));
                 boRepository.callRemoteMethod(method, undefined, (opRslt) => {
                     caller.onCompleted.call(ibas.objects.isNull(caller.caller) ? caller : caller.caller, opRslt);
                 });
@@ -91,7 +91,7 @@ namespace reportanalysis {
                     throw new Error(ibas.i18n.prop("sys_invalid_parameter", "remoteRepository"));
                 }
                 let method: string =
-                    ibas.strings.format("runUserReport?token={0}", this.token);
+                    ibas.strings.format("runUserReport?token={0}", ibas.tokens.content(this.token));
                 let data: string = JSON.stringify(this.createConverter().convert(caller.report, method));
                 boRepository.callRemoteMethod(method, data, (opRslt) => {
                     caller.onCompleted.call(ibas.objects.isNull(caller.caller) ? caller : caller.caller, opRslt);
