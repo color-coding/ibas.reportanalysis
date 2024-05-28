@@ -1247,6 +1247,52 @@ declare namespace thirdpartyapp {
  * Use of this source code is governed by an Apache License, Version 2.0
  * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
  */
+declare namespace thirdpartyapp {
+    namespace app {
+        /** 查看应用-应用 */
+        class ApplicationViewApp extends ibas.BOViewService<IApplicationViewView, bo.Application> {
+            /** 应用标识 */
+            static APPLICATION_ID: string;
+            /** 应用名称 */
+            static APPLICATION_NAME: string;
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string;
+            /** 构造函数 */
+            constructor();
+            /** 注册视图 */
+            protected registerView(): void;
+            /** 视图显示后 */
+            protected viewShowed(): void;
+            /** 编辑数据，参数：目标数据 */
+            protected editData(): void;
+            run(): void;
+            run(data: bo.Application): void;
+            /** 查询数据 */
+            protected fetchData(criteria: ibas.ICriteria | string): void;
+        }
+        /** 视图-应用 */
+        interface IApplicationViewView extends ibas.IBOViewView {
+            /** 显示数据 */
+            showApplication(data: bo.Application): void;
+            /** 显示可用配置 */
+            showApplicationSettingItems(datas: bo.ApplicationSettingItem[]): void;
+        }
+        /** 应用连接服务映射 */
+        class ApplicationLinkServiceMapping extends ibas.BOLinkServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IBOLinkService;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
 /**
  * @license
  * Copyright Color-Coding Studio. All Rights Reserved.
@@ -1405,6 +1451,52 @@ declare namespace thirdpartyapp {
             removeApplicationConfigItemEvent: Function;
             /** 显示数据-应用配置-项目 */
             showApplicationConfigItems(datas: bo.ApplicationConfigItem[]): void;
+        }
+    }
+}
+/**
+ * @license
+ * Copyright Color-Coding Studio. All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache License, Version 2.0
+ * that can be found in the LICENSE file at http://www.apache.org/licenses/LICENSE-2.0
+ */
+declare namespace thirdpartyapp {
+    namespace app {
+        /** 查看应用-应用配置 */
+        class ApplicationConfigViewApp extends ibas.BOViewService<IApplicationConfigViewView, bo.ApplicationConfig> {
+            /** 应用标识 */
+            static APPLICATION_ID: string;
+            /** 应用名称 */
+            static APPLICATION_NAME: string;
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string;
+            /** 构造函数 */
+            constructor();
+            /** 注册视图 */
+            protected registerView(): void;
+            /** 视图显示后 */
+            protected viewShowed(): void;
+            /** 编辑数据，参数：目标数据 */
+            protected editData(): void;
+            run(): void;
+            run(data: bo.ApplicationConfig): void;
+            /** 查询数据 */
+            protected fetchData(criteria: ibas.ICriteria | string): void;
+        }
+        /** 视图-应用配置 */
+        interface IApplicationConfigViewView extends ibas.IBOViewView {
+            /** 显示数据 */
+            showApplicationConfig(data: bo.ApplicationConfig): void;
+            /** 显示数据-应用配置-项目 */
+            showApplicationConfigItems(datas: bo.ApplicationConfigItem[]): void;
+        }
+        /** 应用配置连接服务映射 */
+        class ApplicationConfigLinkServiceMapping extends ibas.BOLinkServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IBOLinkService;
         }
     }
 }
