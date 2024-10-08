@@ -494,6 +494,10 @@ namespace reportanalysis {
             export class ReportDataChooseView extends ReportDialogViewView implements app.IReportDataChooseView {
                 /** 选择数据 */
                 chooseDataEvent: Function;
+                /** 选择方式 */
+                chooseType: ibas.emChooseType;
+                /** 选择第一行 */
+                chooseFirtData: ibas.emYesNo;
                 /** 绘制视图 */
                 draw(): any {
                     let that: this = this;
@@ -533,9 +537,24 @@ namespace reportanalysis {
                 viewContainer: sap.m.Dialog;
                 /** 显示报表结果 */
                 showResults(table: ibas.DataTable): void {
+                    if (this.chooseFirtData === ibas.emYesNo.YES) {
+                        if (table?.rows?.length > 0) {
+                            this.fireViewEvents(this.chooseDataEvent, table.clone([0]));
+                            return;
+                        }
+                    }
                     this.viewContainer.getButtons()[0].setVisible(false);
                     this.viewContainer.getButtons()[1].setVisible(true);
                     super.showResults.apply(this, arguments);
+                    if (this.viewContainer instanceof sap.m.Dialog) {
+                        for (let item of this.viewContainer.getContent()) {
+                            if (item instanceof sap.extension.table.Table) {
+                                item.setChooseType(this.chooseType);
+                            } else if (item instanceof sap.extension.m.List) {
+                                item.setChooseType(this.chooseType);
+                            }
+                        }
+                    }
                 }
                 /** 获取选择的数据 */
                 selectedDataTable(): ibas.DataTable {

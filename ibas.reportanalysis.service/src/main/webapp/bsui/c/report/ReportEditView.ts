@@ -65,6 +65,13 @@ namespace reportanalysis {
                                 })
                             }),
                             new sap.m.Toolbar("", { visible: false }),
+                            new sap.m.Label("", { text: ibas.i18n.prop("bo_report_objectkey") }),
+                            new sap.extension.m.Input("", {
+                                editable: false,
+                            }).bindProperty("bindingValue", {
+                                path: "objectKey",
+                                type: new sap.extension.data.Numeric()
+                            }),
                             new sap.m.Label("", { text: ibas.i18n.prop("bo_report_activated") }),
                             new sap.extension.m.EnumSelect("", {
                                 enumType: ibas.emYesNo

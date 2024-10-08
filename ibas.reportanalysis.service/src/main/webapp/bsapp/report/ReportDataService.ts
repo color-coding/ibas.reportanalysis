@@ -32,7 +32,19 @@ namespace reportanalysis {
                 if (!ibas.strings.isEmpty(contract.title)) {
                     this.description = contract.title;
                 }
+                // 数据选择类型
+                this.dataChooseType = contract.chooseType;
+                if (this.dataChooseType === ibas.emChooseType.SINGLE) {
+                    if (contract.criteria instanceof ibas.Criteria) {
+                        this.chooseFirstData = contract.criteria.result === 1 ? ibas.emYesNo.YES : undefined;
+                    }
+                }
+                // 数据参数
+                this.parameters = ibas.arrays.create(contract.parameters);
+                this.triggerData = (<any>contract).trigger;
+                // 报表选择类型
                 this.view.chooseType = ibas.emChooseType.SINGLE;
+                // 查询使用的报表
                 let criteria: ibas.Criteria = null;
                 if (contract.criteria instanceof ibas.Criteria) {
                     criteria = contract.criteria;
@@ -65,10 +77,12 @@ namespace reportanalysis {
                 } else {
                     this.fetchData(criteria);
                 }
-                this.parameters = contract.parameters;
             }
 
-            private parameters?: ibas.KeyText[];
+            private triggerData?: any;
+            private parameters?: ibas.IList<ibas.KeyText>;
+            private dataChooseType: ibas.emChooseType;
+            private chooseFirstData: ibas.emYesNo;
 
             protected viewShowed(): void {
             }
@@ -101,18 +115,30 @@ namespace reportanalysis {
                 app.onChoosedData = function (table: ibas.DataTable): void {
                     that.fireCompleted(table);
                 };
-                if (this.parameters instanceof Array) {
-                    for (let item of this.parameters) {
-                        let rItem: bo.ReportParameter = report.reportParameters.firstOrDefault(c => ibas.strings.equalsIgnoreCase(c.name, item.key));
-                        if (!ibas.objects.isNull(rItem)) {
-                            if (rItem.category === bo.emReportParameterType.PRESET && !ibas.strings.isEmpty(rItem.value)) {
-                                continue;
-                            }
-                            rItem.value = item.text;
+                // 设置数据参数
+                for (let item of report.reportParameters) {
+                    if (item.category === bo.emReportParameterType.PRESET) {
+                        continue;
+                    }
+                    if (item.category === bo.emReportParameterType.SYSTEM) {
+                        continue;
+                    }
+                    let parameter: ibas.KeyText = this.parameters.firstOrDefault(
+                        c => ibas.strings.equalsIgnoreCase(item.name, c.key)
+                    );
+                    if (!ibas.objects.isNull(parameter)) {
+                        item.value = parameter.text;
+                        continue;
+                    }
+                    if (!ibas.objects.isNull(this.triggerData)) {
+                        let value: any = ibas.objects.propertyValue(this.triggerData, ibas.strings.remove(item.name, "${", "}"), true);
+                        if (!ibas.objects.isNull(value)) {
+                            item.value = String(value);
+                            continue;
                         }
                     }
                 }
-                app.run(report);
+                app.run(report, this.dataChooseType, this.chooseFirstData);
             }
             /** 查询数据 */
             protected fetchData(criteria: ibas.ICriteria): void {

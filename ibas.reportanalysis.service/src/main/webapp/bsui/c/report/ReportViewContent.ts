@@ -352,6 +352,7 @@ namespace reportanalysis {
                     let tableResult: sap.ui.table.Table = new sap.extension.table.Table("", {
                         enableSelectAll: true,
                         chooseType: this.chooseType,
+                        alternateRowColors: true,
                         selectionBehavior: sap.ui.table.SelectionBehavior.RowOnly,
                         visibleRowCount: ibas.config.get(openui5.utils.CONFIG_ITEM_LIST_TABLE_VISIBLE_ROW_COUNT, 15),
                         visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive,
@@ -359,7 +360,7 @@ namespace reportanalysis {
                         columns: [
                             new sap.ui.table.Column("", {
                                 label: "#",
-                                width: "4rem",
+                                width: "3rem",
                                 autoResizable: false,
                                 template: new sap.extension.m.Text("", {
                                 }).bindProperty("bindingValue", {

@@ -66,7 +66,7 @@ namespace reportanalysis {
                 super.run.apply(this, arguments);
             }
             protected report: bo.UserReport;
-            private runReport(): void {
+            protected runReport(): void {
                 this.busy(true);
                 let that: this = this;
                 let boRepository: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
@@ -90,7 +90,7 @@ namespace reportanalysis {
                 });
                 this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("reportanalysis_running_report", this.report.name));
             }
-            private valueLink(objectCode: string, value: string, rowData?: any): void {
+            protected valueLink(objectCode: string, value: string, rowData?: any): void {
                 if (ibas.strings.isEmpty(objectCode) || ibas.objects.isNull(value)) {
                     return;
                 }
@@ -216,6 +216,7 @@ namespace reportanalysis {
             constructor() {
                 super();
                 this.id = ReportDataChooseApp.APPLICATION_ID;
+
             }
             /** 注册视图 */
             protected registerView(): void {
@@ -225,7 +226,22 @@ namespace reportanalysis {
             }
             /** 视图显示后 */
             protected viewShowed(): void {
-                super.viewShowed();
+                // 设置系统变量值
+                let done: boolean = true;
+                this.report.valueParameters();
+                for (let item of this.report.parameters) {
+                    if (ibas.objects.isNull(item.value) || ibas.strings.isEmpty(item.value)) {
+                        done = false;
+                        break;
+                    }
+                }
+                if (done) {
+                    // 没有参数的报表，直接运行
+                    this.runReport();
+                } else {
+                    // 显示信息
+                    this.view.showReport(this.report);
+                }
             }
             private chooseData(table: ibas.DataTable): void {
                 if (ibas.objects.isNull(table) || table.rows.length <= 0) {
@@ -239,6 +255,20 @@ namespace reportanalysis {
                     this.onChoosedData(table);
                 }
             }
+            run(): void;
+            run(report: bo.Report, chooseType?: ibas.emChooseType, chooseFirst?: ibas.emYesNo): void;
+            run(report: bo.UserReport, chooseType?: ibas.emChooseType, chooseFirst?: ibas.emYesNo): void;
+            run(): void {
+                if (arguments.length > 1) {
+                    if (typeof arguments[1] === "number") {
+                        this.view.chooseType = arguments[1];
+                    }
+                    if (typeof arguments[2] === "number") {
+                        this.view.chooseFirtData = arguments[2];
+                    }
+                }
+                ReportViewApp.prototype.run.call(this, arguments[0]);
+            }
             /** 数据选择完成 */
             onChoosedData: (table: ibas.DataTable) => void;
         }
@@ -246,6 +276,10 @@ namespace reportanalysis {
         export interface IReportDataChooseView extends IReportViewView {
             /** 选择数据 */
             chooseDataEvent: Function;
+            /** 选择类型 */
+            chooseType: ibas.emChooseType;
+            /** 选择第一行 */
+            chooseFirtData: ibas.emYesNo;
         }
     }
 }
