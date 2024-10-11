@@ -164,7 +164,11 @@ namespace reportanalysis {
                 }
                 showResults(table: ibas.DataTable): void {
                     super.showResults(table);
-                    this.tableBar.setVisible(true);
+                    if (table.columns.length > 1 || table.rows.length > 1) {
+                        this.tableBar.setVisible(true);
+                    } else {
+                        this.tableBar.setVisible(false);
+                    }
                 }
             }
         }

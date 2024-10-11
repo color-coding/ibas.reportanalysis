@@ -73,6 +73,7 @@ namespace reportanalysis {
                         }
                     }
                 });
+                this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("shell_fetching_data"));
             }
         }
         /** 视图-报表 */

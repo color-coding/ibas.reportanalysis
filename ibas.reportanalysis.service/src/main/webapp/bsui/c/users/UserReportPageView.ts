@@ -43,12 +43,43 @@ namespace reportanalysis {
                                     item.setVisible(false);
                                 }
                             }
+                            let model: any = (<any>that.container.getBinding("tiles"));
+                            if (model instanceof sap.ui.model.ListBinding) {
+                                let filters: sap.ui.model.Filter[] = [];
+                                for (let item of groups) {
+                                    filters.push(new sap.ui.model.Filter("group", sap.ui.model.FilterOperator.Contains, item));
+                                }
+                                if (filters.length > 0) {
+                                    model.filter(new sap.ui.model.Filter({
+                                        filters: filters,
+                                        and: false
+                                    }));
+                                } else {
+                                    model.filter(undefined);
+                                }
+                            }
                         },
                     });
                     return new sap.m.Page("", {
                         showHeader: false,
                         content: [
                             this.container = new sap.m.TileContainer("", {
+                                tiles: {
+                                    path: "/",
+                                    template: new sap.m.StandardTile("", {
+                                        info: "# {id}",
+                                        title: "{name}",
+                                        icon: {
+                                            path: "category",
+                                            formatter(data: any): string {
+                                                return that.getIcon(data);
+                                            }
+                                        },
+                                        press(): void {
+                                            that.fireViewEvents(that.activeReportEvent, this.getBindingContext().getObject());
+                                        }
+                                    })
+                                }
                             })
                         ],
                         footer: new sap.m.Toolbar("", {
@@ -128,7 +159,6 @@ namespace reportanalysis {
                 private button: sap.m.Button;
                 /** 显示数据 */
                 showReports(reports: bo.UserReport[]): void {
-                    this.container.destroyTiles();
                     if (this.button.getType() === sap.m.ButtonType.Emphasized && reports.length > 0) {
                         reports.sort((a, b) => {
                             if (a.name > b.name) {
@@ -140,23 +170,12 @@ namespace reportanalysis {
                         });
                     }
                     let groups: ibas.IList<string> = new ibas.ArrayList<string>();
-                    let that: this = this;
                     for (let item of reports) {
-                        let title: sap.m.StandardTile = new sap.m.StandardTile("", {
-                            info: "# {id}",
-                            title: "{name}",
-                            icon: this.getIcon(item.category),
-                            press(): void {
-                                that.fireViewEvents(that.activeReportEvent, item);
-                            }
-                        });
-                        title.bindObject("/");
-                        title.setModel(new sap.ui.model.json.JSONModel(item));
-                        this.container.addTile(title);
                         if (!ibas.strings.isEmpty(item.group) && !groups.contain(item.group)) {
                             groups.add(item.group);
                         }
                     }
+                    this.container.setModel(new sap.ui.model.json.JSONModel(reports));
                     if (this.multiCombobox.getItems().length === 0) {
                         for (let item of groups) {
                             this.multiCombobox.addItem(new sap.ui.core.Item("", {
