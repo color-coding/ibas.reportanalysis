@@ -40,6 +40,7 @@ namespace reportanalysis {
                 this.register(new ReportDataServiceMapping());
                 this.register(new ReportResultServiceMapping());
                 this.register(new ReportEditServiceMapping());
+                this.register(new ReportLinkServiceMapping());
                 // 注册常驻应用
 
             }

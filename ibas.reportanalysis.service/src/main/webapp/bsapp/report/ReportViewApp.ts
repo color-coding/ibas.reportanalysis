@@ -281,5 +281,98 @@ namespace reportanalysis {
             /** 选择第一行 */
             chooseFirtData: ibas.emYesNo;
         }
+
+        /** 查看应用-报表 */
+        export class ReportDataViewApp extends ibas.BOViewService<ibas.IBOViewView, bo.Report> {
+            /** 应用标识 */
+            static APPLICATION_ID: string = "1d6e6448-71dd-4659-b486-ca4e19c00138";
+            /** 应用名称 */
+            static APPLICATION_NAME: string = "reportanalysis_app_report_view";
+            /** 业务对象编码 */
+            static BUSINESS_OBJECT_CODE: string = bo.Report.BUSINESS_OBJECT_CODE;
+            /** 构造函数 */
+            constructor() {
+                super();
+                this.id = ReportDataViewApp.APPLICATION_ID;
+                this.name = ReportDataViewApp.APPLICATION_NAME;
+                this.boCode = ReportDataViewApp.BUSINESS_OBJECT_CODE;
+                this.description = ibas.i18n.prop(this.name);
+            }
+            /** 注册视图 */
+            protected registerView(): void {
+                super.registerView();
+                // 其他事件
+            }
+            /** 视图显示后 */
+            protected viewShowed(): void {
+                // 视图加载完成，基类方法更新地址
+                super.viewShowed();
+            }
+            /** 编辑数据，参数：目标数据 */
+            protected editData(): void {
+            }
+            run(): void;
+            run(data: bo.Report): void;
+            run(): void {
+                if (arguments[0] instanceof bo.Report) {
+                    this.viewData = arguments[0];
+                    let app: ReportViewerApp = new ReportViewerApp();
+                    app.navigation = this.navigation;
+                    app.viewShower = this.viewShower;
+                    app.run(this.viewData);
+                } else {
+                    super.run.apply(this, arguments);
+                }
+            }
+            /** 查询数据 */
+            protected fetchData(criteria: ibas.ICriteria | string): void {
+                this.busy(true);
+                let that: this = this;
+                if (typeof criteria === "string" || typeof criteria === "number") {
+                    let condition: ibas.ICondition;
+                    let value: string = criteria;
+                    criteria = new ibas.Criteria();
+                    criteria.result = 1;
+                    condition = criteria.conditions.create();
+                    condition.alias = bo.Report.PROPERTY_OBJECTKEY_NAME;
+                    condition.value = value;
+                }
+                let boRepository: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
+                boRepository.fetchReport({
+                    criteria: criteria,
+                    onCompleted(opRslt: ibas.IOperationResult<bo.Report>): void {
+                        try {
+                            if (opRslt.resultObjects.length > 0) {
+                                this.viewData = opRslt.resultObjects.firstOrDefault();
+                                let app: ReportViewerApp = new ReportViewerApp();
+                                app.navigation = that.navigation;
+                                app.viewShower = that.viewShower;
+                                app.run(this.viewData);
+                            } else {
+                                throw new Error(ibas.i18n.prop("reportanalysis_run_report_error"));
+                            }
+                        } catch (error) {
+                            that.messages(error);
+                        }
+                    }
+                });
+                this.proceeding(ibas.emMessageType.INFORMATION, ibas.i18n.prop("shell_fetching_data"));
+            }
+        }
+        /** 报表连接服务映射 */
+        export class ReportLinkServiceMapping extends ibas.BOLinkServiceMapping {
+            /** 构造函数 */
+            constructor() {
+                super();
+                this.id = ReportDataViewApp.APPLICATION_ID;
+                this.name = ReportDataViewApp.APPLICATION_NAME;
+                this.boCode = ReportDataViewApp.BUSINESS_OBJECT_CODE;
+                this.description = ibas.i18n.prop(this.name);
+            }
+            /** 创建服务实例 */
+            create(): ibas.IBOLinkService {
+                return new ReportDataViewApp();
+            }
+        }
     }
 }

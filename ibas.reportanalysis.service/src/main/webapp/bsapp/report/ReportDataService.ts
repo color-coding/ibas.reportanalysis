@@ -131,10 +131,21 @@ namespace reportanalysis {
                         continue;
                     }
                     if (!ibas.objects.isNull(this.triggerData)) {
-                        let value: any = ibas.objects.propertyValue(this.triggerData, ibas.strings.remove(item.name, "${", "}"), true);
-                        if (!ibas.objects.isNull(value)) {
-                            item.value = String(value);
-                            continue;
+                        if (ibas.strings.isWith(item.name, "${", "}")) {
+                            let value: any = null;
+                            let property: string = ibas.strings.remove(item.name, "${", "}");
+                            if (ibas.strings.isWith(property, "U_", undefined)) {
+                                let userFields: any = this.triggerData.userFields;
+                                if (userFields instanceof ibas.UserFields) {
+                                    value = userFields.get(property)?.value;
+                                }
+                            } else {
+                                value = ibas.objects.propertyValue(this.triggerData, property, true);
+                            }
+                            if (!ibas.objects.isNull(value)) {
+                                item.value = String(value);
+                                continue;
+                            }
                         }
                     }
                 }
