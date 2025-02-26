@@ -253,6 +253,92 @@ namespace reportanalysis {
                                     }
                                 }),
                                 new sap.m.ToolbarSeparator(""),
+                                new sap.m.MenuButton("", {
+                                    text: ibas.i18n.prop("reportanalysis_text_align"),
+                                    icon: "sap-icon://outdent",
+                                    type: sap.m.ButtonType.Accept,
+                                    menu: new sap.m.Menu("", {
+                                        items: [
+                                            new sap.m.MenuItem("", {
+                                                text: ibas.i18n.prop("reportanalysis_left"),
+                                                icon: "sap-icon://outdent",
+                                                press: function (): void {
+                                                    let table: sap.ui.table.Table = (<any>that.viewContainer.getContent()[0]);
+                                                    if (table instanceof sap.ui.table.Table) {
+                                                        for (let row of table.getRows()) {
+                                                            for (let cell of row.getCells()) {
+                                                                if (cell instanceof sap.m.Text || cell instanceof sap.m.Link) {
+                                                                    cell.setTextAlign(sap.ui.core.TextAlign.Left);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    this.getParent().getParent().setIcon(this.getIcon());
+                                                }
+                                            }),
+                                            new sap.m.MenuItem("", {
+                                                text: ibas.i18n.prop("reportanalysis_right"),
+                                                icon: "sap-icon://indent",
+                                                press: function (): void {
+                                                    let table: sap.ui.table.Table = (<any>that.viewContainer.getContent()[0]);
+                                                    if (table instanceof sap.ui.table.Table) {
+                                                        for (let row of table.getRows()) {
+                                                            for (let cell of row.getCells()) {
+                                                                if (cell instanceof sap.m.Text || cell instanceof sap.m.Link) {
+                                                                    cell.setTextAlign(sap.ui.core.TextAlign.Right);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    this.getParent().getParent().setIcon(this.getIcon());
+                                                }
+                                            }),
+                                            new sap.m.MenuItem("", {
+                                                text: ibas.i18n.prop("reportanalysis_number_left"),
+                                                icon: "sap-icon://outdent",
+                                                press: function (): void {
+                                                    let table: sap.ui.table.Table = (<any>that.viewContainer.getContent()[0]);
+                                                    if (table instanceof sap.ui.table.Table) {
+                                                        for (let row of table.getRows()) {
+                                                            for (let cell of row.getCells()) {
+                                                                if (cell instanceof sap.m.Text || cell instanceof sap.m.Link) {
+                                                                    let binding: any = cell.getBinding("bindingValue");
+                                                                    if (binding?.getType() instanceof sap.ui.model.type.Float
+                                                                        || binding?.getType() instanceof sap.ui.model.type.Integer) {
+                                                                        cell.setTextAlign(sap.ui.core.TextAlign.Begin);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    this.getParent().getParent().setIcon(this.getIcon());
+                                                }
+                                            }),
+                                            new sap.m.MenuItem("", {
+                                                text: ibas.i18n.prop("reportanalysis_number_right"),
+                                                icon: "sap-icon://indent",
+                                                press: function (): void {
+                                                    let table: sap.ui.table.Table = (<any>that.viewContainer.getContent()[0]);
+                                                    if (table instanceof sap.ui.table.Table) {
+                                                        for (let row of table.getRows()) {
+                                                            for (let cell of row.getCells()) {
+                                                                if (cell instanceof sap.m.Text || cell instanceof sap.m.Link) {
+                                                                    let binding: any = cell.getBinding("bindingValue");
+                                                                    if (binding?.getType() instanceof sap.ui.model.type.Float
+                                                                        || binding?.getType() instanceof sap.ui.model.type.Integer) {
+                                                                        cell.setTextAlign(sap.ui.core.TextAlign.End);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    this.getParent().getParent().setIcon(this.getIcon());
+                                                }
+                                            }),
+                                        ],
+                                    })
+                                }),
+                                new sap.m.ToolbarSeparator(""),
                                 new sap.m.Button("", {
                                     text: ibas.i18n.prop("reportanalysis_resize_column"),
                                     type: sap.m.ButtonType.Accept,

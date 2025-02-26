@@ -86,10 +86,20 @@ namespace reportanalysis {
                     let maxLength: number = ibas.config.get(CONFIG_ITEM_LINE_MAX_TEXT_LENGTH, 30);
                     for (let index: number = 0; index < table.columns.length; index++) {
                         let col: ibas.DataTableColumn = table.columns[index];
-                        let infoCol: { path: string, objectCode?: string, description: string } = {
+                        let infoCol: { path: string, objectCode?: string, description: string, type?: any } = {
                             path: index.toString(),
                             description: ibas.strings.isEmpty(col.description) ? col.name : col.description,
                         };
+                        if (col.definedDataType() === ibas.emTableDataType.NUMERIC) {
+                            infoCol.type = sap.extension.data.Numeric;
+                        } else if (col.definedDataType() === ibas.emTableDataType.DECIMAL) {
+                            // 使用原类型，避免小数位
+                            infoCol.type = sap.ui.model.type.Float;
+                        } else if (col.definedDataType() === ibas.emTableDataType.DATE) {
+                            infoCol.type = sap.extension.data.Date;
+                        } else {
+                            infoCol.type = sap.extension.data.Alphanumeric;
+                        }
                         if (typeof infoCol.description === "string" && infoCol.description.indexOf("#{") > 0 && infoCol.description.endsWith("}")) {
                             let value: string = infoCol.description.substring(infoCol.description.indexOf("#{"));
                             infoCol.objectCode = value.substring(2, value.length - 1);
@@ -102,58 +112,49 @@ namespace reportanalysis {
                                 index === 1 : table.columns.length > 0 ?
                                     index === 0 : false
                         }));
-                        if (col.definedDataType() === ibas.emTableDataType.DATE) {
-                            template.addAttribute(new sap.extension.m.ObjectAttribute("", {
-                                title: infoCol.description,
-                                bindingValue: {
-                                    path: infoCol.path,
-                                    type: new sap.extension.data.Date(),
+                        template.addAttribute(new sap.extension.m.ObjectAttribute("", {
+                            title: infoCol.description,
+                            active: {
+                                path: infoCol.path,
+                                formatter(data: string): boolean {
+                                    if (typeof data === "string") {
+                                        let length: number = 0;
+                                        for (let item of data) {
+                                            if (item.charCodeAt(0) > 255) {
+                                                // 字符编码大于255，说明是双字节字符
+                                                length += 2;
+                                            } else {
+                                                length++;
+                                            }
+                                        }
+                                        if (length >= maxLength) {
+                                            return true;
+                                        }
+                                    }
+                                    return false;
                                 }
-                            }));
-                        } else {
-                            template.addAttribute(new sap.extension.m.ObjectAttribute("", {
-                                title: infoCol.description,
-                                active: {
-                                    path: infoCol.path,
-                                    formatter(data: string): boolean {
-                                        if (typeof data === "string") {
-                                            let length: number = 0;
-                                            for (let item of data) {
-                                                if (item.charCodeAt(0) > 255) {
-                                                    // 字符编码大于255，说明是双字节字符
-                                                    length += 2;
-                                                } else {
-                                                    length++;
-                                                }
-                                            }
-                                            if (length >= maxLength) {
-                                                return true;
-                                            }
-                                        }
-                                        return false;
+                            },
+                            bindingValue: {
+                                path: infoCol.path,
+                                type: new infoCol.type,
+                                formatter: function (value: string): string {
+                                    if (typeof value === "string" && value.endsWith("}") && value.indexOf("#{") > 0) {
+                                        this.setTooltip(value);
+                                        return value.substring(0, value.indexOf("#{"));
                                     }
-                                },
-                                bindingValue: {
-                                    path: infoCol.path,
-                                    formatter: function (value: string): string {
-                                        if (typeof value === "string" && value.endsWith("}") && value.indexOf("#{") > 0) {
-                                            this.setTooltip(value);
-                                            return value.substring(0, value.indexOf("#{"));
-                                        }
-                                        return value;
-                                    }
-                                },
-                                press: function (event: sap.ui.base.Event): void {
-                                    let attribute: any = event.getSource();
-                                    if (attribute instanceof sap.m.ObjectAttribute) {
-                                        sap.extension.m.MessageBox.show(attribute.getText(), {
-                                            title: attribute.getTitle(),
-                                            type: ibas.emMessageType.INFORMATION,
-                                        });
-                                    }
-                                },
-                            }));
-                        }
+                                    return value;
+                                }
+                            },
+                            press: function (event: sap.ui.base.Event): void {
+                                let attribute: any = event.getSource();
+                                if (attribute instanceof sap.m.ObjectAttribute) {
+                                    sap.extension.m.MessageBox.show(attribute.getText(), {
+                                        title: attribute.getTitle(),
+                                        type: ibas.emMessageType.INFORMATION,
+                                    });
+                                }
+                            },
+                        }));
                     }
                     let modelData: any[] = table.convert({ format: true, nameAs: "index" });
                     let index: number = 1;

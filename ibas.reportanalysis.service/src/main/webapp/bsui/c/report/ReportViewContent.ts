@@ -26,6 +26,7 @@ namespace reportanalysis {
                 /** 触发值连接 */
                 fireValueLink(objectCode: string, value: string, row?: any): void;
             }
+
             export class ReportViewContent {
                 constructor(parent: IReportViewView, chooseType: ibas.emChooseType) {
                     this.parent = parent;
@@ -368,16 +369,28 @@ namespace reportanalysis {
                                 template: new sap.extension.m.Text("", {
                                 }).bindProperty("bindingValue", {
                                     path: "#",
+                                    type: new sap.extension.data.Numeric(),
                                 })
                             })
                         ]
                     });
                     for (let index: number = 0; index < table.columns.length; index++) {
                         let col: ibas.DataTableColumn = table.columns[index];
-                        let infoCol: { path: string, objectCode?: string, description: string } = {
+                        let infoCol: { path: string, objectCode?: string, description: string, type?: any } = {
                             path: index.toString(),
                             description: ibas.strings.isEmpty(col.description) ? col.name : col.description,
                         };
+                        if (col.definedDataType() === ibas.emTableDataType.NUMERIC) {
+                            infoCol.type = sap.extension.data.Numeric;
+                        } else if (col.definedDataType() === ibas.emTableDataType.DECIMAL) {
+                            // 使用原类型，避免小数位
+                            infoCol.type = sap.ui.model.type.Float;
+                            // infoCol.type = sap.extension.data.Decimal;
+                        } else if (col.definedDataType() === ibas.emTableDataType.DATE) {
+                            infoCol.type = sap.extension.data.Date;
+                        } else {
+                            infoCol.type = sap.extension.data.Alphanumeric;
+                        }
                         if (typeof infoCol.description === "string" && infoCol.description.indexOf("#{") > 0 && infoCol.description.endsWith("}")) {
                             let value: string = infoCol.description.substring(infoCol.description.indexOf("#{"));
                             infoCol.objectCode = value.substring(2, value.length - 1);
@@ -388,25 +401,7 @@ namespace reportanalysis {
                                 infoCol.description = value;
                             }
                         }
-                        if (col.definedDataType() === ibas.emTableDataType.DATE) {
-                            tableResult.addColumn(new sap.ui.table.Column("", {
-                                autoResizable: true,
-                                label: infoCol.description,
-                                sortProperty: infoCol.path,
-                                filterProperty: infoCol.path,
-                                template: new sap.extension.m.Text("", {
-                                    tooltip: {
-                                        path: infoCol.path,
-                                        formatter(data: any): string {
-                                            return ibas.dates.toString(data);
-                                        }
-                                    }
-                                }).bindProperty("bindingValue", {
-                                    path: infoCol.path,
-                                    type: new sap.extension.data.Date(),
-                                })
-                            }));
-                        } else if (!ibas.objects.isNull(infoCol.objectCode)) {
+                        if (!ibas.objects.isNull(infoCol.objectCode)) {
                             // 对象有值，""认为是任意对象，具体从值中解析
                             tableResult.addColumn(new sap.ui.table.Column("", {
                                 autoResizable: true,
@@ -454,7 +449,8 @@ namespace reportanalysis {
                                             }
                                             that.parent.fireValueLink(objectCode, linkValue, rowData);
                                         }
-                                    }
+                                    },
+                                    width: "100%",
                                 }).bindProperty("bindingValue", {
                                     path: infoCol.path,
                                     type: new sap.extension.data.Alphanumeric(),
@@ -478,7 +474,13 @@ namespace reportanalysis {
                                 ],
                                 sortProperty: infoCol.path,
                                 filterProperty: infoCol.path,
-                                columnMenuOpen(e: sap.ui.base.Event): boolean {
+                                columnMenuOpen(this: sap.ui.table.Column, e: sap.ui.base.Event): boolean {
+                                    if (infoCol.type !== sap.ui.model.type.Float
+                                        && infoCol.type !== sap.ui.model.type.Integer
+                                        && infoCol.type !== sap.extension.data.Numeric
+                                        && infoCol.type !== sap.extension.data.Decimal) {
+                                        return false;
+                                    }
                                     let column: sap.ui.table.Column = this;
                                     let menu: sap.ui.unified.Menu = e.getParameter("menu");
                                     if (!!menu) {
@@ -572,10 +574,11 @@ namespace reportanalysis {
                                         formatter(data: any): string {
                                             return ibas.strings.valueOf(data);
                                         }
-                                    }
+                                    },
+                                    width: "100%",
                                 }).bindProperty("bindingValue", {
                                     path: infoCol.path,
-                                    type: new sap.extension.data.Alphanumeric(),
+                                    type: new infoCol.type,
                                 })
                             }));
                         }

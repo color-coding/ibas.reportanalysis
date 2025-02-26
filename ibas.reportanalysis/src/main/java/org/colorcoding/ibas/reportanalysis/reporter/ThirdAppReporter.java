@@ -64,9 +64,6 @@ public class ThirdAppReporter extends Reporter {
 				if (PARAMETER_NAME_ADDRESS.equalsIgnoreCase(item.getName())) {
 					continue;
 				}
-				if (item.getValue() == null) {
-					continue;
-				}
 				params.put(item.getName(), item.getValue());
 			}
 			IOperationResult<IDataTable> opRslt = client.execute("runReport", params);
