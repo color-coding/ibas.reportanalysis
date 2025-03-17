@@ -64,6 +64,9 @@ namespace reportanalysis {
                     case app.ReportImportApp.APPLICATION_ID:
                         view = new c.ReportImportView();
                         break;
+                    case app.ReportChartsApp.APPLICATION_ID:
+                        view = new c.ReportChartsView();
+                        break;
                     default:
                         break;
                 }

@@ -701,6 +701,8 @@ declare namespace initialfantasy {
             description: string;
             /** 默认值 */
             default: ibas.emYesNo;
+            /** 显示顺序 */
+            visOrder: number;
         }
         /** 业务对象属性信息 集合 */
         interface IBOPropertyValues extends ibas.IBusinessObjects<IBOPropertyValue> {
@@ -2707,6 +2709,12 @@ declare namespace initialfantasy {
             get default(): ibas.emYesNo;
             /** 设置-默认值 */
             set default(value: ibas.emYesNo);
+            /** 映射的属性名称-显示顺序 */
+            static PROPERTY_VISORDER_NAME: string;
+            /** 获取-显示顺序 */
+            get visOrder(): number;
+            /** 设置-显示顺序 */
+            set visOrder(value: number);
             /** 字符串 */
             toString(): string;
             /** 获取查询 */

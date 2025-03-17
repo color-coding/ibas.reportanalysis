@@ -122,5 +122,11 @@
         "em_reporttype_service": "Service Report",
         "em_reporttype_file": "File Report",
         "em_reporttype_third_app": "Third-party App"
+    },
+    {
+        "charttype_pie": "Pie",
+        "charttype_line": "Line",
+        "charttype_bubble": "Bubble",
+        "charttype_scatter": "Scatter"
     }
 ]

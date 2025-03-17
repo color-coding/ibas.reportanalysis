@@ -122,5 +122,11 @@
         "em_reporttype_service": "服务报表",
         "em_reporttype_file": "报表文件",
         "em_reporttype_third_app": "第三方应用"
+    },
+    {
+        "charttype_pie": "饼图",
+        "charttype_line": "折线图",
+        "charttype_bubble": "气泡图",
+        "charttype_scatter": "散点图"
     }
 ]

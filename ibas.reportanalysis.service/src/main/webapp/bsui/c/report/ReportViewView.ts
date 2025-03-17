@@ -351,6 +351,57 @@ namespace reportanalysis {
                                         }
                                     }
                                 }),
+                                new sap.m.ToolbarSeparator(""),
+                                this.chartMenus = new sap.m.MenuButton("", {
+                                    text: ibas.i18n.prop("reportanalysis_chart_display"),
+                                    icon: "sap-icon://line-charts",
+                                    type: sap.m.ButtonType.Accept,
+                                    visible: false,
+                                    menu: new sap.m.Menu("", {
+                                        items: [
+                                            new sap.m.MenuItem("", {
+                                                text: ibas.i18n.prop("reportanalysis_chart_pie"),
+                                                icon: "sap-icon://pie-chart",
+                                                press: function (): void {
+                                                    let app: reportanalysis.app.ReportChartsApp = new reportanalysis.app.ReportChartsApp();
+                                                    app.navigation = that.application.navigation;
+                                                    app.viewShower = that.application.viewShower;
+                                                    app.run(that.viewData, reportanalysis.app.ChartType.PIE);
+                                                }
+                                            }),
+                                            new sap.m.MenuItem("", {
+                                                text: ibas.i18n.prop("reportanalysis_chart_line"),
+                                                icon: "sap-icon://line-chart",
+                                                press: function (): void {
+                                                    let app: reportanalysis.app.ReportChartsApp = new reportanalysis.app.ReportChartsApp();
+                                                    app.navigation = that.application.navigation;
+                                                    app.viewShower = that.application.viewShower;
+                                                    app.run(that.viewData, reportanalysis.app.ChartType.LINE);
+                                                }
+                                            }),
+                                            new sap.m.MenuItem("", {
+                                                text: ibas.i18n.prop("reportanalysis_chart_scatter"),
+                                                icon: "sap-icon://scatter-chart",
+                                                press: function (): void {
+                                                    let app: reportanalysis.app.ReportChartsApp = new reportanalysis.app.ReportChartsApp();
+                                                    app.navigation = that.application.navigation;
+                                                    app.viewShower = that.application.viewShower;
+                                                    app.run(that.viewData, reportanalysis.app.ChartType.SCATTER);
+                                                }
+                                            }),
+                                            new sap.m.MenuItem("", {
+                                                text: ibas.i18n.prop("reportanalysis_chart_bubble"),
+                                                icon: "sap-icon://bubble-chart",
+                                                press: function (): void {
+                                                    let app: reportanalysis.app.ReportChartsApp = new reportanalysis.app.ReportChartsApp();
+                                                    app.navigation = that.application.navigation;
+                                                    app.viewShower = that.application.viewShower;
+                                                    app.run(that.viewData, reportanalysis.app.ChartType.BUBBLE);
+                                                }
+                                            }),
+                                        ],
+                                    })
+                                }),
                             ]
                         }),
                     });
@@ -362,6 +413,8 @@ namespace reportanalysis {
                 }
                 viewData: ibas.DataTable;
                 private countText: sap.extension.m.Text;
+                private chartMenus: sap.m.MenuButton;
+
                 /** 显示报表结果 */
                 showResults(table: ibas.DataTable): void {
                     this.viewContent.showResults(this.viewData = table);
@@ -373,6 +426,12 @@ namespace reportanalysis {
                             toolBar.insertContent(this.countText, 0);
                         }
                         this.countText.setText(ibas.i18n.prop("reportanalysis_ui_count", table.rows.length));
+                    }
+                    // 判断表格是否可形成图表
+                    if (table?.rows.length > 1 && table?.columns.length > 1) {
+                        this.chartMenus.setVisible(true);
+                    } else {
+                        this.chartMenus.setVisible(false);
                     }
                 }
                 proceeding(type: ibas.emMessageType, msg: string): void {
