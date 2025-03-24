@@ -320,10 +320,14 @@ namespace reportanalysis {
                     app.navigation = this.navigation;
                     app.viewShower = this.viewShower;
                     app.run(this.viewData);
+                } else if (arguments[0]?.proxy instanceof ibas.BOLinkServiceProxy) {
+                    this.triggerData = arguments[0].trigger;
+                    super.run.apply(this, arguments);
                 } else {
                     super.run.apply(this, arguments);
                 }
             }
+            private triggerData?: any;
             /** 查询数据 */
             protected fetchData(criteria: ibas.ICriteria | string): void {
                 this.busy(true);
@@ -343,11 +347,39 @@ namespace reportanalysis {
                     onCompleted(opRslt: ibas.IOperationResult<bo.Report>): void {
                         try {
                             if (opRslt.resultObjects.length > 0) {
-                                this.viewData = opRslt.resultObjects.firstOrDefault();
-                                let app: ReportViewerApp = new ReportViewerApp();
-                                app.navigation = that.navigation;
-                                app.viewShower = that.viewShower;
-                                app.run(this.viewData);
+                                that.viewData = opRslt.resultObjects.firstOrDefault();
+                                if (!ibas.objects.isNull(that.triggerData)) {
+                                    // 设置数据参数
+                                    let uReport: bo.UserReport = bo.UserReport.create(that.viewData);
+                                    for (let item of uReport.parameters) {
+                                        if (ibas.strings.isWith(item.name, "${", "}")) {
+                                            let value: any = null;
+                                            let property: string = ibas.strings.remove(item.name, "${", "}");
+                                            if (ibas.strings.isWith(property, "U_", undefined)) {
+                                                let userFields: any = that.triggerData.userFields;
+                                                if (userFields instanceof ibas.UserFields) {
+                                                    value = userFields.get(property)?.value;
+                                                }
+                                            } else {
+                                                value = ibas.objects.propertyValue(that.triggerData, property, true);
+                                            }
+                                            if (!ibas.objects.isNull(value)) {
+                                                item.value = String(value);
+                                                item.category = bo.emReportParameterType.PRESET;
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                    let app: ReportViewerApp = new ReportViewerApp();
+                                    app.navigation = that.navigation;
+                                    app.viewShower = that.viewShower;
+                                    app.run(uReport);
+                                } else {
+                                    let app: ReportViewerApp = new ReportViewerApp();
+                                    app.navigation = that.navigation;
+                                    app.viewShower = that.viewShower;
+                                    app.run(that.viewData);
+                                }
                             } else {
                                 throw new Error(ibas.i18n.prop("reportanalysis_run_report_error"));
                             }
