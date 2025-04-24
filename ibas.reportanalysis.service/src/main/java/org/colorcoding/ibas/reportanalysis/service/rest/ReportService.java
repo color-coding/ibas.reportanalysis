@@ -47,20 +47,22 @@ public class ReportService {
 					int index = info.indexOf(":");
 					String user = info.substring(0, index).trim();
 					String password = info.substring(index + 1).trim();
-					BORepositoryInitialFantasyShell boRepository = new BORepositoryInitialFantasyShell();
-					User sUser = boRepository.userConnect(user, password).getResultObjects().firstOrDefault();
-					if (sUser != null) {
-						return sUser.getToken();
+					try (BORepositoryInitialFantasyShell boRepository = new BORepositoryInitialFantasyShell()) {
+						User sUser = boRepository.userConnect(user, password).getResultObjects().firstOrDefault();
+						if (sUser != null) {
+							return sUser.getToken();
+						}
 					}
 				}
 			} else if (encoded.startsWith("Bearer")) {
 				String[] values = encoded.split(" ");
 				if (values.length > 1) {
-					BORepositoryInitialFantasyShell boRepository = new BORepositoryInitialFantasyShell();
-					User sUser = boRepository.tokenConnect(values[values.length - 1]).getResultObjects()
-							.firstOrDefault();
-					if (sUser != null) {
-						return sUser.getToken();
+					try (BORepositoryInitialFantasyShell boRepository = new BORepositoryInitialFantasyShell()) {
+						User sUser = boRepository.tokenConnect(values[values.length - 1]).getResultObjects()
+								.firstOrDefault();
+						if (sUser != null) {
+							return sUser.getToken();
+						}
 					}
 				}
 			}
@@ -102,29 +104,30 @@ public class ReportService {
 			condition = criteria.getConditions().create();
 			condition.setAlias(Report.PROPERTY_ACTIVATED.getName());
 			condition.setValue(emYesNo.YES);
-			BORepositoryReportAnalysis boRepository = new BORepositoryReportAnalysis();
-			boRepository.setUserToken(token);
-			IOperationResult<IReport> opRsltReport = boRepository.fetchReport(criteria);
-			if (opRsltReport.getError() != null) {
-				throw opRsltReport.getError();
-			}
-			OperationResult<ReportData> operationResult = new OperationResult<>();
-			for (IReport item : opRsltReport.getResultObjects()) {
-				ReportData data = new ReportData();
-				data.setId(String.valueOf(item.getObjectKey()));
-				data.setName(item.getName());
-				data.setGroup(item.getGroup());
-				data.setParameters(new ReportDataParameter[item.getReportParameters().size()]);
-				for (int i = 0; i < item.getReportParameters().size(); i++) {
-					IReportParameter pItem = item.getReportParameters().get(i);
-					ReportDataParameter pData = new ReportDataParameter();
-					pData.setName(pItem.getName());
-					pData.setValue(pItem.getValue());
-					data.getParameters()[i] = pData;
+			try (BORepositoryReportAnalysis boRepository = new BORepositoryReportAnalysis()) {
+				boRepository.setUserToken(token);
+				IOperationResult<IReport> opRsltReport = boRepository.fetchReport(criteria);
+				if (opRsltReport.getError() != null) {
+					throw opRsltReport.getError();
 				}
-				operationResult.addResultObjects(data);
+				OperationResult<ReportData> operationResult = new OperationResult<>();
+				for (IReport item : opRsltReport.getResultObjects()) {
+					ReportData data = new ReportData();
+					data.setId(String.valueOf(item.getObjectKey()));
+					data.setName(item.getName());
+					data.setGroup(item.getGroup());
+					data.setParameters(new ReportDataParameter[item.getReportParameters().size()]);
+					for (int i = 0; i < item.getReportParameters().size(); i++) {
+						IReportParameter pItem = item.getReportParameters().get(i);
+						ReportDataParameter pData = new ReportDataParameter();
+						pData.setName(pItem.getName());
+						pData.setValue(pItem.getValue());
+						data.getParameters()[i] = pData;
+					}
+					operationResult.addResultObjects(data);
+				}
+				return operationResult;
 			}
-			return operationResult;
 		} catch (Exception e) {
 			return new OperationResult<>(e);
 		}
@@ -145,38 +148,39 @@ public class ReportService {
 			condition = criteria.getConditions().create();
 			condition.setAlias(Report.PROPERTY_OBJECTKEY.getName());
 			condition.setValue(reportData.getId());
-			BORepositoryReportAnalysis boRepository = new BORepositoryReportAnalysis();
-			boRepository.setUserToken(token);
-			IOperationResult<IReport> opRsltReport = boRepository.fetchReport(criteria);
-			if (opRsltReport.getError() != null) {
-				throw opRsltReport.getError();
-			}
-			IReport report = opRsltReport.getResultObjects().firstOrDefault();
-			if (report == null) {
-				throw new Exception(I18N.prop("msg_ra_not_found_report", reportData.getId()));
-			}
-			UserReport userReport = UserReport.create(report);
-			if (reportData.getParameters() != null && userReport.getParameters() != null) {
-				for (UserReportParameter uItem : userReport.getParameters()) {
-					if (uItem.getName() == null) {
-						continue;
-					}
-					if (uItem.getCategory() == emReportParameterType.PRESET) {
-						continue;
-					}
-					for (ReportDataParameter dItem : reportData.getParameters()) {
-						if (dItem.getName() == null) {
+			try (BORepositoryReportAnalysis boRepository = new BORepositoryReportAnalysis()) {
+				boRepository.setUserToken(token);
+				IOperationResult<IReport> opRsltReport = boRepository.fetchReport(criteria);
+				if (opRsltReport.getError() != null) {
+					throw opRsltReport.getError();
+				}
+				IReport report = opRsltReport.getResultObjects().firstOrDefault();
+				if (report == null) {
+					throw new Exception(I18N.prop("msg_ra_not_found_report", reportData.getId()));
+				}
+				UserReport userReport = UserReport.create(report);
+				if (reportData.getParameters() != null && userReport.getParameters() != null) {
+					for (UserReportParameter uItem : userReport.getParameters()) {
+						if (uItem.getName() == null) {
 							continue;
 						}
-						if (!uItem.getName().equals(dItem.getName())) {
+						if (uItem.getCategory() == emReportParameterType.PRESET) {
 							continue;
 						}
-						uItem.setValue(dItem.getValue());
-						break;
+						for (ReportDataParameter dItem : reportData.getParameters()) {
+							if (dItem.getName() == null) {
+								continue;
+							}
+							if (!uItem.getName().equals(dItem.getName())) {
+								continue;
+							}
+							uItem.setValue(dItem.getValue());
+							break;
+						}
 					}
 				}
+				return (OperationResult<DataTable>) boRepository.runUserReport(userReport);
 			}
-			return (OperationResult<DataTable>) boRepository.runUserReport(userReport);
 		} catch (Exception e) {
 			return new OperationResult<>(e);
 		}

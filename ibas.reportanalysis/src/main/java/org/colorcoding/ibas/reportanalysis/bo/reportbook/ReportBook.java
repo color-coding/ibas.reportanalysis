@@ -8,14 +8,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.colorcoding.ibas.bobas.bo.BusinessObject;
+import org.colorcoding.ibas.bobas.bo.BusinessObjectUnit;
+import org.colorcoding.ibas.bobas.common.Strings;
 import org.colorcoding.ibas.bobas.core.IPropertyInfo;
 import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.data.emYesNo;
-import org.colorcoding.ibas.bobas.mapping.BusinessObjectUnit;
-import org.colorcoding.ibas.bobas.mapping.DbField;
-import org.colorcoding.ibas.bobas.mapping.DbFieldType;
+import org.colorcoding.ibas.bobas.db.DbField;
+import org.colorcoding.ibas.bobas.db.DbFieldType;
 import org.colorcoding.ibas.bobas.ownership.IDataOwnership;
-import org.colorcoding.ibas.initialfantasy.data.DataConvert;
 import org.colorcoding.ibas.reportanalysis.MyConfiguration;
 import org.colorcoding.ibas.reportanalysis.data.emAssignedType;
 
@@ -745,7 +745,7 @@ public class ReportBook extends BusinessObject<ReportBook> implements IReportBoo
 		super.initialize();// 基类初始化，不可去除
 		this.setReportBookItems(new ReportBookItems(this));
 		this.setObjectCode(MyConfiguration.applyVariables(BUSINESS_OBJECT_CODE));
-		this.setAssigned(DataConvert.STRING_VALUE_EMPTY);
+		this.setAssigned(Strings.VALUE_EMPTY);
 
 	}
 

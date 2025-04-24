@@ -1,7 +1,5 @@
 package org.colorcoding.ibas.reportanalysis.service.rest;
 
-import java.io.OutputStream;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -19,9 +17,8 @@ import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
-import org.colorcoding.ibas.bobas.data.FileData;
+import org.colorcoding.ibas.bobas.data.FileItem;
 import org.colorcoding.ibas.bobas.repository.FileRepository;
-import org.colorcoding.ibas.bobas.repository.FileRepositoryReadonly;
 import org.colorcoding.ibas.bobas.repository.jersey.FileRepositoryService;
 import org.colorcoding.ibas.reportanalysis.MyConfiguration;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -31,14 +28,14 @@ public class FileService extends FileRepositoryService {
 
 	public FileService() {
 		// 设置工作目录，资源目录下的报表目录
-		this.getRepository().setRepositoryFolder(MyConfiguration.getDocumetsFolder());
+		this.setRepositoryFolder(MyConfiguration.getDocumetsFolder());
 	}
 
 	@POST
 	@Path("upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public OperationResult<FileData> upload(FormDataMultiPart formData,
+	public OperationResult<FileItem> upload(FormDataMultiPart formData,
 			@HeaderParam("authorization") String authorization, @QueryParam("token") String token) {
 		return super.save(formData.getField("file"), MyConfiguration.optToken(authorization, token));
 	}
@@ -51,31 +48,21 @@ public class FileService extends FileRepositoryService {
 			@QueryParam("token") String token, @Context HttpServletResponse response) {
 		try {
 			// 获取文件
-			if (criteria != null) {
-				for (ICondition item : criteria.getConditions()) {
-					if (item.getAlias().equalsIgnoreCase(FileRepositoryReadonly.CRITERIA_CONDITION_ALIAS_FILE_NAME)) {
-						if (item.getValue() != null && item.getValue().startsWith("file://")) {
-							item.setValue(item.getValue().substring(7));
-						}
-					}
-				}
-			}
-			IOperationResult<FileData> operationResult = this.fetch(criteria,
+			IOperationResult<FileItem> operationResult = this.fetch(criteria,
 					MyConfiguration.optToken(authorization, token));
 			if (operationResult.getError() != null) {
 				throw operationResult.getError();
 			}
-			FileData fileData = operationResult.getResultObjects().firstOrDefault();
-			if (fileData != null) {
+			FileItem fileItem = operationResult.getResultObjects().firstOrDefault();
+			if (fileItem != null) {
 				// 设置文件名
-				response.setHeader("Content-Disposition",
-						String.format("attachment;filename=%s", fileData.getFileName()));
+				response.setHeader("Content-Disposition", String.format("attachment;filename=%s", fileItem.getName()));
 				// 设置内容类型
 				response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				// 写入响应输出流
-				OutputStream os = response.getOutputStream();
-				os.write(fileData.getFileBytes());
-				os.flush();
+				fileItem.writeTo(response.getOutputStream());
+				// 提交
+				response.getOutputStream().flush();
 			} else {
 				// 文件不存在
 				throw new WebApplicationException(404);
@@ -94,24 +81,21 @@ public class FileService extends FileRepositoryService {
 		try {
 			Criteria criteria = new Criteria();
 			ICondition condition = criteria.getConditions().create();
-			condition.setAlias(FileRepository.CRITERIA_CONDITION_ALIAS_FILE_NAME);
+			condition.setAlias(FileRepository.CONDITION_ALIAS_FILE_NAME);
 			condition.setValue(resource);
-			if (condition.getValue() != null && condition.getValue().startsWith("file://")) {
-				condition.setValue(condition.getValue().substring(7));
-			}
 			// 获取文件
-			IOperationResult<FileData> operationResult = this.fetch(criteria, token);
+			IOperationResult<FileItem> operationResult = this.fetch(criteria, token);
 			if (operationResult.getError() != null) {
 				throw operationResult.getError();
 			}
-			FileData fileData = operationResult.getResultObjects().firstOrDefault();
-			if (fileData != null) {
+			FileItem fileItem = operationResult.getResultObjects().firstOrDefault();
+			if (fileItem != null) {
 				// 设置内容类型
-				response.setContentType(this.getContentType(fileData));
+				response.setContentType(this.getContentType(fileItem));
 				// 写入响应输出流
-				OutputStream os = response.getOutputStream();
-				os.write(fileData.getFileBytes());
-				os.flush();
+				fileItem.writeTo(response.getOutputStream());
+				// 提交
+				response.getOutputStream().flush();
 			} else {
 				// 文件不存在
 				throw new WebApplicationException(404);
