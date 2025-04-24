@@ -11,8 +11,8 @@ import org.colorcoding.ibas.bobas.data.ArrayList;
 import org.colorcoding.ibas.bobas.data.DataTable;
 import org.colorcoding.ibas.bobas.data.emYesNo;
 import org.colorcoding.ibas.bobas.i18n.I18N;
-import org.colorcoding.ibas.bobas.message.Logger;
-import org.colorcoding.ibas.bobas.message.MessageLevel;
+import org.colorcoding.ibas.bobas.logging.Logger;
+import org.colorcoding.ibas.bobas.logging.LoggingLevel;
 import org.colorcoding.ibas.bobas.repository.BORepositoryServiceApplication;
 import org.colorcoding.ibas.reportanalysis.bo.report.IReport;
 import org.colorcoding.ibas.reportanalysis.bo.report.Report;
@@ -216,7 +216,7 @@ public class BORepositoryReportAnalysis extends BORepositoryServiceApplication
 				throw new Exception(I18N.prop("msg_ra_not_allowed_run_report",
 						report.getName() != null ? report.getName() : report.getId()));
 			}
-			Logger.log(MessageLevel.DEBUG, MSG_USER_RUN_REPORT, this.getCurrentUser().getId(), boReport.getObjectKey(),
+			Logger.log(LoggingLevel.DEBUG, MSG_USER_RUN_REPORT, this.getCurrentUser().getId(), boReport.getObjectKey(),
 					boReport.getName());
 			// 运行报表
 			opRslt.addResultObjects(reporter.run(exeReport));
@@ -246,7 +246,7 @@ public class BORepositoryReportAnalysis extends BORepositoryServiceApplication
 	 * @return 操作结果
 	 */
 	public OperationResult<Report> fetchReport(ICriteria criteria, String token) {
-		return super.fetch(criteria, token, Report.class);
+		return super.fetch(Report.class, criteria, token);
 	}
 
 	/**
@@ -289,7 +289,7 @@ public class BORepositoryReportAnalysis extends BORepositoryServiceApplication
 	 * @return 操作结果
 	 */
 	public OperationResult<ReportBook> fetchReportBook(ICriteria criteria, String token) {
-		return super.fetch(criteria, token, ReportBook.class);
+		return super.fetch(ReportBook.class, criteria, token);
 	}
 
 	/**
