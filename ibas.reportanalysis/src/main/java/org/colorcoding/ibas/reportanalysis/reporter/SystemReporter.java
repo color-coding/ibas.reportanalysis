@@ -3,12 +3,13 @@ package org.colorcoding.ibas.reportanalysis.reporter;
 import java.util.Iterator;
 
 import org.colorcoding.ibas.bobas.common.IOperationResult;
-import org.colorcoding.ibas.bobas.common.SqlQuery;
+import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.data.IDataTable;
 import org.colorcoding.ibas.bobas.data.IKeyText;
+import org.colorcoding.ibas.bobas.db.DbTransaction;
+import org.colorcoding.ibas.bobas.db.SqlStatement;
 import org.colorcoding.ibas.bobas.i18n.I18N;
-import org.colorcoding.ibas.bobas.repository.BORepository4DbReadonly;
-import org.colorcoding.ibas.bobas.repository.IBORepository4DbReadonly;
+import org.colorcoding.ibas.bobas.repository.BORepositoryService;
 import org.colorcoding.ibas.reportanalysis.MyConfiguration;
 import org.colorcoding.ibas.reportanalysis.bo.report.Report;
 
@@ -71,20 +72,41 @@ public class SystemReporter extends Reporter {
 			}
 		});
 		// 执行语句
-		IBORepository4DbReadonly boRepository = new BORepository4DbReadonly("Master");
-		IOperationResult<IDataTable> opRslt = boRepository.query(new SqlQuery(sqlString, true, false));
-		if (opRslt.getError() != null) {
-			throw new ReporterException(opRslt.getError());
+		try (ReportRepository boRepository = new ReportRepository()) {
+			IOperationResult<IDataTable> opRslt = boRepository.query(new SqlStatement(sqlString));
+			if (opRslt.getError() != null) {
+				throw new ReporterException(opRslt.getError());
+			}
+			if (opRslt.getResultCode() != 0) {
+				throw new ReporterException(opRslt.getMessage());
+			}
+			IDataTable dataTable = opRslt.getResultObjects().firstOrDefault();
+			if (dataTable != null) {
+				dataTable.setName(this.getReport().getId());
+				dataTable.setDescription(this.getReport().getName());
+			}
+			return dataTable;
 		}
-		if (opRslt.getResultCode() != 0) {
-			throw new ReporterException(opRslt.getMessage());
+	}
+
+	private class ReportRepository extends BORepositoryService {
+
+		public IOperationResult<IDataTable> query(SqlStatement sqlStatement) {
+			try {
+				if (this.getTransaction() == null) {
+					this.connect();
+				}
+				if (this.getTransaction() instanceof DbTransaction) {
+					DbTransaction transaction = (DbTransaction) this.getTransaction();
+					return new OperationResult<IDataTable>().addResultObjects(transaction.fetch(sqlStatement));
+				} else {
+					return new OperationResult<>();
+				}
+			} catch (Exception e) {
+				return new OperationResult<>(e);
+			}
 		}
-		IDataTable dataTable = opRslt.getResultObjects().firstOrDefault();
-		if (dataTable != null) {
-			dataTable.setName(this.getReport().getId());
-			dataTable.setDescription(this.getReport().getName());
-		}
-		return dataTable;
+
 	}
 
 }
