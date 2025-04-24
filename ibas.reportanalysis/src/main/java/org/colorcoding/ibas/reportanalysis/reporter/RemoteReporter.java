@@ -32,8 +32,7 @@ import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.serialization.ISerializer;
-import org.colorcoding.ibas.bobas.serialization.ISerializerManager;
-import org.colorcoding.ibas.bobas.serialization.SerializerFactory;
+import org.colorcoding.ibas.bobas.serialization.SerializationFactory;
 import org.colorcoding.ibas.bobas.serialization.SerializerManager;
 import org.colorcoding.ibas.reportanalysis.MyConfiguration;
 import org.colorcoding.ibas.reportanalysis.bo.report.Report;
@@ -182,15 +181,15 @@ public class RemoteReporter extends Reporter {
 			connection.setDoInput(true);
 			connection.setUseCaches(false);
 			// 处理请求
-			ISerializerManager serializerManager = SerializerFactory.create().createManager();
+			SerializerManager serializerManager = SerializationFactory.createManager();
 			try (OutputStream outputStream = connection.getOutputStream()) {
-				ISerializer<?> serializer = serializerManager.create(SerializerManager.TYPE_JSON);
+				ISerializer serializer = serializerManager.create(SerializerManager.TYPE_JSON);
 				serializer.serialize(reportData, outputStream);
 				outputStream.flush();
 			}
 			// 处理返回
 			try (InputStreamReader streamReader = new InputStreamReader(connection.getInputStream(), "utf-8")) {
-				ISerializer<?> serializer = serializerManager.create(SerializerManager.TYPE_JSON);
+				ISerializer serializer = serializerManager.create(SerializerManager.TYPE_JSON);
 				Object data = serializer.deserialize(new InputSource(streamReader), OperationResult.class,
 						OperationMessage.class, Result.class, String.class, DataTable.class);
 				if (data instanceof OperationResult) {

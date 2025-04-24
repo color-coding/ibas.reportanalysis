@@ -246,7 +246,7 @@ public class BORepositoryReportAnalysis extends BORepositoryServiceApplication
 	 * @return 操作结果
 	 */
 	public OperationResult<Report> fetchReport(ICriteria criteria, String token) {
-		return super.fetch(criteria, token, Report.class);
+		return super.fetch(Report.class, criteria, token);
 	}
 
 	/**
@@ -289,7 +289,7 @@ public class BORepositoryReportAnalysis extends BORepositoryServiceApplication
 	 * @return 操作结果
 	 */
 	public OperationResult<ReportBook> fetchReportBook(ICriteria criteria, String token) {
-		return super.fetch(criteria, token, ReportBook.class);
+		return super.fetch(ReportBook.class, criteria, token);
 	}
 
 	/**
