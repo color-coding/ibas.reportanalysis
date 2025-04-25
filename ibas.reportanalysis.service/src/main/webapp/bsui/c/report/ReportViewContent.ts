@@ -160,6 +160,10 @@ namespace reportanalysis {
                                         boCode: criteria.businessObject,
                                         chooseType: ibas.emChooseType.MULTIPLE,
                                         onCompleted(selecteds: ibas.IList<any>): void {
+                                            if (selecteds instanceof ibas.DataTable) {
+                                                selecteds = <any>selecteds.convert({ format: true, nameAs: "index" });
+                                                property = "0";
+                                            }
                                             let builder: ibas.StringBuilder = new ibas.StringBuilder();
                                             for (let item of selecteds) {
                                                 if (builder.length > 0) {
