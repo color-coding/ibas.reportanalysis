@@ -39,6 +39,7 @@ namespace reportanalysis {
                         }
                     }) === null) {
                     // 没有参数的报表，直接运行
+                    this.view.showReport(this.report);
                     this.runReport();
                 } else {
                     // 有参数报表
@@ -141,6 +142,9 @@ namespace reportanalysis {
                                             name = name.substring(2, name.length - 1);
                                         }
                                         let tmp: any = rowData[name];
+                                        if (ibas.objects.isNull(tmp)) {
+                                            tmp = rowData[item.description];
+                                        }
                                         if (ibas.objects.isNull(tmp)) {
                                             continue;
                                         }

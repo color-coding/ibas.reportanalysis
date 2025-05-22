@@ -86,6 +86,29 @@ namespace reportanalysis {
                             content: [
                                 new sap.m.ToolbarSpacer(""),
                                 this.multiCombobox,
+                                new sap.m.SearchField("", {
+                                    liveChange: function (oEvent: sap.ui.base.Event): void {
+                                        let sQuery: string = this.getValue();
+                                        let aFilters: ibas.ArrayList<sap.ui.model.Filter> = new ibas.ArrayList<sap.ui.model.Filter>();
+                                        let oBinding: any = that.container.getBinding("tiles");
+                                        if (sQuery) {
+                                            // 对多个属性进行搜索
+                                            let oFilter: sap.ui.model.Filter = new sap.ui.model.Filter([
+                                                new sap.ui.model.Filter(
+                                                    ibas.businessobjects.properties.naming.lowerCamelCase(reportanalysis.bo.Report.PROPERTY_NAME_NAME),
+                                                    sap.ui.model.FilterOperator.Contains, sQuery
+                                                ),
+                                                new sap.ui.model.Filter(
+                                                    ibas.businessobjects.properties.naming.lowerCamelCase(reportanalysis.bo.Report.PROPERTY_OBJECTKEY_NAME),
+                                                    sap.ui.model.FilterOperator.Contains, sQuery
+                                                )
+                                            ], false);
+                                            aFilters.push(oFilter);
+                                        }
+                                        // 应用过滤器
+                                        oBinding.filter(aFilters);
+                                    }
+                                }),
                                 new sap.m.MenuButton("", {
                                     text: ibas.i18n.prop("shell_refresh"),
                                     type: sap.m.ButtonType.Transparent,
@@ -175,7 +198,9 @@ namespace reportanalysis {
                             groups.add(item.group);
                         }
                     }
-                    this.container.setModel(new sap.ui.model.json.JSONModel(reports));
+                    let model: sap.ui.model.json.JSONModel = new sap.ui.model.json.JSONModel(reports);
+                    model.setSizeLimit(reports.length);
+                    this.container.setModel(model);
                     if (this.multiCombobox.getItems().length === 0) {
                         for (let item of groups) {
                             this.multiCombobox.addItem(new sap.ui.core.Item("", {
