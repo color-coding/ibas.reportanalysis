@@ -142,6 +142,9 @@ namespace reportanalysis {
                                         }
                                         let tmp: any = rowData[name];
                                         if (ibas.objects.isNull(tmp)) {
+                                            tmp = rowData[item.description];
+                                        }
+                                        if (ibas.objects.isNull(tmp)) {
                                             continue;
                                         }
                                         item.value = tmp;
