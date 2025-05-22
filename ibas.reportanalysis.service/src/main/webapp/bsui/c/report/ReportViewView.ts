@@ -268,6 +268,9 @@ namespace reportanalysis {
                                                         for (let row of table.getRows()) {
                                                             for (let cell of row.getCells()) {
                                                                 if (cell instanceof sap.m.Text || cell instanceof sap.m.Link) {
+                                                                    if (cell.getWidth() !== "100%") {
+                                                                        cell.setWidth("100%");
+                                                                    }
                                                                     cell.setTextAlign(sap.ui.core.TextAlign.Left);
                                                                 }
                                                             }
@@ -285,6 +288,9 @@ namespace reportanalysis {
                                                         for (let row of table.getRows()) {
                                                             for (let cell of row.getCells()) {
                                                                 if (cell instanceof sap.m.Text || cell instanceof sap.m.Link) {
+                                                                    if (cell.getWidth() !== "100%") {
+                                                                        cell.setWidth("100%");
+                                                                    }
                                                                     cell.setTextAlign(sap.ui.core.TextAlign.Right);
                                                                 }
                                                             }
@@ -305,6 +311,9 @@ namespace reportanalysis {
                                                                     let binding: any = cell.getBinding("bindingValue");
                                                                     if (binding?.getType() instanceof sap.ui.model.type.Float
                                                                         || binding?.getType() instanceof sap.ui.model.type.Integer) {
+                                                                        if (cell.getWidth() !== "100%") {
+                                                                            cell.setWidth("100%");
+                                                                        }
                                                                         cell.setTextAlign(sap.ui.core.TextAlign.Begin);
                                                                     }
                                                                 }
@@ -326,6 +335,9 @@ namespace reportanalysis {
                                                                     let binding: any = cell.getBinding("bindingValue");
                                                                     if (binding?.getType() instanceof sap.ui.model.type.Float
                                                                         || binding?.getType() instanceof sap.ui.model.type.Integer) {
+                                                                        if (cell.getWidth() !== "100%") {
+                                                                            cell.setWidth("100%");
+                                                                        }
                                                                         cell.setTextAlign(sap.ui.core.TextAlign.End);
                                                                     }
                                                                 }
@@ -428,10 +440,14 @@ namespace reportanalysis {
                         this.countText.setText(ibas.i18n.prop("reportanalysis_ui_count", table.rows.length));
                     }
                     // 判断表格是否可形成图表
-                    if (table?.rows.length > 1 && table?.columns.length > 1) {
-                        this.chartMenus.setVisible(true);
-                    } else {
-                        this.chartMenus.setVisible(false);
+                    if (ibas.booleans.valueOf(config.get(config.CONFIG_ITEM_DISABLE_REPORT_CHARTS)) !== true) {
+                        if (!ibas.objects.isNull(this.chartMenus)) {
+                            if (table?.rows.length > 1 && table?.columns.length > 1) {
+                                this.chartMenus.setVisible(true);
+                            } else {
+                                this.chartMenus.setVisible(false);
+                            }
+                        }
                     }
                 }
                 proceeding(type: ibas.emMessageType, msg: string): void {
@@ -694,7 +710,16 @@ namespace reportanalysis {
                     if (this.viewContainer instanceof sap.m.Dialog) {
                         for (let item of this.viewContainer.getContent()) {
                             if (item instanceof sap.extension.table.Table) {
+                                if (item.getVisibleRowCountMode() === sap.ui.table.VisibleRowCountMode.Auto) {
+                                    item.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Interactive);
+                                }
                                 item.setChooseType(this.chooseType);
+                                item.attachRowDoubleClick(undefined, (event: sap.ui.base.Event) => {
+                                    let row: number = (<sap.extension.table.Table>item).indexOfRow(event.getParameter("row"));
+                                    if (row >= 0) {
+                                        this.fireViewEvents(this.chooseDataEvent, this.viewData.clone([row]));
+                                    }
+                                });
                             } else if (item instanceof sap.extension.m.List) {
                                 item.setChooseType(this.chooseType);
                             }
