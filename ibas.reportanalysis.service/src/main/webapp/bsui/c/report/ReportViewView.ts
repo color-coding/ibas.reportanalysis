@@ -695,6 +695,12 @@ namespace reportanalysis {
                         for (let item of this.viewContainer.getContent()) {
                             if (item instanceof sap.extension.table.Table) {
                                 item.setChooseType(this.chooseType);
+                                item.attachRowDoubleClick(undefined, (event: sap.ui.base.Event) => {
+                                    let row: number = (<sap.extension.table.Table>item).indexOfRow(event.getParameter("row"));
+                                    if (row >= 0) {
+                                        this.fireViewEvents(this.chooseDataEvent, this.viewData.clone([row]));
+                                    }
+                                });
                             } else if (item instanceof sap.extension.m.List) {
                                 item.setChooseType(this.chooseType);
                             }
