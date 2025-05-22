@@ -449,6 +449,9 @@ namespace reportanalysis {
                                                 if (ibas.objects.isNull(name)) {
                                                     continue;
                                                 }
+                                                if (name.indexOf("#") > 0) {
+                                                    name = name.substring(0, name.indexOf("#"));
+                                                }
                                                 rowData[name] = data[item];
                                             }
                                             that.parent.fireValueLink(objectCode, linkValue, rowData);
