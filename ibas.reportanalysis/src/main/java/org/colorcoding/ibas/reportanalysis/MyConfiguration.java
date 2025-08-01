@@ -76,4 +76,14 @@ public class MyConfiguration extends org.colorcoding.ibas.initialfantasy.MyConfi
 		return MyConfiguration.getConfigValue(MyConfiguration.CONFIG_ITEM_DOCUMENT_FOLDER,
 				MyConfiguration.getDataFolder() + File.separator + "reportanalysis_files");
 	}
+
+	/**
+	 * 获取日志目录
+	 * 
+	 * @return
+	 */
+	public static String getLogsFolder() {
+		return MyConfiguration.getConfigValue(MyConfiguration.CONFIG_ITEM_LOG_FILE_FOLDER,
+				MyConfiguration.getDataFolder() + File.separator + "reportanalysis_logs");
+	}
 }

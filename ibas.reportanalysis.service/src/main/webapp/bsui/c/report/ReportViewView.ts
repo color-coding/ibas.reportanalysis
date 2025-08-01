@@ -720,6 +720,12 @@ namespace reportanalysis {
                                         this.fireViewEvents(this.chooseDataEvent, this.viewData.clone([row]));
                                     }
                                 });
+                                // 选择数据时，不显示编号
+                                item.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
+                                if (item.getColumns()[0]?.getLabel() === "#"
+                                    || (<any>item.getColumns()[0])?.getLabel()?.getText() === "#") {
+                                    item.getColumns()[0].setVisible(false);
+                                }
                             } else if (item instanceof sap.extension.m.List) {
                                 item.setChooseType(this.chooseType);
                             }

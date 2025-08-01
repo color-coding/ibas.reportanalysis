@@ -22,5 +22,6 @@ namespace reportanalysis {
         boFactory.register(UserReportParameter);
         boFactory.register(Report.BUSINESS_OBJECT_CODE, Report);
         boFactory.register(ReportBook.BUSINESS_OBJECT_CODE, ReportBook);
+        boFactory.register(ReportLog);
     }
 }

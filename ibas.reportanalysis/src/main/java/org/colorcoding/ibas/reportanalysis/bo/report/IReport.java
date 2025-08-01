@@ -404,6 +404,20 @@ public interface IReport extends IBOSimple {
 	void setThirdPartyApp(String value);
 
 	/**
+	* 获取-追溯
+	* 
+	* @return 值
+	*/
+	emYesNo getTraced();
+
+	/**
+	* 设置-追溯
+	* 
+	* @param value 值
+	*/
+	void setTraced(emYesNo value);
+
+	/**
 	 * 获取-备注
 	 * 
 	 * @return 值

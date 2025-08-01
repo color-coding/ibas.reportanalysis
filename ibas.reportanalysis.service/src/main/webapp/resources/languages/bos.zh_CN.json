@@ -29,6 +29,7 @@
         "bo_report_password": "密码",
         "bo_report_address": "报表地址",
         "bo_report_thirdpartyapp": "第三方应用",
+        "bo_report_traced": "追溯",
         "bo_report_remarks": "备注",
         "bo_report_reportparameters": "报表参数",
         "bo_reportparameter": "报表参数",
@@ -107,6 +108,22 @@
         "bo_reportdata_group": "报表组别",
         "bo_reportdata_remarks": "备注",
         "bo_reportdata_closing_delimiter": "----结束----"
+    },
+    {
+        "bo_reportlog": "报表日志",
+        "bo_reportlog_id": "编号",
+        "bo_reportlog_report": "报表",
+        "bo_reportlog_reportid": "报表编号",
+        "bo_reportlog_reportname": "报表名称",
+        "bo_reportlog_workfolder": "工作目录",
+        "bo_reportlog_runner": "运行者",
+        "bo_reportlog_remarks": "备注",
+        "bo_reportlog_begintime": "开始时间",
+        "bo_reportlog_finishtime": "完成时间",
+        "bo_reportlog_reportparameters": "报表参数",
+        "bo_reportlog_reportdata": "报表数据",
+        "bo_reportlog_parametercount": "共{0}个",
+        "bo_reportlog_closing_delimiter": "----结束----"
     },
     {
         "em_reportparametertype_text": "文本",

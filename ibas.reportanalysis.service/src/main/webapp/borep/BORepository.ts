@@ -125,8 +125,15 @@ namespace reportanalysis {
             saveReportBook(saver: ibas.ISaveCaller<bo.ReportBook>): void {
                 super.save(bo.ReportBook.name, saver);
             }
-
+            /**
+             * 查询 报表日志
+             * @param fetcher 查询者
+             */
+            fetchReportLog(fetcher: ibas.IFetchCaller<bo.ReportLog>): void {
+                super.fetch(bo.ReportLog.name, fetcher);
+            }
         }
+
         /**
          * 用户相关调用者
          */
