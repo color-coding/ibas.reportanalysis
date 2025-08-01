@@ -38,5 +38,28 @@ namespace reportanalysis {
             /** 备注 */
             remarks: string;
         }
+        /** 报表数据日志 */
+        export class ReportLog {
+            /** 标识 */
+            id: string;
+            /** 报表标识 */
+            reportId: string;
+            /** 报表名称 */
+            reportName: string;
+            /** 工作目录 */
+            workFolder: string;
+            /** 运行者 */
+            runner: string;
+            /** 开始时间 */
+            beginTime: Date;
+            /** 完成时间 */
+            finishTime: Date;
+            /** 内容 */
+            content: string;
+            /** 备注 */
+            remarks: string;
+            /** 参数 */
+            parameters: ibas.KeyText[];
+        }
     }
 }

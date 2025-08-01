@@ -1,5 +1,7 @@
 package org.colorcoding.ibas.reportanalysis.repository;
 
+import java.io.File;
+
 import org.colorcoding.ibas.bobas.common.ConditionOperation;
 import org.colorcoding.ibas.bobas.common.ConditionRelationship;
 import org.colorcoding.ibas.bobas.common.Criteria;
@@ -14,6 +16,7 @@ import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.repository.BORepositoryServiceApplication;
+import org.colorcoding.ibas.reportanalysis.MyConfiguration;
 import org.colorcoding.ibas.reportanalysis.bo.report.IReport;
 import org.colorcoding.ibas.reportanalysis.bo.report.Report;
 import org.colorcoding.ibas.reportanalysis.bo.reportbook.IReportBook;
@@ -216,6 +219,11 @@ public class BORepositoryReportAnalysis extends BORepositoryServiceApplication
 				throw new Exception(I18N.prop("msg_ra_not_allowed_run_report",
 						report.getName() != null ? report.getName() : report.getId()));
 			}
+			reporter.setRunner(this.getCurrentUser().toString());
+			reporter.setTraced(boReport.getTraced() == emYesNo.YES ? true : false);
+			reporter.setWorkFolder(
+					new File(MyConfiguration.getLogsFolder(), String.valueOf(boReport.getObjectKey())).getPath());
+
 			Logger.log(MessageLevel.DEBUG, MSG_USER_RUN_REPORT, this.getCurrentUser().getId(), boReport.getObjectKey(),
 					boReport.getName());
 			// 运行报表

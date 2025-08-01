@@ -146,6 +146,25 @@ namespace reportanalysis {
                     newData.name = remote.Name;
                     newData.remarks = remote.Remarks;
                     return newData;
+                } else if (data.type === bo.ReportLog.name) {
+                    let remote: ibas4j.IReportLog = data;
+                    let newData: bo.ReportLog = new bo.ReportLog();
+                    newData.id = remote.Id;
+                    newData.reportId = remote.ReportId;
+                    newData.reportName = remote.ReportName;
+                    newData.runner = remote.Runner;
+                    newData.beginTime = ibas.dates.valueOf(remote.BeginTime);
+                    newData.finishTime = ibas.dates.valueOf(remote.FinishTime);
+                    newData.content = remote.Content;
+                    newData.remarks = remote.Remarks;
+                    if (remote.Parameters instanceof Array) {
+                        newData.parameters = new ibas.ArrayList<any>();
+                        for (let item of remote.Parameters) {
+                            item.type = ibas.KeyText.name;
+                            newData.parameters.push(super.parsing(item, ""));
+                        }
+                    }
+                    return newData;
                 } else {
                     return super.parsing(data, sign);
                 }
@@ -181,6 +200,8 @@ namespace reportanalysis {
                 if (boName === bo.Report.name) {
                     if (property === bo.Report.PROPERTY_CATEGORY_NAME) {
                         return ibas.enums.toString(bo.emReportType, value);
+                    } else if (property === bo.Report.PROPERTY_TRACED_NAME) {
+                        return ibas.enums.toString(ibas.emYesNo, value);
                     }
                 } else if (boName === bo.ReportParameter.name) {
                     if (property === bo.ReportParameter.PROPERTY_CATEGORY_NAME) {
@@ -205,6 +226,8 @@ namespace reportanalysis {
                 if (boName === bo.Report.name) {
                     if (property === bo.Report.PROPERTY_CATEGORY_NAME) {
                         return ibas.enums.valueOf(bo.emReportType, value);
+                    } else if (property === bo.Report.PROPERTY_TRACED_NAME) {
+                        return ibas.enums.valueOf(ibas.emYesNo, value);
                     }
                 } else if (boName === bo.ReportParameter.name) {
                     if (property === bo.ReportParameter.PROPERTY_CATEGORY_NAME) {
