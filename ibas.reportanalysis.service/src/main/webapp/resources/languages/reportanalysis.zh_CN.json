@@ -25,6 +25,7 @@
   "reportanalysis_run_report_error": "报表运行错误",
   "reportanalysis_running_report": "正在运行报表[{0}]，请稍后",
   "reportanalysis_running_parameters": "请输入运行参数",
+  "reportanalysis_last_input_parameter": "最后一次参数",
   "reportanalysis_report_no_data": "报表没有结果",
   "reportanalysis_loading_report_data": "正在加载报表数据，请稍后",
   "reportanalysis_report_not_support_view": "报表[{0}]是[{1}]类型，不支持查看",

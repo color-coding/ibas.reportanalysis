@@ -2,6 +2,7 @@ package org.colorcoding.ibas.reportanalysis.service.rest;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
@@ -240,7 +241,9 @@ public class ReportService {
 				file = new File(fileData.getLocation());
 				properties = new Properties();
 				try (FileInputStream input = new FileInputStream(file)) {
-					properties.load(input);
+					try (InputStreamReader reader = new InputStreamReader(input, "utf-8")) {
+						properties.load(reader);
+					}
 				}
 
 				ReportLog reportLog = new ReportLog();

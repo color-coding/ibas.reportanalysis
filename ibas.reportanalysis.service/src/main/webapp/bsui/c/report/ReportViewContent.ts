@@ -42,7 +42,7 @@ namespace reportanalysis {
                     if (this.parent.viewContainer instanceof sap.m.Page) {
                         this.parent.viewContainer.setShowSubHeader(true);
                         this.parent.viewContainer.setShowFooter(false);
-                        this.parent.viewContainer.setEnableScrolling(true);
+                        this.parent.viewContainer.setEnableScrolling(false);
                     } else if (this.parent.viewContainer instanceof sap.m.Dialog) {
                         this.parent.viewContainer.setVerticalScrolling(true);
                     }
@@ -192,7 +192,7 @@ namespace reportanalysis {
                                 }
                             });
                         }
-                        input.setModel(new sap.ui.model.json.JSONModel(item));
+                        input.setModel(new sap.extension.model.JSONModel(item));
                         form.addContent(input);
                     }
                     this.parent.viewContainer.addContent(new sap.m.FlexBox("", {
@@ -217,7 +217,7 @@ namespace reportanalysis {
                     if (this.parent.viewContainer instanceof sap.m.Page) {
                         this.parent.viewContainer.setShowSubHeader(true);
                         this.parent.viewContainer.setShowFooter(true);
-                        this.parent.viewContainer.setEnableScrolling(false);
+                        this.parent.viewContainer.setEnableScrolling(true);
                     } else if (this.parent.viewContainer instanceof sap.m.Dialog) {
                         this.parent.viewContainer.setVerticalScrolling(false);
                     }
@@ -363,6 +363,7 @@ namespace reportanalysis {
                         alternateRowColors: true,
                         selectionBehavior: sap.ui.table.SelectionBehavior.RowOnly,
                         visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Auto,
+                        rowHeight: (<any>sap.ui.table).utils.TableUtils.DefaultRowHeight.undefined,
                         rows: "{/rows}",
                         columns: [
                             new sap.ui.table.Column("", {
@@ -405,7 +406,41 @@ namespace reportanalysis {
                             }
                         }
                         let trColumn: sap.ui.table.Column = null;
-                        if (!ibas.objects.isNull(infoCol.objectCode)) {
+                        if (ibas.strings.equalsIgnoreCase(infoCol.objectCode, "image")) {
+                            trColumn = new sap.ui.table.Column("", {
+                                autoResizable: true,
+                                label: infoCol.description,
+                                template: new sap.m.Avatar("", {
+                                    decorative: true,
+                                    showBorder: false,
+                                    displayShape: sap.m.AvatarShape.Square,
+                                    imageFitType: sap.m.AvatarImageFitType.Cover,
+                                    backgroundColor: sap.m.AvatarColor.Transparent,
+                                    fallbackIcon: "sap-icon://avatar-icon-none",
+                                    press: function (oEvent: sap.ui.base.Event): void {
+                                        let src: string = this.getSrc();
+                                        if (!ibas.strings.isEmpty(src)) {
+                                            let lightBox: sap.m.LightBox = new sap.m.LightBox("", {
+                                                imageContent: [
+                                                    new sap.m.LightBoxItem("", {
+                                                        imageSrc: src
+                                                    })
+                                                ]
+                                            });
+                                            lightBox.open();
+                                        }
+                                    },
+                                    tooltip: {
+                                        path: infoCol.path,
+                                        formatter(data: any): string {
+                                            return ibas.strings.valueOf(data);
+                                        }
+                                    },
+                                }).bindProperty("src", {
+                                    path: infoCol.path,
+                                })
+                            });
+                        } else if (!ibas.objects.isNull(infoCol.objectCode)) {
                             // 对象有值，""认为是任意对象，具体从值中解析
                             trColumn = new sap.ui.table.Column("", {
                                 autoResizable: true,

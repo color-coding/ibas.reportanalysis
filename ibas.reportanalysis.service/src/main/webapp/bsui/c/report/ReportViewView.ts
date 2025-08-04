@@ -74,6 +74,8 @@ namespace reportanalysis {
                                         that.fireViewEvents(that.runReportEvent);
                                     }
                                 }),
+                                /*
+                                new sap.m.ToolbarSeparator(),
                                 new sap.m.Button("", {
                                     text: ibas.i18n.prop("shell_reset"),
                                     type: sap.m.ButtonType.Transparent,
@@ -87,6 +89,48 @@ namespace reportanalysis {
                                         that.fireViewEvents(that.resetReportEvent);
                                     }
                                 }),
+                                */
+                                new sap.m.MenuButton("", {
+                                    icon: "sap-icon://reset",
+                                    text: ibas.i18n.prop("shell_reset"),
+                                    type: sap.m.ButtonType.Transparent,
+                                    menuPosition: sap.ui.core.Popup.Dock.EndBottom,
+                                    menu: new sap.m.Menu("", {
+                                        items: [
+                                            new sap.m.MenuItem("", {
+                                                text: ibas.i18n.prop("reportanalysis_last_input_parameter"),
+                                                press(): void {
+                                                    for (let item of (<any>that.viewContainer.getFooter()).getContent()) {
+                                                        if (item instanceof sap.m.Input) {
+                                                            item.setValue(null);
+                                                        }
+                                                    }
+                                                    if (that.report.parameters instanceof Array) {
+                                                        for (let hItem of that.loadReportParameters(ibas.i18n.prop("reportanalysis_last_input_parameter"))) {
+                                                            for (let rItem of that.report.parameters) {
+                                                                if (hItem.key === rItem.name) {
+                                                                    rItem.value = hItem.value;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    that.fireViewEvents(that.resetReportEvent);
+                                                }
+                                            }),
+                                        ],
+                                    }),
+                                    useDefaultActionOnly: true,
+                                    buttonMode: sap.m.MenuButtonMode.Split,
+                                    defaultAction(): void {
+                                        for (let item of (<any>that.viewContainer.getFooter()).getContent()) {
+                                            if (item instanceof sap.m.Input) {
+                                                item.setValue(null);
+                                            }
+                                        }
+                                        that.fireViewEvents(that.resetReportEvent);
+                                    }
+                                }),
+                                new sap.m.ToolbarSeparator(),
                                 new sap.m.ToolbarSpacer(""),
                                 new sap.m.Button("", {
                                     type: sap.m.ButtonType.Transparent,
@@ -422,8 +466,10 @@ namespace reportanalysis {
                 /** 显示报表 */
                 showReport(report: bo.UserReport): void {
                     this.viewContent.showReport(report);
+                    this.report = report;
                 }
                 viewData: ibas.DataTable;
+                report: bo.UserReport;
                 private countText: sap.extension.m.Text;
                 private chartMenus: sap.m.MenuButton;
 
@@ -449,7 +495,62 @@ namespace reportanalysis {
                             }
                         }
                     }
+                    // 记录当前参数
+                    try {
+                        this.writeReportParameters();
+                    } catch (error) {
+                        ibas.logger.log(error);
+                    }
                 }
+
+                private loadReportParameters(sign: string): ibas.KeyValue[] {
+                    let reportRunfor: any = localStorage.getItem(ibas.strings.format("rpt_{0}_{1}", this.application.id, this.report.id));
+                    if (ibas.objects.isNull(reportRunfor)) {
+                        reportRunfor = {
+                            id: this.report.id,
+                            name: this.report.name,
+                            content: []
+                        };
+                    } else {
+                        reportRunfor = JSON.parse(reportRunfor);
+                    }
+                    let content: ibas.IList<any> = ibas.arrays.create(reportRunfor.content);
+                    let lastContent: any = content.firstOrDefault(c => c.sign === sign);
+                    if (lastContent?.parameters instanceof Array) {
+                        return lastContent.parameters;
+                    }
+                    return [];
+                }
+                private writeReportParameters(): void {
+                    let reportRunfor: any = localStorage.getItem(ibas.strings.format("rpt_{0}_{1}", this.application.id, this.report.id));
+                    if (ibas.objects.isNull(reportRunfor)) {
+                        reportRunfor = {
+                            id: this.report.id,
+                            name: this.report.name,
+                            content: []
+                        };
+                    } else {
+                        reportRunfor = JSON.parse(reportRunfor);
+                    }
+                    let content: ibas.IList<any> = ibas.arrays.create(reportRunfor.content);
+                    let lastContent: any = content.firstOrDefault(c => c.sign === ibas.i18n.prop("reportanalysis_last_input_parameter"));
+                    if (ibas.objects.isNull(lastContent)) {
+                        lastContent = {
+                            sign: ibas.i18n.prop("reportanalysis_last_input_parameter")
+                        };
+                        content.add(lastContent);
+                    }
+                    lastContent.parameters = [];
+                    for (let item of this.report.parameters) {
+                        lastContent.parameters.push({
+                            key: item.name,
+                            value: item.value,
+                        });
+                    }
+                    reportRunfor.content = content;
+                    localStorage.setItem(ibas.strings.format("{0}_{1}", this.application.id, this.report.id), JSON.stringify(reportRunfor));
+                }
+
                 proceeding(type: ibas.emMessageType, msg: string): void {
                     this.application.viewShower.proceeding(this, type, msg);
                 }

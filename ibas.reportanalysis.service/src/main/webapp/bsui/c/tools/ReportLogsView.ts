@@ -20,8 +20,6 @@ namespace reportanalysis {
                     let that: this = this;
                     this.table = new sap.extension.m.Table("", {
                         autoPopinMode: true,
-                        growing: true,
-                        growingScrollToLoad: true,
                         chooseType: ibas.emChooseType.NONE,
                         columns: [
                             new sap.m.Column("", {
