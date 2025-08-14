@@ -25,9 +25,6 @@ namespace reportanalysis {
                     case app.ReportViewerApp.APPLICATION_ID:
                         view = new m.ReportViewerView();
                         break;
-                    case app.ReportTabViewerApp.APPLICATION_ID:
-                        view = new m.ReportViewerView();
-                        break;
                     case app.UserReportPageApp.APPLICATION_ID:
                         view = new m.UserReportPageView();
                         break;

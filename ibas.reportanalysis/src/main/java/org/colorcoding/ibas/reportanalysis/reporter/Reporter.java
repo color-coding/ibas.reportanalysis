@@ -103,7 +103,8 @@ public abstract class Reporter implements IReporter {
 				params.put("ReportName", this.getReport().getName());
 				params.put("Runner", this.getRunner());
 				for (ExecuteReportParameter item : this.getReport().getParameters()) {
-					params.put(item.getName(), item.getValue());
+					params.put(item.getName(),
+							item.getValue() == null ? DataConvert.STRING_VALUE_EMPTY : item.getValue());
 				}
 				try (FileOutputStream outputStream = new FileOutputStream(new File(workFolder, "Params.properties"))) {
 					try (OutputStreamWriter writer = new OutputStreamWriter(outputStream, "utf-8")) {
