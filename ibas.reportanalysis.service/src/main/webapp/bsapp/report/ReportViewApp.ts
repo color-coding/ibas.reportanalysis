@@ -197,16 +197,6 @@ namespace reportanalysis {
                 super();
                 this.id = ReportViewerApp.APPLICATION_ID;
             }
-        }
-        /** 查看应用-报表页签 */
-        export class ReportTabViewerApp extends ReportViewApp<IReportDataChooseView> {
-            /** 应用标识 */
-            static APPLICATION_ID: string = "3c42c391-4dc3-4188-a9d7-b6cc757428ec";
-            /** 构造函数 */
-            constructor() {
-                super();
-                this.id = ReportTabViewerApp.APPLICATION_ID;
-            }
             /** 使用报表 */
             useReport(report: bo.UserReport): void {
                 this.report = report;
