@@ -8,12 +8,16 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.function.Function;
 
+import org.colorcoding.ibas.bobas.data.DateTime;
 import org.colorcoding.ibas.bobas.data.IDataTable;
 import org.colorcoding.ibas.bobas.data.IDataTableColumn;
 import org.colorcoding.ibas.bobas.data.IDataTableRow;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
+import org.colorcoding.ibas.bobas.organization.OrganizationFactory;
+import org.colorcoding.ibas.reportanalysis.bo.report.ReportRunningLog;
 import org.colorcoding.ibas.reportanalysis.data.DataConvert;
+import org.colorcoding.ibas.reportanalysis.repository.BORepositoryReportAnalysis;
 
 public abstract class Reporter implements IReporter {
 
@@ -91,6 +95,7 @@ public abstract class Reporter implements IReporter {
 	 */
 	public IDataTable run(ExecuteReport report) throws ReporterException {
 		this.setReport(report);
+		ReportRunningLog reportLog = null;
 		File workFolder = new File(this.getWorkFolder(), this.getId());
 		if (this.isTraced() && this.getReport() != null) {
 			// 记录运行参数（文件创建时间为开始时间）
@@ -103,7 +108,8 @@ public abstract class Reporter implements IReporter {
 				params.put("ReportName", this.getReport().getName());
 				params.put("Runner", this.getRunner());
 				for (ExecuteReportParameter item : this.getReport().getParameters()) {
-					params.put(item.getName(), item.getValue());
+					params.put(item.getName(),
+							item.getValue() == null ? DataConvert.STRING_VALUE_EMPTY : item.getValue());
 				}
 				try (FileOutputStream outputStream = new FileOutputStream(new File(workFolder, "Params.properties"))) {
 					try (OutputStreamWriter writer = new OutputStreamWriter(outputStream, "utf-8")) {
@@ -111,6 +117,28 @@ public abstract class Reporter implements IReporter {
 						writer.flush();
 					}
 					outputStream.flush();
+				}
+				if (reportLog == null) {
+					reportLog = new ReportRunningLog();
+					reportLog.setSign(this.getId());
+					reportLog.setReport(Integer.valueOf(this.getReport().getId()));
+					reportLog.setReportName(this.getReport().getName());
+					reportLog.setRunner(this.getRunner());
+					if (reportLog.getRunner() != null) {
+						StringBuilder builder = new StringBuilder();
+						for (int i = reportLog.getRunner().indexOf(":") + 1; i < reportLog.getRunner()
+								.indexOf("|"); i++) {
+							if (reportLog.getRunner().charAt(i) != ' ') {
+								builder.append(reportLog.getRunner().charAt(i));
+							}
+						}
+						if (builder.length() > 0) {
+							reportLog.setDataOwner(Integer.valueOf(builder.toString()));
+						}
+					}
+					reportLog.setStartDate(DateTime.getToday());
+					reportLog.setStartTime(Short.valueOf(DateTime.getNow().toString("HHmm")));
+					reportLog.setParameterFile(String.format("%s/%s", this.getId(), "Params.properties"));
 				}
 			} catch (Exception e) {
 				Logger.log(e);
@@ -170,9 +198,24 @@ public abstract class Reporter implements IReporter {
 						}
 					}
 				}
+				if (reportLog != null) {
+					reportLog.setEndDate(DateTime.getToday());
+					reportLog.setEndTime(Short.valueOf(DateTime.getNow().toString("HHmm")));
+					reportLog.setResultFile(String.format("%s/%s", this.getId(), "ReportData.csv"));
+				}
 			} catch (Exception e) {
 				Logger.log(e);
 			}
+		}
+		try {
+			// 记录运行日志
+			if (reportLog != null) {
+				BORepositoryReportAnalysis boRepository = new BORepositoryReportAnalysis();
+				boRepository.setUserToken(OrganizationFactory.SYSTEM_USER.getToken());
+				boRepository.saveReportRunningLog(reportLog);
+			}
+		} catch (Exception e) {
+			Logger.log(e);
 		}
 		return dataTable;
 	}

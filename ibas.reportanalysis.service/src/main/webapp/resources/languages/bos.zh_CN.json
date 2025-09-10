@@ -119,6 +119,8 @@
         "bo_reportlog_runner": "运行者",
         "bo_reportlog_remarks": "备注",
         "bo_reportlog_begintime": "开始时间",
+        "bo_reportlog_from": "从",
+        "bo_reportlog_to": "到",
         "bo_reportlog_finishtime": "完成时间",
         "bo_reportlog_reportparameters": "报表参数",
         "bo_reportlog_reportdata": "报表数据",

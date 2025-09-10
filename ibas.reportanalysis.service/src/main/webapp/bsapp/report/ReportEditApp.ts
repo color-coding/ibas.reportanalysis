@@ -417,7 +417,7 @@ namespace reportanalysis {
                 }
                 let criteria: ibas.Criteria = new ibas.Criteria();
                 let condition: ibas.ICondition = criteria.conditions.create();
-                condition.alias = bo.Report.PROPERTY_OBJECTKEY_NAME;
+                condition.alias = bo.ReportRunningLog.PROPERTY_REPORT_NAME;
                 condition.value = String(this.editData.objectKey);
 
                 let app: ReportLogsApp = new ReportLogsApp();

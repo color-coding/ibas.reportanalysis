@@ -10,6 +10,7 @@
 /// <reference path="./bo/ReportBook.ts" />
 /// <reference path="./bo/ReportData.ts" />
 /// <reference path="./bo/UserReport.ts" />
+/// <reference path="./bo/ReportRunningLog.ts" />
 /// <reference path="./DataConverter.ts" />
 /// <reference path="./BORepository.ts" />
 
@@ -22,6 +23,6 @@ namespace reportanalysis {
         boFactory.register(UserReportParameter);
         boFactory.register(Report.BUSINESS_OBJECT_CODE, Report);
         boFactory.register(ReportBook.BUSINESS_OBJECT_CODE, ReportBook);
-        boFactory.register(ReportLog);
+        boFactory.register(ReportRunningLog.BUSINESS_OBJECT_CODE, ReportRunningLog);
     }
 }

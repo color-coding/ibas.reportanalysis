@@ -34,6 +34,8 @@ namespace reportanalysis {
         export const BO_CODE_REPORTBOOK: string = "${Company}_RA_RPTBOOK";
         /** 业务对象编码-报表结果 */
         export const BO_CODE_REPORTRESULT: string = "${Company}_RA_RPTRESULT";
+        /** 业务对象编码-报表运行日志 */
+        export const BO_CODE_REPORTRUNNINGLOG: string = "${Company}_RA_RPTRUNLOG";
         /**
          * 报表类型
          */

@@ -56,8 +56,13 @@ namespace reportanalysis {
                 if (ibas.numbers.valueOf(criteria.result) === 0) {
                     criteria.result = ibas.config.get(ibas.CONFIG_ITEM_CRITERIA_RESULT_COUNT, 30);
                 }
+                if (criteria.sorts.length === 0) {
+                    let sort: ibas.ISort = criteria.sorts.create();
+                    sort.alias = bo.ReportRunningLog.PROPERTY_OBJECTKEY_NAME;
+                    sort.sortType = ibas.emSortType.DESCENDING;
+                }
                 let boRepository: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
-                boRepository.fetchReportLog({
+                boRepository.fetchReportRunningLog({
                     criteria: criteria,
                     onCompleted: (opRslt) => {
                         try {
@@ -81,7 +86,7 @@ namespace reportanalysis {
             /** 获取报表日志 */
             fetchReportLogsEvent: Function;
             /** 显示报表日志 */
-            showReportLogs(datas: bo.ReportLog[]): void;
+            showReportLogs(datas: bo.ReportRunningLog[]): void;
         }
     }
 }

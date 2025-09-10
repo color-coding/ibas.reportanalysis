@@ -593,7 +593,7 @@ namespace reportanalysis {
                                         ],
                                     })
                                 }),
-                                new sap.m.ToolbarSeparator(""),
+                                new sap.m.ToolbarSpacer(""),
                                 new sap.m.Button("", {
                                     text: ibas.i18n.prop("reportanalysis_view_running_logs"),
                                     type: sap.m.ButtonType.Transparent,
@@ -602,7 +602,7 @@ namespace reportanalysis {
                                         that.fireViewEvents(that.viewReportLogsEvent);
                                     }
                                 }),
-                                new sap.m.ToolbarSpacer(""),
+                                new sap.m.ToolbarSeparator(""),
                                 new sap.m.Button("", {
                                     text: ibas.i18n.prop("shell_run"),
                                     type: sap.m.ButtonType.Transparent,

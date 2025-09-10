@@ -18,7 +18,9 @@ import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.repository.BORepositoryServiceApplication;
 import org.colorcoding.ibas.reportanalysis.MyConfiguration;
 import org.colorcoding.ibas.reportanalysis.bo.report.IReport;
+import org.colorcoding.ibas.reportanalysis.bo.report.IReportRunningLog;
 import org.colorcoding.ibas.reportanalysis.bo.report.Report;
+import org.colorcoding.ibas.reportanalysis.bo.report.ReportRunningLog;
 import org.colorcoding.ibas.reportanalysis.bo.reportbook.IReportBook;
 import org.colorcoding.ibas.reportanalysis.bo.reportbook.IReportBookItem;
 import org.colorcoding.ibas.reportanalysis.bo.reportbook.ReportBook;
@@ -331,5 +333,44 @@ public class BORepositoryReportAnalysis extends BORepositoryServiceApplication
 		return new OperationResult<IReportBook>(this.saveReportBook((ReportBook) bo, this.getUserToken()));
 	}
 
+	// --------------------------------------------------------------------------------------------//
+	/**
+	 * 查询-报表运行日志
+	 * @param criteria 查询
+	 * @param token 口令
+	 * @return 操作结果
+	 */
+	public OperationResult<ReportRunningLog> fetchReportRunningLog(ICriteria criteria, String token) {
+		return super.fetch(criteria, token, ReportRunningLog.class);
+	}
+
+	/**
+	 * 查询-报表运行日志（提前设置用户口令）
+	 * @param criteria 查询
+	 * @return 操作结果
+	 */
+	public IOperationResult<IReportRunningLog> fetchReportRunningLog(ICriteria criteria) {
+		return new OperationResult<IReportRunningLog>(this.fetchReportRunningLog(criteria, this.getUserToken()));
+	}
+
+	/**
+	 * 保存-报表运行日志
+	 * @param bo 对象实例
+	 * @param token 口令
+	 * @return 操作结果
+	 */
+	public OperationResult<ReportRunningLog> saveReportRunningLog(ReportRunningLog bo, String token) {
+		return super.save(bo, token);
+	}
+
+	/**
+	 * 保存-报表运行日志（提前设置用户口令）
+	 * @param bo 对象实例
+	 * @return 操作结果
+	 */
+	public IOperationResult<IReportRunningLog> saveReportRunningLog(IReportRunningLog bo) {
+		return new OperationResult<IReportRunningLog>(
+				this.saveReportRunningLog((ReportRunningLog) bo, this.getUserToken()));
+	}
 	// --------------------------------------------------------------------------------------------//
 }

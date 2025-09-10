@@ -26,13 +26,13 @@ namespace reportanalysis {
                                 header: new sap.m.Text("", {
                                     text: ibas.i18n.prop("bo_reportlog_id"),
                                 }),
-                                width: "8rem",
+                                width: "12rem",
                             }),
                             new sap.m.Column("", {
                                 header: new sap.m.Text("", {
                                     text: ibas.i18n.prop("bo_reportlog_report"),
                                 }),
-                                width: "12rem",
+                                width: "14rem",
                             }),
                             new sap.m.Column("", {
                                 header: new sap.m.Text("", {
@@ -74,7 +74,7 @@ namespace reportanalysis {
                                 cells: [
                                     new sap.extension.m.ObjectAttribute("", {
                                         bindingValue: {
-                                            path: "id",
+                                            path: "sign",
                                             type: new sap.extension.data.Alphanumeric(),
                                         }
                                     }),
@@ -82,11 +82,11 @@ namespace reportanalysis {
                                         active: true,
                                         press(): void {
                                             let data: any = this.getBindingContext().getObject();
-                                            if (data instanceof bo.ReportLog) {
+                                            if (data instanceof bo.ReportRunningLog) {
                                                 let criteria: ibas.Criteria = new ibas.Criteria();
                                                 let condition: ibas.ICondition = criteria.conditions.create();
                                                 condition.alias = bo.Report.PROPERTY_OBJECTKEY_NAME;
-                                                condition.value = data.reportId;
+                                                condition.value = data.report.toString();
                                                 let boRepository: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
                                                 boRepository.fetchReport({
                                                     criteria: criteria,
@@ -105,7 +105,7 @@ namespace reportanalysis {
                                         bindingValue: {
                                             parts: [
                                                 {
-                                                    path: "reportId",
+                                                    path: "report",
                                                     type: new sap.extension.data.Alphanumeric(),
                                                 },
                                                 {
@@ -128,13 +128,13 @@ namespace reportanalysis {
                                         active: true,
                                         press(): void {
                                             let data: any = this.getBindingContext().getObject();
-                                            if (data instanceof bo.ReportLog) {
+                                            if (data instanceof bo.ReportRunningLog) {
                                                 if (ibas.strings.isWith(data.runner, "{", "}")) {
                                                     let values: string[] = data.runner.substring(1, data.runner.length - 1).split(":");
                                                     if (values.length > 1) {
                                                         ibas.servicesManager.runLinkService({
                                                             boCode: initialfantasy.bo.User.BUSINESS_OBJECT_CODE,
-                                                            linkValue: values[1].replace("|", " - ")
+                                                            linkValue: values[1].split("|")[1]
                                                         });
                                                     }
                                                 }
@@ -156,140 +156,100 @@ namespace reportanalysis {
                                     }),
                                     new sap.extension.m.ObjectAttribute("", {
                                         bindingValue: {
-                                            path: "beginTime",
-                                            type: new sap.extension.data.DateTime(),
+                                            parts: [
+                                                {
+                                                    path: "startDate",
+                                                    type: new sap.extension.data.Date(),
+                                                },
+                                                {
+                                                    path: "startTime",
+                                                    type: new sap.extension.data.Time(),
+                                                },
+                                            ]
                                         }
                                     }),
                                     new sap.extension.m.ObjectAttribute("", {
                                         bindingValue: {
-                                            path: "finishTime",
-                                            type: new sap.extension.data.DateTime(),
+                                            parts: [
+                                                {
+                                                    path: "endDate",
+                                                    type: new sap.extension.data.Date(),
+                                                },
+                                                {
+                                                    path: "endTime",
+                                                    type: new sap.extension.data.Time(),
+                                                },
+                                            ]
                                         }
                                     }),
-                                    new sap.extension.m.ObjectAttribute("", {
-                                        active: true,
-                                        press(): void {
-                                            let data: any = this.getBindingContext().getObject();
-                                            if (data instanceof bo.ReportLog) {
-                                                let dialog: sap.m.Dialog = new sap.m.Dialog("", {
-                                                    title: ibas.i18n.prop("bo_reportlog_reportparameters"),
-                                                    type: sap.m.DialogType.Standard,
-                                                    state: sap.ui.core.ValueState.None,
-                                                    content: [
-                                                        new sap.m.List("", {
-                                                            items: {
-                                                                path: "/",
-                                                                templateShareable: false,
-                                                                template: new sap.m.StandardListItem("", {
-                                                                    title: {
-                                                                        path: "key",
-                                                                    },
-                                                                    description: {
-                                                                        path: "text",
-                                                                    }
-                                                                })
-                                                            },
-                                                        })
-                                                    ],
-                                                    buttons: [
-                                                        new sap.m.Button("", {
-                                                            text: ibas.i18n.prop("shell_exit"),
-                                                            type: sap.m.ButtonType.Transparent,
-                                                            icon: "sap-icon://inspect-down",
-                                                            press: function (): void {
-                                                                dialog.close();
-                                                                dialog = null;
-                                                            }
-                                                        }),
-                                                    ]
-                                                }).addStyleClass("sapUiNoContentPadding");
-                                                dialog.setModel(new sap.extension.model.JSONModel(data.parameters));
-                                                dialog.open();
+                                    new sap.m.Button("", {
+                                        icon: "sap-icon://detail-view",
+                                        type: sap.m.ButtonType.Transparent,
+                                        press: function (): void {
+                                            let data: bo.ReportRunningLog = this.getParent().getBindingContext().getObject();
+                                            if (ibas.objects.isNull(data)) {
+                                                return;
                                             }
-                                        },
-                                        bindingValue: {
-                                            path: "parameters",
-                                            formatter(parameters: any): string {
-                                                if (parameters instanceof Array) {
-                                                    return ibas.i18n.prop("bo_reportlog_parametercount", parameters.length);
-                                                } else {
-                                                    return ibas.i18n.prop("bo_reportlog_parametercount", 0);
+                                            let criteria: ibas.ICriteria = new ibas.Criteria();
+                                            let condition: ibas.ICondition = criteria.conditions.create();
+                                            condition.alias = ibas.CRITERIA_CONDITION_ALIAS_FILE_NAME;
+                                            condition.value = ibas.strings.format("../reportanalysis_logs/{0}/{1}", data.report, data.parameterFile);
+                                            let boReposiorty: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
+                                            boReposiorty.download({
+                                                criteria: criteria,
+                                                onCompleted: (opRslt) => {
+                                                    try {
+                                                        if (opRslt.resultCode !== 0) {
+                                                            throw new Error(opRslt.message);
+                                                        }
+                                                        for (let item of opRslt.resultObjects) {
+                                                            that.showBlobAsText(item);
+                                                        }
+                                                    } catch (error) {
+                                                        that.application.viewShower.messages({
+                                                            type: ibas.emMessageType.ERROR,
+                                                            title: that.title,
+                                                            message: error.toString()
+                                                        });
+                                                    }
                                                 }
-                                            }
-                                        },
+                                            });
+                                        }
                                     }),
-                                    new sap.m.HBox("", {
-                                        fitContainer: true,
-                                        justifyContent: sap.m.FlexJustifyContent.Center,
-                                        alignItems: sap.m.FlexAlignItems.Center,
-                                        renderType: sap.m.FlexRendertype.Div,
-                                        items: [
-                                            new sap.m.Button("", {
-                                                icon: "sap-icon://detail-view",
-                                                type: sap.m.ButtonType.Transparent,
-                                                press: function (): void {
-                                                    let data: bo.ReportLog = this.getParent().getBindingContext().getObject();
-                                                    if (ibas.objects.isNull(data)) {
-                                                        return;
+                                    new sap.m.Button("", {
+                                        icon: "sap-icon://download",
+                                        type: sap.m.ButtonType.Transparent,
+                                        press: function (): void {
+                                            let data: bo.ReportRunningLog = this.getParent().getBindingContext().getObject();
+                                            if (ibas.objects.isNull(data)) {
+                                                return;
+                                            }
+                                            let criteria: ibas.ICriteria = new ibas.Criteria();
+                                            let condition: ibas.ICondition = criteria.conditions.create();
+                                            condition.alias = ibas.CRITERIA_CONDITION_ALIAS_FILE_NAME;
+                                            condition.value = ibas.strings.format("../reportanalysis_logs/{0}/{1}", data.report, data.resultFile);
+                                            let boReposiorty: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
+                                            boReposiorty.download({
+                                                criteria: criteria,
+                                                onCompleted: (opRslt) => {
+                                                    try {
+                                                        if (opRslt.resultCode !== 0) {
+                                                            throw new Error(opRslt.message);
+                                                        }
+                                                        for (let item of opRslt.resultObjects) {
+                                                            ibas.files.save(item, ibas.strings.format("{0}_{1}_results.csv", data.reportName, data.sign));
+                                                        }
+                                                    } catch (error) {
+                                                        that.application.viewShower.messages({
+                                                            type: ibas.emMessageType.ERROR,
+                                                            title: that.title,
+                                                            message: error.toString()
+                                                        });
                                                     }
-                                                    jQuery.sap.require("sap.ui.codeeditor.CodeEditor");
-                                                    let dialog: sap.m.Dialog = new sap.m.Dialog("", {
-                                                        title: ibas.i18n.prop("reportanalysis_title_content"),
-                                                        type: sap.m.DialogType.Standard,
-                                                        state: sap.ui.core.ValueState.None,
-                                                        content: [
-                                                            new sap.ui.codeeditor.CodeEditor("", {
-                                                                height: ibas.strings.format("{0}px", window.innerHeight * 0.6),
-                                                                width: ibas.strings.format("{0}px", window.innerWidth * 0.6),
-                                                                type: "plain_text",
-                                                                colorTheme: "eclipse",
-                                                                value: {
-                                                                    path: "/content"
-                                                                },
-                                                            })
-                                                        ],
-                                                        buttons: [
-                                                            new sap.m.Button("", {
-                                                                text: ibas.i18n.prop("reportanalysis_sql_code_pretty"),
-                                                                type: sap.m.ButtonType.Transparent,
-                                                                icon: "sap-icon://text-formatting",
-                                                                press: function (): void {
-                                                                    let content: any = dialog.getContent()[0];
-                                                                    if (content instanceof sap.ui.codeeditor.CodeEditor) {
-                                                                        content.prettyPrint();
-                                                                    }
-                                                                }
-                                                            }),
-                                                            new sap.m.Button("", {
-                                                                text: ibas.i18n.prop("shell_exit"),
-                                                                type: sap.m.ButtonType.Transparent,
-                                                                icon: "sap-icon://inspect-down",
-                                                                press: function (): void {
-                                                                    dialog.close();
-                                                                    dialog = null;
-                                                                }
-                                                            }),
-                                                        ]
-                                                    }).addStyleClass("sapUiNoContentPadding");
-                                                    dialog.setModel(new sap.extension.model.JSONModel(data));
-                                                    dialog.open();
                                                 }
-                                            }),
-                                            new sap.m.Button("", {
-                                                icon: "sap-icon://download",
-                                                type: sap.m.ButtonType.Transparent,
-                                                press: function (): void {
-                                                    let data: bo.ReportLog = this.getParent().getBindingContext().getObject();
-                                                    if (ibas.objects.isNull(data)) {
-                                                        return;
-                                                    }
-                                                    let blob: Blob = new Blob([data.content], { type: "text/plain" });
-                                                    ibas.files.save(blob, ibas.strings.format("{0}_{1}.csv", data.reportId, data.id));
-                                                }
-                                            }),
-                                        ]
-                                    })
-
+                                            });
+                                        }
+                                    }),
                                 ],
                             })
                         },
@@ -304,7 +264,7 @@ namespace reportanalysis {
                             }
                             let model: any = that.table.getModel();
                             if (model instanceof sap.extension.model.JSONModel) {
-                                let datas: ibas.ArrayList<bo.ReportLog> = model.getData("rows");
+                                let datas: ibas.ArrayList<bo.ReportRunningLog> = model.getData("rows");
                                 if (!(datas?.length > 0)) {
                                     return;
                                 }
@@ -313,8 +273,8 @@ namespace reportanalysis {
                                 let condition: ibas.ICondition = criteria.conditions.create();
                                 // condition.alias = ibas.CRITERIA_CONDITION_ALIAS_FOLDER;
                                 // condition.value = ibas.strings.format("{0}/{1}", datas[datas.length - 1].reportId, datas[datas.length - 1].id);
-                                condition.alias = ibas.CRITERIA_CONDITION_ALIAS_MODIFIED_TIME;
-                                condition.value = datas[datas.length - 1].beginTime.getTime().toString();
+                                condition.alias = bo.ReportRunningLog.PROPERTY_OBJECTKEY_NAME;
+                                condition.value = datas[datas.length - 1].objectKey.toString();
                                 condition.operation = ibas.emConditionOperation.LESS_THAN;
                                 that.fireViewEvents(that.fetchReportLogsEvent, criteria);
                             }
@@ -324,13 +284,48 @@ namespace reportanalysis {
                         showHeader: false,
                         subHeader: new sap.m.Toolbar("", {
                             content: [
+                                new sap.m.Label("", {
+                                    text: ibas.i18n.prop(["bo_reportlog_begintime", "bo_reportlog_from"]),
+                                    showColon: true,
+                                    width: "6rem",
+                                }),
+                                new sap.extension.m.DatePicker("", {
+                                    width: "10rem",
+                                }),
+                                new sap.m.Label("", {
+                                    text: ibas.i18n.prop(["bo_reportlog_begintime", "bo_reportlog_to"]),
+                                    showColon: true,
+                                    width: "6rem",
+                                }).addStyleClass("sapUiSmallMarginBegin"),
+                                new sap.extension.m.DatePicker("", {
+                                    width: "10rem",
+                                }),
+                                new sap.m.ToolbarSeparator(),
                                 new sap.m.Button("", {
-                                    text: ibas.i18n.prop("shell_refresh"),
+                                    icon: "sap-icon://search",
+                                    text: ibas.i18n.prop("shell_query"),
                                     type: sap.m.ButtonType.Transparent,
                                     press: function (): void {
                                         that.table.setModel(null);
                                         that.table.destroyItems();
-                                        that.fireViewEvents(that.fetchReportLogsEvent);
+                                        let datePicker: sap.m.DatePicker;
+                                        let condition: ibas.ICondition;
+                                        let criteria: ibas.ICriteria = new ibas.Criteria();
+                                        datePicker = this.getParent().getContent()[1];
+                                        if (datePicker instanceof sap.m.DatePicker && datePicker.getDateValue() instanceof Date) {
+                                            condition = criteria.conditions.create();
+                                            condition.alias = bo.ReportRunningLog.PROPERTY_STARTDATE_NAME;
+                                            condition.operation = ibas.emConditionOperation.GRATER_EQUAL;
+                                            condition.value = ibas.dates.toString(datePicker.getDateValue(), "yyyy-MM-dd");
+                                        }
+                                        datePicker = this.getParent().getContent()[3];
+                                        if (datePicker instanceof sap.m.DatePicker && datePicker.getDateValue() instanceof Date) {
+                                            condition = criteria.conditions.create();
+                                            condition.alias = bo.ReportRunningLog.PROPERTY_STARTDATE_NAME;
+                                            condition.operation = ibas.emConditionOperation.LESS_EQUAL;
+                                            condition.value = ibas.dates.toString(datePicker.getDateValue(), "yyyy-MM-dd");
+                                        }
+                                        that.fireViewEvents(that.fetchReportLogsEvent, criteria);
                                     }
                                 }),
                             ]
@@ -343,7 +338,7 @@ namespace reportanalysis {
                 private table: sap.extension.m.Table;
 
                 /** 显示报表日志 */
-                showReportLogs(datas: bo.ReportLog[]): void {
+                showReportLogs(datas: bo.ReportRunningLog[]): void {
                     let model: sap.ui.model.Model = this.table.getModel();
                     if (model instanceof sap.extension.model.JSONModel) {
                         // 已绑定过数据
@@ -353,6 +348,43 @@ namespace reportanalysis {
                         this.table.setModel(new sap.extension.model.JSONModel({ rows: datas }));
                     }
                     this.table.setBusy(false);
+                }
+
+                showBlobAsText(blob: Blob): void {
+                    let reader: FileReader = new FileReader();
+                    reader.onload = function (): void {
+                        jQuery.sap.require("sap.ui.codeeditor.CodeEditor");
+                        let dialog: sap.m.Dialog = new sap.m.Dialog("", {
+                            title: ibas.i18n.prop("reportanalysis_title_content"),
+                            type: sap.m.DialogType.Standard,
+                            state: sap.ui.core.ValueState.None,
+                            content: [
+                                new sap.ui.codeeditor.CodeEditor("", {
+                                    height: ibas.strings.format("{0}px", window.innerHeight * 0.6),
+                                    width: ibas.strings.format("{0}px", window.innerWidth * 0.6),
+                                    type: "plain_text",
+                                    colorTheme: "eclipse",
+                                    value: {
+                                        path: "/content"
+                                    },
+                                })
+                            ],
+                            buttons: [
+                                new sap.m.Button("", {
+                                    text: ibas.i18n.prop("shell_exit"),
+                                    type: sap.m.ButtonType.Transparent,
+                                    icon: "sap-icon://inspect-down",
+                                    press: function (): void {
+                                        dialog.close();
+                                        dialog = null;
+                                    }
+                                }),
+                            ]
+                        }).addStyleClass("sapUiNoContentPadding");
+                        (<sap.ui.codeeditor.CodeEditor>dialog.getContent()[0]).setValue(reader.result as string);
+                        dialog.open();
+                    };
+                    reader.readAsText(blob, "utf-8");
                 }
             }
         }

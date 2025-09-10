@@ -126,11 +126,11 @@ namespace reportanalysis {
                 super.save(bo.ReportBook.name, saver);
             }
             /**
-             * 查询 报表日志
+             * 查询 报表运行日志
              * @param fetcher 查询者
              */
-            fetchReportLog(fetcher: ibas.IFetchCaller<bo.ReportLog>): void {
-                super.fetch(bo.ReportLog.name, fetcher);
+            fetchReportRunningLog(fetcher: ibas.IFetchCaller<bo.ReportRunningLog>): void {
+                super.fetch(bo.ReportRunningLog.name, fetcher);
             }
         }
 

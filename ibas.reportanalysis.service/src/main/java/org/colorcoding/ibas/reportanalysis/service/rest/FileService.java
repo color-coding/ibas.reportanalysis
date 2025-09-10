@@ -1,5 +1,6 @@
 package org.colorcoding.ibas.reportanalysis.service.rest;
 
+import java.io.File;
 import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
@@ -56,6 +57,9 @@ public class FileService extends FileRepositoryService {
 					if (item.getAlias().equalsIgnoreCase(FileRepositoryReadonly.CRITERIA_CONDITION_ALIAS_FILE_NAME)) {
 						if (item.getValue() != null && item.getValue().startsWith("file://")) {
 							item.setValue(item.getValue().substring(7));
+						}
+						if (item.getValue() != null && item.getValue().indexOf("/") >= 0) {
+							item.setValue(item.getValue().replaceAll("/", File.separator));
 						}
 					}
 				}
