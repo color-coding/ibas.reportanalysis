@@ -440,6 +440,29 @@ namespace reportanalysis {
                                     path: infoCol.path,
                                 })
                             });
+                        } else if (ibas.strings.equalsIgnoreCase(infoCol.objectCode, "i18n.prop")) {
+                            // 调用i18n.prop方法，列后缀：#{i18n.prop}，值：$(bo_user_name)
+                            trColumn = new sap.ui.table.Column("", {
+                                autoResizable: true,
+                                label: infoCol.description,
+                                sortProperty: infoCol.path,
+                                filterProperty: infoCol.path,
+                                template: new sap.extension.m.Text("", {
+                                    tooltip: {
+                                        path: infoCol.path,
+                                        formatter(data: any): string {
+                                            if (ibas.strings.isWith(data, "$(", ")")) {
+                                                return ibas.i18n.prop(data.substring(2, data.length - 1));
+                                            }
+                                            return data;
+                                        }
+                                    },
+                                    // width: "100%",
+                                }).bindProperty("bindingValue", {
+                                    path: infoCol.path,
+                                    type: new infoCol.type,
+                                })
+                            });
                         } else if (!ibas.objects.isNull(infoCol.objectCode)) {
                             // 对象有值，""认为是任意对象，具体从值中解析
                             trColumn = new sap.ui.table.Column("", {
