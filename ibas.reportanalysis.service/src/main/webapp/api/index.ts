@@ -8,4 +8,5 @@
 /// <reference path="./Data.ts" />
 /// <reference path="./bo/Report.ts" />
 /// <reference path="./bo/ReportBook.ts" />
+/// <reference path="./bo/ReportRunningLog.ts" />
 /// <reference path="./BORepository.ts" />

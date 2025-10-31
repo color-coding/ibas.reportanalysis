@@ -38,6 +38,7 @@ namespace reportanalysis {
                 this.view.uploadReportEvent = this.uploadReport;
                 this.view.downloadReportEvent = this.downloadFile;
                 this.view.runReportEvent = this.runReport;
+                this.view.viewReportLogsEvent = this.viewReportLogs;
             }
             /** 视图显示后 */
             protected viewShowed(): void {
@@ -409,6 +410,21 @@ namespace reportanalysis {
                 app.viewShower = this.viewShower;
                 app.run(this.editData);
             }
+            protected viewReportLogs(): void {
+                if (ibas.objects.isNull(this.editData) || this.editData.isNew === true) {
+                    this.messages(ibas.emMessageType.WARNING, ibas.i18n.prop("shell_data_saved_first"));
+                    return;
+                }
+                let criteria: ibas.Criteria = new ibas.Criteria();
+                let condition: ibas.ICondition = criteria.conditions.create();
+                condition.alias = bo.ReportRunningLog.PROPERTY_REPORT_NAME;
+                condition.value = String(this.editData.objectKey);
+
+                let app: ReportLogsApp = new ReportLogsApp();
+                app.navigation = this.navigation;
+                app.viewShower = this.viewShower;
+                app.run(criteria);
+            }
         }
         /** 视图-报表 */
         export interface IReportEditView extends ibas.IBOEditView {
@@ -438,6 +454,8 @@ namespace reportanalysis {
             downloadReportEvent: Function;
             /** 运行报表 */
             runReportEvent: Function;
+            /** 查看运行报表日志 */
+            viewReportLogsEvent: Function;
         }
         /** 报表编辑服务映射 */
         export class ReportEditServiceMapping extends ibas.BOEditServiceMapping {

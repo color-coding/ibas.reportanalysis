@@ -8,3 +8,4 @@
 /// <reference path="./ReportImportApp.ts" />
 /// <reference path="./ReportImportFunc.ts" />
 /// <reference path="./ReportChartsApp.ts" />
+/// <reference path="./ReportLogsApp.ts" />

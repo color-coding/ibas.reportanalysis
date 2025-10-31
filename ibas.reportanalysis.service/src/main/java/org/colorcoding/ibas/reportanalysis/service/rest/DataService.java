@@ -13,6 +13,7 @@ import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.data.DataTable;
 import org.colorcoding.ibas.reportanalysis.MyConfiguration;
 import org.colorcoding.ibas.reportanalysis.bo.report.Report;
+import org.colorcoding.ibas.reportanalysis.bo.report.ReportRunningLog;
 import org.colorcoding.ibas.reportanalysis.bo.reportbook.ReportBook;
 import org.colorcoding.ibas.reportanalysis.bo.users.UserReport;
 import org.colorcoding.ibas.reportanalysis.repository.BORepositoryReportAnalysis;
@@ -120,6 +121,37 @@ public class DataService extends BORepositoryReportAnalysis {
 	public OperationResult<ReportBook> saveReportBook(ReportBook bo, @HeaderParam("authorization") String authorization,
 			@QueryParam("token") String token) {
 		return super.saveReportBook(bo, MyConfiguration.optToken(authorization, token));
+	}
+
+	// --------------------------------------------------------------------------------------------//
+	/**
+	 * 查询-报表运行日志
+	 * @param criteria 查询
+	 * @param token 口令
+	 * @return 操作结果
+	 */
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("fetchReportRunningLog")
+	public OperationResult<ReportRunningLog> fetchReportRunningLog(Criteria criteria,
+			@HeaderParam("authorization") String authorization, @QueryParam("token") String token) {
+		return super.fetchReportRunningLog(criteria, MyConfiguration.optToken(authorization, token));
+	}
+
+	/**
+	 * 保存-报表运行日志
+	 * @param bo 对象实例
+	 * @param token 口令
+	 * @return 操作结果
+	 */
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("saveReportRunningLog")
+	public OperationResult<ReportRunningLog> saveReportRunningLog(ReportRunningLog bo,
+			@HeaderParam("authorization") String authorization, @QueryParam("token") String token) {
+		return super.saveReportRunningLog(bo, MyConfiguration.optToken(authorization, token));
 	}
 
 	// --------------------------------------------------------------------------------------------//

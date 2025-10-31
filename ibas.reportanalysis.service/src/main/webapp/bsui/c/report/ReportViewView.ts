@@ -74,6 +74,8 @@ namespace reportanalysis {
                                         that.fireViewEvents(that.runReportEvent);
                                     }
                                 }),
+                                /*
+                                new sap.m.ToolbarSeparator(),
                                 new sap.m.Button("", {
                                     text: ibas.i18n.prop("shell_reset"),
                                     type: sap.m.ButtonType.Transparent,
@@ -87,6 +89,48 @@ namespace reportanalysis {
                                         that.fireViewEvents(that.resetReportEvent);
                                     }
                                 }),
+                                */
+                                new sap.m.MenuButton("", {
+                                    icon: "sap-icon://reset",
+                                    text: ibas.i18n.prop("shell_reset"),
+                                    type: sap.m.ButtonType.Transparent,
+                                    menuPosition: sap.ui.core.Popup.Dock.EndBottom,
+                                    menu: new sap.m.Menu("", {
+                                        items: [
+                                            new sap.m.MenuItem("", {
+                                                text: ibas.i18n.prop("reportanalysis_last_input_parameter"),
+                                                press(): void {
+                                                    for (let item of (<any>that.viewContainer.getFooter()).getContent()) {
+                                                        if (item instanceof sap.m.Input) {
+                                                            item.setValue(null);
+                                                        }
+                                                    }
+                                                    if (that.report.parameters instanceof Array) {
+                                                        for (let hItem of that.loadReportParameters(ibas.i18n.prop("reportanalysis_last_input_parameter"))) {
+                                                            for (let rItem of that.report.parameters) {
+                                                                if (hItem.key === rItem.name) {
+                                                                    rItem.value = hItem.value;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    that.fireViewEvents(that.resetReportEvent);
+                                                }
+                                            }),
+                                        ],
+                                    }),
+                                    useDefaultActionOnly: true,
+                                    buttonMode: sap.m.MenuButtonMode.Split,
+                                    defaultAction(): void {
+                                        for (let item of (<any>that.viewContainer.getFooter()).getContent()) {
+                                            if (item instanceof sap.m.Input) {
+                                                item.setValue(null);
+                                            }
+                                        }
+                                        that.fireViewEvents(that.resetReportEvent);
+                                    }
+                                }),
+                                new sap.m.ToolbarSeparator(),
                                 new sap.m.ToolbarSpacer(""),
                                 new sap.m.Button("", {
                                     type: sap.m.ButtonType.Transparent,
@@ -268,6 +312,9 @@ namespace reportanalysis {
                                                         for (let row of table.getRows()) {
                                                             for (let cell of row.getCells()) {
                                                                 if (cell instanceof sap.m.Text || cell instanceof sap.m.Link) {
+                                                                    if (cell.getWidth() !== "100%") {
+                                                                        cell.setWidth("100%");
+                                                                    }
                                                                     cell.setTextAlign(sap.ui.core.TextAlign.Left);
                                                                 }
                                                             }
@@ -285,6 +332,9 @@ namespace reportanalysis {
                                                         for (let row of table.getRows()) {
                                                             for (let cell of row.getCells()) {
                                                                 if (cell instanceof sap.m.Text || cell instanceof sap.m.Link) {
+                                                                    if (cell.getWidth() !== "100%") {
+                                                                        cell.setWidth("100%");
+                                                                    }
                                                                     cell.setTextAlign(sap.ui.core.TextAlign.Right);
                                                                 }
                                                             }
@@ -305,6 +355,9 @@ namespace reportanalysis {
                                                                     let binding: any = cell.getBinding("bindingValue");
                                                                     if (binding?.getType() instanceof sap.ui.model.type.Float
                                                                         || binding?.getType() instanceof sap.ui.model.type.Integer) {
+                                                                        if (cell.getWidth() !== "100%") {
+                                                                            cell.setWidth("100%");
+                                                                        }
                                                                         cell.setTextAlign(sap.ui.core.TextAlign.Begin);
                                                                     }
                                                                 }
@@ -326,6 +379,9 @@ namespace reportanalysis {
                                                                     let binding: any = cell.getBinding("bindingValue");
                                                                     if (binding?.getType() instanceof sap.ui.model.type.Float
                                                                         || binding?.getType() instanceof sap.ui.model.type.Integer) {
+                                                                        if (cell.getWidth() !== "100%") {
+                                                                            cell.setWidth("100%");
+                                                                        }
                                                                         cell.setTextAlign(sap.ui.core.TextAlign.End);
                                                                     }
                                                                 }
@@ -410,8 +466,10 @@ namespace reportanalysis {
                 /** 显示报表 */
                 showReport(report: bo.UserReport): void {
                     this.viewContent.showReport(report);
+                    this.report = report;
                 }
                 viewData: ibas.DataTable;
+                report: bo.UserReport;
                 private countText: sap.extension.m.Text;
                 private chartMenus: sap.m.MenuButton;
 
@@ -428,124 +486,71 @@ namespace reportanalysis {
                         this.countText.setText(ibas.i18n.prop("reportanalysis_ui_count", table.rows.length));
                     }
                     // 判断表格是否可形成图表
-                    if (table?.rows.length > 1 && table?.columns.length > 1) {
-                        this.chartMenus.setVisible(true);
+                    if (ibas.booleans.valueOf(config.get(config.CONFIG_ITEM_DISABLE_REPORT_CHARTS)) !== true) {
+                        if (!ibas.objects.isNull(this.chartMenus)) {
+                            if (table?.rows.length > 1 && table?.columns.length > 1) {
+                                this.chartMenus.setVisible(true);
+                            } else {
+                                this.chartMenus.setVisible(false);
+                            }
+                        }
+                    }
+                    // 记录当前参数
+                    try {
+                        this.writeReportParameters();
+                    } catch (error) {
+                        ibas.logger.log(error);
+                    }
+                }
+
+                private loadReportParameters(sign: string): ibas.KeyValue[] {
+                    let reportRunfor: any = localStorage.getItem(ibas.strings.format("rpt_{0}_{1}", this.application.id, this.report.id));
+                    if (ibas.objects.isNull(reportRunfor)) {
+                        reportRunfor = {
+                            id: this.report.id,
+                            name: this.report.name,
+                            content: []
+                        };
                     } else {
-                        this.chartMenus.setVisible(false);
+                        reportRunfor = JSON.parse(reportRunfor);
                     }
-                }
-                proceeding(type: ibas.emMessageType, msg: string): void {
-                    this.application.viewShower.proceeding(this, type, msg);
-                }
-                messages(caller: ibas.IMessgesCaller): void {
-                    if (ibas.strings.isEmpty(caller.title)) {
-                        caller.title = ibas.i18n.prop("reportanalysis_app_report_view");
+                    let content: ibas.IList<any> = ibas.arrays.create(reportRunfor.content);
+                    let lastContent: any = content.firstOrDefault(c => c.sign === sign);
+                    if (lastContent?.parameters instanceof Array) {
+                        return lastContent.parameters;
                     }
-                    this.application.viewShower.messages(caller);
+                    return [];
                 }
-                protected viewContent: ReportViewContent = new ReportViewContent(this, ibas.emChooseType.SINGLE);
-            }
-            /**
-             * 视图-报表查看-页签，需要与上保持同步
-             */
-            export class ReportTabViewView extends ibas.TabView implements app.IReportViewView {
-                /** 运行报表 */
-                runReportEvent: Function;
-                /** 重置报表 */
-                resetReportEvent: Function;
-                /** 值链接事件 */
-                valueLinkEvent: Function;
-                /** 触发事件 */
-                fireValueLink(objectCode: string, value: string, row?: any): void {
-                    this.fireViewEvents(this.valueLinkEvent, objectCode, value, row);
+                private writeReportParameters(): void {
+                    let reportRunfor: any = localStorage.getItem(ibas.strings.format("rpt_{0}_{1}", this.application.id, this.report.id));
+                    if (ibas.objects.isNull(reportRunfor)) {
+                        reportRunfor = {
+                            id: this.report.id,
+                            name: this.report.name,
+                            content: []
+                        };
+                    } else {
+                        reportRunfor = JSON.parse(reportRunfor);
+                    }
+                    let content: ibas.IList<any> = ibas.arrays.create(reportRunfor.content);
+                    let lastContent: any = content.firstOrDefault(c => c.sign === ibas.i18n.prop("reportanalysis_last_input_parameter"));
+                    if (ibas.objects.isNull(lastContent)) {
+                        lastContent = {
+                            sign: ibas.i18n.prop("reportanalysis_last_input_parameter")
+                        };
+                        content.add(lastContent);
+                    }
+                    lastContent.parameters = [];
+                    for (let item of this.report.parameters) {
+                        lastContent.parameters.push({
+                            key: item.name,
+                            value: item.value,
+                        });
+                    }
+                    reportRunfor.content = content;
+                    localStorage.setItem(ibas.strings.format("{0}_{1}", this.application.id, this.report.id), JSON.stringify(reportRunfor));
                 }
-                /** 绘制视图 */
-                draw(): any {
-                    let that: this = this;
-                    return this.viewContainer = new sap.m.Page("", {
-                        showHeader: false,
-                        subHeader: new sap.m.Toolbar("", {
-                            content: [
-                                new sap.m.Button("", {
-                                    text: ibas.i18n.prop("shell_run"),
-                                    type: sap.m.ButtonType.Transparent,
-                                    icon: "sap-icon://begin",
-                                    press: function (): void {
-                                        that.fireViewEvents(that.runReportEvent);
-                                    }
-                                }),
-                                new sap.m.Button("", {
-                                    text: ibas.i18n.prop("shell_reset"),
-                                    type: sap.m.ButtonType.Transparent,
-                                    icon: "sap-icon://reset",
-                                    press: function (): void {
-                                        that.fireViewEvents(that.resetReportEvent);
-                                    }
-                                }),
-                                new sap.m.ToolbarSpacer(""),
-                                new sap.m.Button("", {
-                                    type: sap.m.ButtonType.Transparent,
-                                    icon: "sap-icon://action",
-                                    press: function (event: any): void {
-                                        ibas.servicesManager.showServices({
-                                            proxy: new DataTableServiceProxy({
-                                                data: that.viewData,
-                                            }),
-                                            displayServices(services: ibas.IServiceAgent[]): void {
-                                                if (ibas.objects.isNull(services) || services.length === 0) {
-                                                    return;
-                                                }
-                                                let actionSheet: sap.m.ActionSheet = new sap.m.ActionSheet("", {
-                                                    placement: sap.m.PlacementType.Bottom,
-                                                    buttons: {
-                                                        path: "/",
-                                                        template: new sap.m.Button("", {
-                                                            type: sap.m.ButtonType.Transparent,
-                                                            text: {
-                                                                path: "name",
-                                                                type: new sap.extension.data.Alphanumeric(),
-                                                                formatter(data: string): string {
-                                                                    return data ? ibas.i18n.prop(data) : "";
-                                                                }
-                                                            },
-                                                            icon: {
-                                                                path: "icon",
-                                                                type: new sap.extension.data.Alphanumeric(),
-                                                                formatter(data: string): string {
-                                                                    return data ? data : "sap-icon://e-care";
-                                                                }
-                                                            },
-                                                            press(this: sap.m.Button): void {
-                                                                let service: ibas.IServiceAgent = this.getBindingContext().getObject();
-                                                                if (service) {
-                                                                    service.run();
-                                                                }
-                                                            }
-                                                        })
-                                                    }
-                                                });
-                                                actionSheet.setModel(new sap.extension.model.JSONModel(services));
-                                                actionSheet.openBy(event.getSource());
-                                            }
-                                        });
-                                    }
-                                })
-                            ]
-                        }),
-                        content: [
-                        ]
-                    });
-                }
-                viewContainer: sap.m.Page;
-                /** 显示报表 */
-                showReport(report: bo.UserReport): void {
-                    this.viewContent.showReport(report);
-                }
-                viewData: ibas.DataTable;
-                /** 显示报表结果 */
-                showResults(table: ibas.DataTable): void {
-                    this.viewContent.showResults(this.viewData = table);
-                }
+
                 proceeding(type: ibas.emMessageType, msg: string): void {
                     this.application.viewShower.proceeding(this, type, msg);
                 }
@@ -694,7 +699,22 @@ namespace reportanalysis {
                     if (this.viewContainer instanceof sap.m.Dialog) {
                         for (let item of this.viewContainer.getContent()) {
                             if (item instanceof sap.extension.table.Table) {
+                                if (item.getVisibleRowCountMode() === sap.ui.table.VisibleRowCountMode.Auto) {
+                                    item.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Interactive);
+                                }
                                 item.setChooseType(this.chooseType);
+                                item.attachRowDoubleClick(undefined, (event: sap.ui.base.Event) => {
+                                    let row: number = (<sap.extension.table.Table>item).indexOfRow(event.getParameter("row"));
+                                    if (row >= 0) {
+                                        this.fireViewEvents(this.chooseDataEvent, this.viewData.clone([row]));
+                                    }
+                                });
+                                // 选择数据时，不显示编号
+                                item.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
+                                if (item.getColumns()[0]?.getLabel() === "#"
+                                    || (<any>item.getColumns()[0])?.getLabel()?.getText() === "#") {
+                                    item.getColumns()[0].setVisible(false);
+                                }
                             } else if (item instanceof sap.extension.m.List) {
                                 item.setChooseType(this.chooseType);
                             }

@@ -1,5 +1,7 @@
 package org.colorcoding.ibas.reportanalysis.service.rest;
 
+import java.io.File;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -48,6 +50,18 @@ public class FileService extends FileRepositoryService {
 			@QueryParam("token") String token, @Context HttpServletResponse response) {
 		try {
 			// 获取文件
+			if (criteria != null) {
+				for (ICondition item : criteria.getConditions()) {
+					if (item.getAlias().equalsIgnoreCase(FileRepository.CONDITION_ALIAS_FILE_NAME)) {
+						if (item.getValue() != null && item.getValue().startsWith("file://")) {
+							item.setValue(item.getValue().substring(7));
+						}
+						if (item.getValue() != null && item.getValue().indexOf("/") >= 0) {
+							item.setValue(item.getValue().replaceAll("/", File.separator));
+						}
+					}
+				}
+			}
 			IOperationResult<FileItem> operationResult = this.fetch(criteria,
 					MyConfiguration.optToken(authorization, token));
 			if (operationResult.getError() != null) {

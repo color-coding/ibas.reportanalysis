@@ -39,6 +39,7 @@ namespace reportanalysis {
                         }
                     }) === null) {
                     // 没有参数的报表，直接运行
+                    this.view.showReport(this.report);
                     this.runReport();
                 } else {
                     // 有参数报表
@@ -142,6 +143,9 @@ namespace reportanalysis {
                                         }
                                         let tmp: any = rowData[name];
                                         if (ibas.objects.isNull(tmp)) {
+                                            tmp = rowData[item.description];
+                                        }
+                                        if (ibas.objects.isNull(tmp)) {
                                             continue;
                                         }
                                         item.value = tmp;
@@ -192,16 +196,6 @@ namespace reportanalysis {
             constructor() {
                 super();
                 this.id = ReportViewerApp.APPLICATION_ID;
-            }
-        }
-        /** 查看应用-报表页签 */
-        export class ReportTabViewerApp extends ReportViewApp<IReportDataChooseView> {
-            /** 应用标识 */
-            static APPLICATION_ID: string = "3c42c391-4dc3-4188-a9d7-b6cc757428ec";
-            /** 构造函数 */
-            constructor() {
-                super();
-                this.id = ReportTabViewerApp.APPLICATION_ID;
             }
             /** 使用报表 */
             useReport(report: bo.UserReport): void {
