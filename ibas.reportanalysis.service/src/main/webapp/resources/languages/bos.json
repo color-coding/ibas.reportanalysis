@@ -29,6 +29,7 @@
         "bo_report_password": "Password",
         "bo_report_address": "Report Address",
         "bo_report_thirdpartyapp": "Third-party App",
+        "bo_report_traced": "Traced",
         "bo_report_remarks": "Remarks",
         "bo_report_reportparameters": "Report Parameters",
         "bo_reportparameter": "Report Parameter",
@@ -107,6 +108,21 @@
         "bo_reportdata_group": "Report Group",
         "bo_reportdata_remarks": "Remarks",
         "bo_reportdata_closing_delimiter": "----End----"
+    },
+    {
+        "bo_reportlog": "Report Log",
+        "bo_reportlog_id": "ID",
+        "bo_reportlog_report": "Report",
+        "bo_reportlog_reportid": "Report ID",
+        "bo_reportlog_reportname": "Report Name",
+        "bo_reportlog_workfolder": "WorkFolder",
+        "bo_reportlog_runner": "Runner",
+        "bo_reportlog_remarks": "Remarks",
+        "bo_reportlog_begintime": "Begin Time",
+        "bo_reportlog_finishtime": "Finish Time",
+        "bo_reportlog_reportparameters": "Parameters",
+        "bo_reportlog_reportdata": "Data",
+        "bo_reportlog_closing_delimiter": "----End----"
     },
     {
         "em_reportparametertype_text": "Text",

@@ -7,3 +7,4 @@
  */
 /// <reference path="./ReportImportView.ts" />
 /// <reference path="./ReportChartsView.ts" />
+/// <reference path="./ReportLogsView.ts" />

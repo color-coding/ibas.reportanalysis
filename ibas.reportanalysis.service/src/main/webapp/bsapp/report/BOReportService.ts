@@ -91,7 +91,9 @@ namespace reportanalysis {
                                                     }
                                                     builder.append(value);
                                                 }
-                                                pItem.value = builder.toString();
+                                                if (builder.length > 0) {
+                                                    pItem.value = builder.toString();
+                                                }
                                             }
                                         }
                                         reports.add(uReport);

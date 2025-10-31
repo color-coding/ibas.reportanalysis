@@ -34,6 +34,8 @@ namespace reportanalysis {
                 downloadReportEvent: Function;
                 /** 运行报表 */
                 runReportEvent: Function;
+                /** 查看运行报表日志 */
+                viewReportLogsEvent: Function;
 
                 /** 绘制视图 */
                 draw(): any {
@@ -532,6 +534,13 @@ namespace reportanalysis {
                                 path: "associatedReport",
                                 type: new sap.extension.data.Numeric()
                             }),
+                            new sap.m.Label("", { text: ibas.i18n.prop("bo_report_traced") }),
+                            new sap.extension.m.EnumSelect("", {
+                                enumType: ibas.emYesNo
+                            }).bindProperty("bindingValue", {
+                                path: "traced",
+                                type: new sap.extension.data.YesNo()
+                            }),
                         ]
                     });
                     return this.page = new sap.extension.m.DataPage("", {
@@ -585,6 +594,15 @@ namespace reportanalysis {
                                     })
                                 }),
                                 new sap.m.ToolbarSpacer(""),
+                                new sap.m.Button("", {
+                                    text: ibas.i18n.prop("reportanalysis_view_running_logs"),
+                                    type: sap.m.ButtonType.Transparent,
+                                    icon: "sap-icon://activity-items",
+                                    press: function (): void {
+                                        that.fireViewEvents(that.viewReportLogsEvent);
+                                    }
+                                }),
+                                new sap.m.ToolbarSeparator(""),
                                 new sap.m.Button("", {
                                     text: ibas.i18n.prop("shell_run"),
                                     type: sap.m.ButtonType.Transparent,

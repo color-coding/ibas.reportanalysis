@@ -181,6 +181,8 @@ namespace reportanalysis {
                 if (boName === bo.Report.name) {
                     if (property === bo.Report.PROPERTY_CATEGORY_NAME) {
                         return ibas.enums.toString(bo.emReportType, value);
+                    } else if (property === bo.Report.PROPERTY_TRACED_NAME) {
+                        return ibas.enums.toString(ibas.emYesNo, value);
                     }
                 } else if (boName === bo.ReportParameter.name) {
                     if (property === bo.ReportParameter.PROPERTY_CATEGORY_NAME) {
@@ -205,6 +207,8 @@ namespace reportanalysis {
                 if (boName === bo.Report.name) {
                     if (property === bo.Report.PROPERTY_CATEGORY_NAME) {
                         return ibas.enums.valueOf(bo.emReportType, value);
+                    } else if (property === bo.Report.PROPERTY_TRACED_NAME) {
+                        return ibas.enums.valueOf(ibas.emYesNo, value);
                     }
                 } else if (boName === bo.ReportParameter.name) {
                     if (property === bo.ReportParameter.PROPERTY_CATEGORY_NAME) {

@@ -70,6 +70,20 @@ namespace reportanalysis {
                                 }),
                             }),
                             new sap.extension.table.DataColumn("", {
+                                label: ibas.i18n.prop("bo_report_bocode"),
+                                template: new sap.extension.m.RepositoryText("", {
+                                    repository: initialfantasy.bo.BORepositoryInitialFantasy,
+                                    dataInfo: {
+                                        type: initialfantasy.bo.BOInformation,
+                                        key: initialfantasy.bo.BOInformation.PROPERTY_CODE_NAME,
+                                        text: initialfantasy.bo.BOInformation.PROPERTY_DESCRIPTION_NAME
+                                    },
+                                }).bindProperty("bindingValue", {
+                                    path: "boCode",
+                                    type: new sap.extension.data.Alphanumeric()
+                                }),
+                            }),
+                            new sap.extension.table.DataColumn("", {
                                 label: ibas.i18n.prop("bo_report_remarks"),
                                 template: new sap.extension.m.Text("", {
                                 }).bindProperty("bindingValue", {

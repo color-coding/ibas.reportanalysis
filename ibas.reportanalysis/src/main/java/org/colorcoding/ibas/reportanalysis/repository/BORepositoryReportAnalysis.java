@@ -1,5 +1,7 @@
 package org.colorcoding.ibas.reportanalysis.repository;
 
+import java.io.File;
+
 import org.colorcoding.ibas.bobas.common.ConditionOperation;
 import org.colorcoding.ibas.bobas.common.ConditionRelationship;
 import org.colorcoding.ibas.bobas.common.Criteria;
@@ -14,8 +16,11 @@ import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.message.MessageLevel;
 import org.colorcoding.ibas.bobas.repository.BORepositoryServiceApplication;
+import org.colorcoding.ibas.reportanalysis.MyConfiguration;
 import org.colorcoding.ibas.reportanalysis.bo.report.IReport;
+import org.colorcoding.ibas.reportanalysis.bo.report.IReportRunningLog;
 import org.colorcoding.ibas.reportanalysis.bo.report.Report;
+import org.colorcoding.ibas.reportanalysis.bo.report.ReportRunningLog;
 import org.colorcoding.ibas.reportanalysis.bo.reportbook.IReportBook;
 import org.colorcoding.ibas.reportanalysis.bo.reportbook.IReportBookItem;
 import org.colorcoding.ibas.reportanalysis.bo.reportbook.ReportBook;
@@ -216,6 +221,11 @@ public class BORepositoryReportAnalysis extends BORepositoryServiceApplication
 				throw new Exception(I18N.prop("msg_ra_not_allowed_run_report",
 						report.getName() != null ? report.getName() : report.getId()));
 			}
+			reporter.setRunner(this.getCurrentUser().toString());
+			reporter.setTraced(boReport.getTraced() == emYesNo.YES ? true : false);
+			reporter.setWorkFolder(
+					new File(MyConfiguration.getLogsFolder(), String.valueOf(boReport.getObjectKey())).getPath());
+
 			Logger.log(MessageLevel.DEBUG, MSG_USER_RUN_REPORT, this.getCurrentUser().getId(), boReport.getObjectKey(),
 					boReport.getName());
 			// 运行报表
@@ -323,5 +333,48 @@ public class BORepositoryReportAnalysis extends BORepositoryServiceApplication
 		return new OperationResult<IReportBook>(this.saveReportBook((ReportBook) bo, this.getUserToken()));
 	}
 
+	// --------------------------------------------------------------------------------------------//
+	/**
+	 * 查询-报表运行日志
+	 * 
+	 * @param criteria 查询
+	 * @param token    口令
+	 * @return 操作结果
+	 */
+	public OperationResult<ReportRunningLog> fetchReportRunningLog(ICriteria criteria, String token) {
+		return super.fetch(ReportRunningLog.class, criteria, token);
+	}
+
+	/**
+	 * 查询-报表运行日志（提前设置用户口令）
+	 * 
+	 * @param criteria 查询
+	 * @return 操作结果
+	 */
+	public IOperationResult<IReportRunningLog> fetchReportRunningLog(ICriteria criteria) {
+		return new OperationResult<IReportRunningLog>(this.fetchReportRunningLog(criteria, this.getUserToken()));
+	}
+
+	/**
+	 * 保存-报表运行日志
+	 * 
+	 * @param bo    对象实例
+	 * @param token 口令
+	 * @return 操作结果
+	 */
+	public OperationResult<ReportRunningLog> saveReportRunningLog(ReportRunningLog bo, String token) {
+		return super.save(bo, token);
+	}
+
+	/**
+	 * 保存-报表运行日志（提前设置用户口令）
+	 * 
+	 * @param bo 对象实例
+	 * @return 操作结果
+	 */
+	public IOperationResult<IReportRunningLog> saveReportRunningLog(IReportRunningLog bo) {
+		return new OperationResult<IReportRunningLog>(
+				this.saveReportRunningLog((ReportRunningLog) bo, this.getUserToken()));
+	}
 	// --------------------------------------------------------------------------------------------//
 }

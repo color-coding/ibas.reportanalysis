@@ -10,6 +10,7 @@ import org.colorcoding.ibas.bobas.bo.UserFieldProxy;
 import org.colorcoding.ibas.bobas.common.Criteria;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.reportanalysis.bo.report.Report;
+import org.colorcoding.ibas.reportanalysis.bo.report.ReportRunningLog;
 import org.colorcoding.ibas.reportanalysis.bo.reportbook.ReportBook;
 
 /**
@@ -25,7 +26,7 @@ public class Resolver implements ContextResolver<JAXBContext> {
 		try {
 			if (jaxbContext == null) {
 				jaxbContext = JAXBContext.newInstance(Criteria.class, OperationResult.class, UserFieldProxy.class,
-						Report.class, ReportBook.class);
+						Report.class, ReportBook.class, ReportRunningLog.class);
 			}
 		} catch (JAXBException e) {
 			e.printStackTrace();

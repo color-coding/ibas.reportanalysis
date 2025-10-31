@@ -334,6 +334,17 @@ namespace reportanalysis {
                 this.setProperty(Report.PROPERTY_THIRDPARTYAPP_NAME, value);
             }
 
+            /** 映射的属性名称-追溯 */
+            static PROPERTY_TRACED_NAME: string = "Traced";
+            /** 获取-追溯 */
+            get traced(): ibas.emYesNo {
+                return this.getProperty<ibas.emYesNo>(Report.PROPERTY_TRACED_NAME);
+            }
+            /** 设置-追溯 */
+            set traced(value: ibas.emYesNo) {
+                this.setProperty(Report.PROPERTY_TRACED_NAME, value);
+            }
+
             /** 映射的属性名称-备注 */
             static PROPERTY_REMARKS_NAME: string = "Remarks";
             /** 获取-备注 */

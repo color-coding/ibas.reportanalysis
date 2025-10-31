@@ -5,6 +5,7 @@ import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.data.DataTable;
 import org.colorcoding.ibas.bobas.repository.IBORepositorySmartService;
 import org.colorcoding.ibas.reportanalysis.bo.report.Report;
+import org.colorcoding.ibas.reportanalysis.bo.report.ReportRunningLog;
 import org.colorcoding.ibas.reportanalysis.bo.reportbook.ReportBook;
 import org.colorcoding.ibas.reportanalysis.bo.users.UserReport;
 
@@ -81,6 +82,23 @@ public interface IBORepositoryReportAnalysisSvc extends IBORepositorySmartServic
 	 * @return 操作结果
 	 */
 	OperationResult<ReportBook> saveReportBook(ReportBook bo, String token);
+
+	// --------------------------------------------------------------------------------------------//
+	/**
+	 * 查询-报表运行日志
+	 * @param criteria 查询
+	 * @param token 口令
+	 * @return 操作结果
+	 */
+	OperationResult<ReportRunningLog> fetchReportRunningLog(ICriteria criteria, String token);
+
+	/**
+	 * 保存-报表运行日志
+	 * @param bo 对象实例
+	 * @param token 口令
+	 * @return 操作结果
+	 */
+	OperationResult<ReportRunningLog> saveReportRunningLog(ReportRunningLog bo, String token);
 
 	// --------------------------------------------------------------------------------------------//
 

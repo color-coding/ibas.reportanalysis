@@ -14,6 +14,8 @@ namespace reportanalysis {
     export const CONSOLE_VERSION: string = "0.1.0";
 
     export namespace config {
+        /** 配置项目-禁用报表图形功能 */
+        export const CONFIG_ITEM_DISABLE_REPORT_CHARTS: string = "disableReportCharts";
         /**
          * 获取此模块配置
          * @param key 配置项
@@ -32,6 +34,8 @@ namespace reportanalysis {
         export const BO_CODE_REPORTBOOK: string = "${Company}_RA_RPTBOOK";
         /** 业务对象编码-报表结果 */
         export const BO_CODE_REPORTRESULT: string = "${Company}_RA_RPTRESULT";
+        /** 业务对象编码-报表运行日志 */
+        export const BO_CODE_REPORTRUNNINGLOG: string = "${Company}_RA_RPTRUNLOG";
         /**
          * 报表类型
          */
