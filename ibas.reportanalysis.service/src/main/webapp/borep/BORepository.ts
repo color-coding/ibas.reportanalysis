@@ -25,8 +25,12 @@ namespace reportanalysis {
                         return ibas.urls.normalize(arguments[0]);
                     } else {
                         if (!this.address.endsWith("/")) { this.address += "/"; }
+                        let value: string = arguments[0];
+                        if (ibas.strings.isWith(value, "file://", undefined)) {
+                            value = value.substring("file://".length);
+                        }
                         let url: string = this.address.replace("/services/rest/data/", "/services/rest/file/");
-                        url += arguments[0];
+                        url += value;
                         url += url.indexOf("?") >= 0 ? "&" : "?";
                         url += ibas.strings.format("token={0}", ibas.tokens.content(this.token));
                         return encodeURI(url);
