@@ -410,13 +410,10 @@ namespace reportanalysis {
                             trColumn = new sap.ui.table.Column("", {
                                 autoResizable: true,
                                 label: infoCol.description,
-                                template: new sap.m.Avatar("", {
-                                    decorative: true,
-                                    showBorder: false,
-                                    displayShape: sap.m.AvatarShape.Square,
-                                    imageFitType: sap.m.AvatarImageFitType.Cover,
-                                    backgroundColor: sap.m.AvatarColor.Transparent,
-                                    fallbackIcon: "sap-icon://avatar-icon-none",
+                                template: new sap.m.Image("", {
+                                    height: "1.75rem",
+                                    width: "100%",
+                                    mode: sap.m.ImageMode.Image,
                                     press: function (oEvent: sap.ui.base.Event): void {
                                         let src: string = this.getSrc();
                                         if (!ibas.strings.isEmpty(src)) {
@@ -461,6 +458,12 @@ namespace reportanalysis {
                                 }).bindProperty("bindingValue", {
                                     path: infoCol.path,
                                     type: new infoCol.type,
+                                    formatter(data: any): string {
+                                        if (ibas.strings.isWith(data, "$(", ")")) {
+                                            return ibas.i18n.prop(data.substring(2, data.length - 1));
+                                        }
+                                        return data;
+                                    }
                                 })
                             });
                         } else if (!ibas.objects.isNull(infoCol.objectCode)) {
