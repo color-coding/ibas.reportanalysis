@@ -93,6 +93,7 @@ namespace reportanalysis {
                                                 }
                                                 if (builder.length > 0) {
                                                     pItem.value = builder.toString();
+                                                    pItem.category = bo.emReportParameterType.PRESET;
                                                 }
                                             }
                                         }
