@@ -458,6 +458,12 @@ namespace reportanalysis {
                                 }).bindProperty("bindingValue", {
                                     path: infoCol.path,
                                     type: new infoCol.type,
+                                    formatter(data: any): string {
+                                        if (ibas.strings.isWith(data, "$(", ")")) {
+                                            return ibas.i18n.prop(data.substring(2, data.length - 1));
+                                        }
+                                        return data;
+                                    }
                                 })
                             });
                         } else if (!ibas.objects.isNull(infoCol.objectCode)) {
