@@ -144,6 +144,7 @@ namespace reportanalysis {
                             }
                             if (!ibas.objects.isNull(value)) {
                                 item.value = String(value);
+                                item.category = bo.emReportParameterType.PRESET;
                                 continue;
                             }
                         }
