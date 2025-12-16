@@ -111,6 +111,17 @@ public class UserReport extends Serializable {
 		this.parameters = parameters;
 	}
 
+	@XmlElement(name = "ResultMethod")
+	private String resultMethod;
+
+	public String getResultMethod() {
+		return resultMethod;
+	}
+
+	public void setResultMethod(String resultMethod) {
+		this.resultMethod = resultMethod;
+	}
+
 	@Override
 	public String toString() {
 		return String.format("{report: %s}", this.getName() != null ? this.getName() : this.getId());

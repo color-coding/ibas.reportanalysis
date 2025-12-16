@@ -31,6 +31,8 @@ namespace reportanalysis {
             category: emReportType;
             /** 组 */
             group: string;
+            /** 结果形式 */
+            resultMethod: string;
             /** 报表参数 */
             parameters: ibas.ArrayList<UserReportParameter>;
             /** 参数获取值 */

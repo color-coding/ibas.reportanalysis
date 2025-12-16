@@ -80,7 +80,7 @@ public class Report extends BusinessObject<Report> implements IReport, IDataOwne
 	 * 
 	 * @param value 值
 	 */
-	public final void setObjectKey(Integer value) {
+	public void setObjectKey(Integer value) {
 		this.setProperty(PROPERTY_OBJECTKEY, value);
 	}
 
@@ -953,32 +953,32 @@ public class Report extends BusinessObject<Report> implements IReport, IDataOwne
 	}
 
 	/**
-	* 属性名称-追溯
-	*/
+	 * 属性名称-追溯
+	 */
 	private static final String PROPERTY_TRACED_NAME = "Traced";
 
 	/**
-	* 追溯 属性
-	*/
+	 * 追溯 属性
+	 */
 	@DbField(name = "Traced", type = DbFieldType.ALPHANUMERIC, table = DB_TABLE_NAME)
 	public static final IPropertyInfo<emYesNo> PROPERTY_TRACED = registerProperty(PROPERTY_TRACED_NAME, emYesNo.class,
 			MY_CLASS);
 
 	/**
-	* 获取-追溯
-	* 
-	* @return 值
-	*/
+	 * 获取-追溯
+	 * 
+	 * @return 值
+	 */
 	@XmlElement(name = PROPERTY_TRACED_NAME)
 	public final emYesNo getTraced() {
 		return this.getProperty(PROPERTY_TRACED);
 	}
 
 	/**
-	* 设置-追溯
-	* 
-	* @param value 值
-	*/
+	 * 设置-追溯
+	 * 
+	 * @param value 值
+	 */
 	public final void setTraced(emYesNo value) {
 		this.setProperty(PROPERTY_TRACED, value);
 	}
