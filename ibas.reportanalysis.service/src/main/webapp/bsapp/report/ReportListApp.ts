@@ -38,6 +38,24 @@ namespace reportanalysis {
             /** 查询数据 */
             protected fetchData(criteria: ibas.ICriteria): void {
                 this.busy(true);
+                if (ibas.variablesManager.getValue(ibas.VARIABLE_NAME_USER_SUPER) !== true) {
+                    if (!ibas.objects.isNull(criteria)) {
+                        if (criteria.conditions.firstOrDefault(
+                            c => c.alias === bo.Report.PROPERTY_OBJECTKEY_NAME
+                                && c.operation === ibas.emConditionOperation.GRATER_THAN
+                                && c.value === "0"
+                        ) === null) {
+                            if (criteria.conditions.length > 2) {
+                                criteria.conditions.firstOrDefault().bracketOpen++;
+                                criteria.conditions.lastOrDefault().bracketClose++;
+                            }
+                            let condition: ibas.ICondition = criteria.conditions.create();
+                            condition.alias = bo.Report.PROPERTY_OBJECTKEY_NAME;
+                            condition.operation = ibas.emConditionOperation.GRATER_THAN;
+                            condition.value = "0";
+                        }
+                    }
+                }
                 let that: this = this;
                 let boRepository: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
                 boRepository.fetchReport({
