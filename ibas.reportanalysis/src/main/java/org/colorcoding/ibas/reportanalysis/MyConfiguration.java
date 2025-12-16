@@ -1,7 +1,6 @@
 package org.colorcoding.ibas.reportanalysis;
 
-import java.io.File;
-
+import org.colorcoding.ibas.bobas.common.Files;
 import org.colorcoding.ibas.bobas.configuration.ConfigurationFactory;
 import org.colorcoding.ibas.bobas.configuration.ConfigurationManager;
 
@@ -73,8 +72,8 @@ public class MyConfiguration extends org.colorcoding.ibas.initialfantasy.MyConfi
 	 * @return
 	 */
 	public static String getDocumetsFolder() {
-		return MyConfiguration.getConfigValue(MyConfiguration.CONFIG_ITEM_DOCUMENT_FOLDER,
-				MyConfiguration.getDataFolder() + File.separator + "reportanalysis_files");
+		return Files.valueOf(MyConfiguration.getConfigValue(MyConfiguration.CONFIG_ITEM_DOCUMENT_FOLDER,
+				MyConfiguration.getDataFolder()), "reportanalysis_files").getPath();
 	}
 
 	/**
@@ -83,7 +82,7 @@ public class MyConfiguration extends org.colorcoding.ibas.initialfantasy.MyConfi
 	 * @return
 	 */
 	public static String getLogsFolder() {
-		return MyConfiguration.getConfigValue(MyConfiguration.CONFIG_ITEM_LOG_FILE_FOLDER,
-				MyConfiguration.getDataFolder() + File.separator + "reportanalysis_logs");
+		return Files.valueOf(MyConfiguration.getConfigValue(MyConfiguration.CONFIG_ITEM_DOCUMENT_FOLDER,
+				MyConfiguration.getDataFolder()), "reportanalysis_logs").getPath();
 	}
 }

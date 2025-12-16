@@ -20,7 +20,6 @@ import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.data.FileItem;
-import org.colorcoding.ibas.bobas.repository.FileRepository;
 import org.colorcoding.ibas.bobas.repository.jersey.FileRepositoryService;
 import org.colorcoding.ibas.reportanalysis.MyConfiguration;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -29,8 +28,11 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 public class FileService extends FileRepositoryService {
 
 	public FileService() {
-		// 设置工作目录，资源目录下的报表目录
+		// 设置工作目录
 		this.setRepositoryFolder(MyConfiguration.getDocumetsFolder());
+		// 设置是否分组存储文件
+		this.setGroupingFiles(
+				MyConfiguration.getConfigValue(MyConfiguration.CONFIG_ITEM_FILE_REPOSITORY_GROUPING_FILES, true));
 	}
 
 	@POST
@@ -52,7 +54,7 @@ public class FileService extends FileRepositoryService {
 			// 获取文件
 			if (criteria != null) {
 				for (ICondition item : criteria.getConditions()) {
-					if (item.getAlias().equalsIgnoreCase(FileRepository.CONDITION_ALIAS_FILE_NAME)) {
+					if (item.getAlias().equalsIgnoreCase(FileRepositoryService.CONDITION_ALIAS_FILE_NAME)) {
 						if (item.getValue() != null && item.getValue().startsWith("file://")) {
 							item.setValue(item.getValue().substring(7));
 						}
@@ -95,7 +97,7 @@ public class FileService extends FileRepositoryService {
 		try {
 			Criteria criteria = new Criteria();
 			ICondition condition = criteria.getConditions().create();
-			condition.setAlias(FileRepository.CONDITION_ALIAS_FILE_NAME);
+			condition.setAlias(FileRepositoryService.CONDITION_ALIAS_FILE_NAME);
 			condition.setValue(resource);
 			// 获取文件
 			IOperationResult<FileItem> operationResult = this.fetch(criteria, token);
@@ -106,6 +108,11 @@ public class FileService extends FileRepositoryService {
 			if (fileItem != null) {
 				// 设置内容类型
 				response.setContentType(this.getContentType(fileItem));
+				// 设置缓存时间（单位：秒）
+				int cacheAge = 60 * 60 * 24 * 30;
+				// 设置缓存控制头
+				response.setHeader("Cache-Control", "private, max-age=" + cacheAge);
+				response.setDateHeader("Expires", System.currentTimeMillis() + cacheAge * 1000L);
 				// 写入响应输出流
 				fileItem.writeTo(response.getOutputStream());
 				// 提交

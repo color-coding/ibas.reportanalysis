@@ -316,13 +316,7 @@ namespace reportanalysis {
                         if (ibas.config.get(CONFIG_ITEM_FULL_SCREEN, false)) {
                             height = height + 48;
                         }
-                        if (this.parent instanceof ibas.TabView) {
-                            if (ibas.config.get(openui5.CONFIG_ITEM_COMPACT_SCREEN) === false) {
-                                height = height + 48 - 48;
-                            } else {
-                                height = height + 40 - 32;
-                            }
-                        } else if (this.parent instanceof ibas.DialogView) {
+                        if (this.parent instanceof ibas.DialogView) {
                             width = Math.round(window.innerWidth * 0.8);
                             height = Math.round(window.innerHeight * 0.85);
                         }

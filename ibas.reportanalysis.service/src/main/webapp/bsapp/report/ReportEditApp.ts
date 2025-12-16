@@ -346,15 +346,15 @@ namespace reportanalysis {
                 let boRepository: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
                 boRepository.upload({
                     fileData: data,
-                    onCompleted(opRslt: ibas.IOperationResult<ibas.FileData>): void {
+                    onCompleted(opRslt: ibas.IOperationResult<ibas.FileItem>): void {
                         try {
                             that.busy(false);
                             if (opRslt.resultCode !== 0) {
                                 throw new Error(opRslt.message);
                             }
-                            let fileData: ibas.FileData = opRslt.resultObjects.firstOrDefault();
+                            let fileData: ibas.FileItem = opRslt.resultObjects.firstOrDefault();
                             if (!ibas.objects.isNull(fileData)) {
-                                that.editData.address = ibas.strings.format("file://{0}", fileData.fileName);
+                                that.editData.address = ibas.strings.format("file://{0}", fileData.name);
                                 if (ibas.strings.isEmpty(that.editData.name)) {
                                     that.editData.name = decodeURI((<any>data.get("file"))?.name);
                                 }

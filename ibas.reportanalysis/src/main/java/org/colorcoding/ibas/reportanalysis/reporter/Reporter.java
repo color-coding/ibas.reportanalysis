@@ -3,10 +3,8 @@ package org.colorcoding.ibas.reportanalysis.reporter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.UUID;
-import java.util.function.Function;
 
 import org.colorcoding.ibas.bobas.common.DateTimes;
 import org.colorcoding.ibas.bobas.common.Strings;
@@ -16,6 +14,7 @@ import org.colorcoding.ibas.bobas.data.IDataTableRow;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.organization.OrganizationFactory;
+import org.colorcoding.ibas.bobas.serialization.writer.CsvWriter;
 import org.colorcoding.ibas.reportanalysis.bo.report.ReportRunningLog;
 import org.colorcoding.ibas.reportanalysis.repository.BORepositoryReportAnalysis;
 
@@ -146,57 +145,33 @@ public abstract class Reporter implements IReporter {
 		IDataTable dataTable = this.run();
 		if (this.isTraced() && dataTable != null) {
 			// 记录运行结果（文件创建时间为结束时间）
-			try {
-				/*
-				 * try (FileOutputStream outputStream = new FileOutputStream(new
-				 * File(workFolder, "ReportData.json"))) { try (OutputStreamWriter writer = new
-				 * OutputStreamWriter(outputStream, "utf-8")) { ISerializer<?> serializer =
-				 * SerializerFactory.create().createManager()
-				 * .create(SerializerManager.TYPE_JSON); serializer.serialize(dataTable,
-				 * outputStream, false); writer.flush(); } outputStream.flush(); }
-				 */
-				try (OutputStreamWriter writer = new OutputStreamWriter(
-						new FileOutputStream(new File(workFolder, "ReportData.csv")), StandardCharsets.UTF_8)) {
-					Function<Object, String> escapeCsvField = new Function<Object, String>() {
-
-						@Override
-						public String apply(Object value) {
-							if (value == null)
-								return "";
-							String sValue = String.valueOf(value);
-							// 如果包含逗号、换行或双引号，则用双引号包裹并转义内部引号
-							if (sValue.contains(",") || sValue.contains("\"") || sValue.contains("\n")) {
-								return "\"" + sValue.replace("\"", "\"\"") + "\"";
-							}
-							return sValue;
-
-						}
-
-					};
-					if (!dataTable.getColumns().isEmpty()) {
-						IDataTableColumn column;
-						for (int i = 0; i < dataTable.getColumns().size(); i++) {
-							column = dataTable.getColumns().get(i);
-							if (i > 0) {
-								writer.append(",");
-							}
-							writer.append(!Strings.isNullOrEmpty(column.getDescription()) ? column.getDescription()
-									: column.getName());
-						}
-						writer.append("\n");
+			try (FileOutputStream outputStream = new FileOutputStream(new File(workFolder, "ReportData.csv"))) {
+				CsvWriter writer = new CsvWriter();
+				IDataTableColumn column;
+				for (int i = 0; i < dataTable.getColumns().size(); i++) {
+					column = dataTable.getColumns().get(i);
+					if (i > 0) {
+						writer.writeDelimiter(outputStream);
 					}
-					if (!dataTable.getRows().isEmpty()) {
-						for (IDataTableRow row : dataTable.getRows()) {
-							for (int i = 0; i < dataTable.getColumns().size(); i++) {
-								if (i > 0) {
-									writer.append(",");
-								}
-								writer.append(escapeCsvField.apply(row.getValue(i)));
-							}
-							writer.append("\n");
+					writer.write(outputStream, Strings.isNullOrEmpty(column.getDescription()) ? column.getDescription()
+							: column.getName());
+				}
+				writer.writeNewLine(outputStream);
+
+				IDataTableRow row;
+				for (int i = 0; i < dataTable.getRows().size(); i++) {
+					row = dataTable.getRows().get(i);
+					if (i > 0) {
+						writer.writeNewLine(outputStream);
+					}
+					for (int j = 0; j < dataTable.getColumns().size(); j++) {
+						if (j > 0) {
+							writer.writeDelimiter(outputStream);
 						}
+						writer.write(outputStream, Strings.valueOf(row.getValue(j)));
 					}
 				}
+
 				if (reportLog != null) {
 					reportLog.setEndDate(DateTimes.today());
 					reportLog.setEndTime(Short.valueOf(DateTimes.now().toString("HHmm")));

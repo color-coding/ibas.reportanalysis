@@ -36,7 +36,6 @@ import org.colorcoding.ibas.bobas.serialization.SerializationFactory;
 import org.colorcoding.ibas.bobas.serialization.SerializerManager;
 import org.colorcoding.ibas.reportanalysis.MyConfiguration;
 import org.colorcoding.ibas.reportanalysis.bo.report.Report;
-import org.xml.sax.InputSource;
 
 /**
  * 文件报表者
@@ -190,8 +189,8 @@ public class RemoteReporter extends Reporter {
 			// 处理返回
 			try (InputStreamReader streamReader = new InputStreamReader(connection.getInputStream(), "utf-8")) {
 				ISerializer serializer = serializerManager.create(SerializerManager.TYPE_JSON);
-				Object data = serializer.deserialize(new InputSource(streamReader), OperationResult.class,
-						OperationMessage.class, Result.class, String.class, DataTable.class);
+				Object data = serializer.deserialize(streamReader, OperationResult.class, OperationMessage.class,
+						Result.class, String.class, DataTable.class);
 				if (data instanceof OperationResult) {
 					OperationResult<?> operationResult = (OperationResult<?>) data;
 					data = operationResult.getResultObjects().firstOrDefault();

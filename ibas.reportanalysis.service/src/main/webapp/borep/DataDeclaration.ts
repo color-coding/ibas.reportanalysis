@@ -26,6 +26,8 @@ namespace reportanalysis {
                 Category: string;
                 /** 组 */
                 Group: string;
+                /** 结果形式 */
+                ResultMethod: string;
                 /** 报表参数 */
                 Parameters: IUserReportParameter[];
             }
