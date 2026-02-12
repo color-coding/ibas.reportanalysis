@@ -42,7 +42,6 @@ namespace reportanalysis {
                     if (!ibas.objects.isNull(criteria)) {
                         if (criteria.conditions.firstOrDefault(
                             c => c.alias === bo.Report.PROPERTY_OBJECTKEY_NAME
-                                && c.operation === ibas.emConditionOperation.GRATER_THAN
                                 && c.value === "0"
                         ) === null) {
                             if (criteria.conditions.length > 2) {

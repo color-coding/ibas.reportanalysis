@@ -397,6 +397,7 @@ namespace reportanalysis {
                                 new sap.m.ToolbarSeparator(""),
                                 new sap.m.Button("", {
                                     text: ibas.i18n.prop("reportanalysis_resize_column"),
+                                    icon: "sap-icon://resize-horizontal",
                                     type: sap.m.ButtonType.Accept,
                                     press: function (event: sap.ui.base.Event): void {
                                         let table: sap.ui.table.Table = (<any>that.viewContainer.getContent()[0]);

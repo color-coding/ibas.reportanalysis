@@ -1,11 +1,20 @@
 package org.colorcoding.ibas.reportanalysis.reporter;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.Properties;
 
+import org.colorcoding.ibas.bobas.common.Criteria;
+import org.colorcoding.ibas.bobas.common.Files;
+import org.colorcoding.ibas.bobas.common.ICondition;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.data.IDataTable;
+import org.colorcoding.ibas.bobas.file.FileItem;
 import org.colorcoding.ibas.bobas.i18n.I18N;
+import org.colorcoding.ibas.bobas.message.Logger;
+import org.colorcoding.ibas.bobas.message.MessageLevel;
+import org.colorcoding.ibas.bobas.repository.FileRepository;
 import org.colorcoding.ibas.reportanalysis.MyConfiguration;
 import org.colorcoding.ibas.reportanalysis.bo.report.Report;
 import org.colorcoding.ibas.thirdpartyapp.client.ApplicationClient;
@@ -50,8 +59,35 @@ public class ThirdAppReporter extends Reporter {
 			Properties params = new Properties();
 			params.put(PARAM_NAME_REPORT, this.getAddress());
 			if (this.getAddress() != null && this.getAddress().startsWith(URL_HEAD_FILE)) {
-				params.put(PARAM_NAME_REPORT_FILE, new File(MyConfiguration.getDocumetsFolder(),
-						this.getAddress().substring(URL_HEAD_FILE.length())).getPath());
+				// 获取文件地址
+				try (FileRepository fileRepository = new FileRepository()) {
+					fileRepository.setRepositoryFolder(MyConfiguration.getDocumetsFolder());
+					fileRepository.setGroupingFiles(MyConfiguration
+							.getConfigValue(MyConfiguration.CONFIG_ITEM_FILE_REPOSITORY_GROUPING_FILES, true));
+					Criteria criteria = new Criteria();
+					ICondition condition = criteria.getConditions().create();
+					condition.setAlias(FileRepository.CONDITION_ALIAS_FILE_NAME);
+					condition.setValue(this.getAddress().substring(URL_HEAD_FILE.length()));
+					IOperationResult<FileItem> opRsltFile = fileRepository.fetch(criteria);
+					if (opRsltFile.getError() != null) {
+						throw opRsltFile.getError();
+					}
+					if (opRsltFile.getResultObjects().isEmpty()) {
+						throw new FileNotFoundException(this.getAddress());
+					}
+					for (FileItem fileItem : opRsltFile.getResultObjects()) {
+						File file = Files.valueOf(MyConfiguration.getTempFolder(), this.getId(), fileItem.getName());
+						if (file.getParentFile().mkdirs()) {
+							try (FileOutputStream outputStream = new FileOutputStream(file)) {
+								fileItem.writeTo(outputStream);
+								outputStream.flush();
+							}
+							params.put(PARAM_NAME_REPORT_FILE, file);
+							Logger.log(MessageLevel.DEBUG, "%s: write file [%s] to [%s].", application,
+									fileItem.getName(), file.getPath());
+						}
+					}
+				}
 			}
 			params.put(PARAM_NAME_REPORT_NAME, this.getReport().getName());
 			for (ExecuteReportParameter item : this.getReport().getParameters()) {
@@ -79,6 +115,12 @@ public class ThirdAppReporter extends Reporter {
 			return opRslt.getResultObjects().firstOrDefault();
 		} catch (Exception e) {
 			throw new ReporterException(e);
+		} finally {
+			// 清理临时目录
+			File file = Files.valueOf(MyConfiguration.getTempFolder(), this.getId());
+			if (file.exists() && file.canWrite()) {
+				file.delete();
+			}
 		}
 	}
 

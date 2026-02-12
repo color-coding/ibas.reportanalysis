@@ -98,9 +98,7 @@ namespace reportanalysis {
                         }));
                         let input: sap.ui.core.Control;
                         if (item.category === bo.emReportParameterType.DATETIME) {
-                            input = new sap.m.DatePicker("", {
-                                valueFormat: ibas.config.get(ibas.CONFIG_ITEM_FORMAT_DATE),
-                                displayFormat: ibas.config.get(ibas.CONFIG_ITEM_FORMAT_DATE),
+                            input = new sap.extension.m.DatePicker("", {
                                 value: {
                                     path: "/value"
                                 }

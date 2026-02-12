@@ -193,8 +193,9 @@ namespace reportanalysis {
                                             let criteria: ibas.ICriteria = new ibas.Criteria();
                                             let condition: ibas.ICondition = criteria.conditions.create();
                                             condition.alias = ibas.CRITERIA_CONDITION_ALIAS_FILE_NAME;
-                                            condition.value = ibas.strings.format("../reportanalysis_logs/{0}/{1}", data.report, data.parameterFile);
+                                            condition.value = ibas.strings.format("{0}/{1}", data.report, data.parameterFile);
                                             let boReposiorty: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
+                                            boReposiorty.address = boReposiorty.address.replace("/services/rest/data", "/services/rest/logfile");
                                             boReposiorty.download({
                                                 criteria: criteria,
                                                 onCompleted: (opRslt) => {
@@ -227,8 +228,9 @@ namespace reportanalysis {
                                             let criteria: ibas.ICriteria = new ibas.Criteria();
                                             let condition: ibas.ICondition = criteria.conditions.create();
                                             condition.alias = ibas.CRITERIA_CONDITION_ALIAS_FILE_NAME;
-                                            condition.value = ibas.strings.format("../reportanalysis_logs/{0}/{1}", data.report, data.resultFile);
+                                            condition.value = ibas.strings.format("{0}/{1}", data.report, data.resultFile);
                                             let boReposiorty: bo.BORepositoryReportAnalysis = new bo.BORepositoryReportAnalysis();
+                                            boReposiorty.address = boReposiorty.address.replace("/services/rest/data", "/services/rest/logfile");
                                             boReposiorty.download({
                                                 criteria: criteria,
                                                 onCompleted: (opRslt) => {

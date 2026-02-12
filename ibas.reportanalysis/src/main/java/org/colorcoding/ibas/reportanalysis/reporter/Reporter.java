@@ -1,19 +1,24 @@
 package org.colorcoding.ibas.reportanalysis.reporter;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Properties;
 import java.util.UUID;
 
 import org.colorcoding.ibas.bobas.common.DateTimes;
+import org.colorcoding.ibas.bobas.common.Files;
+import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.Strings;
 import org.colorcoding.ibas.bobas.data.IDataTable;
 import org.colorcoding.ibas.bobas.data.IDataTableColumn;
 import org.colorcoding.ibas.bobas.data.IDataTableRow;
+import org.colorcoding.ibas.bobas.file.FileData;
+import org.colorcoding.ibas.bobas.file.FileItem;
 import org.colorcoding.ibas.bobas.i18n.I18N;
 import org.colorcoding.ibas.bobas.message.Logger;
 import org.colorcoding.ibas.bobas.organization.OrganizationFactory;
+import org.colorcoding.ibas.bobas.repository.FileRepository;
 import org.colorcoding.ibas.bobas.serialization.writer.CsvWriter;
 import org.colorcoding.ibas.reportanalysis.bo.report.ReportRunningLog;
 import org.colorcoding.ibas.reportanalysis.repository.BORepositoryReportAnalysis;
@@ -95,13 +100,11 @@ public abstract class Reporter implements IReporter {
 	public IDataTable run(ExecuteReport report) throws ReporterException {
 		this.setReport(report);
 		ReportRunningLog reportLog = null;
-		File workFolder = new File(this.getWorkFolder(), this.getId());
+		// 记录运行参数（文件创建时间为开始时间）
 		if (this.isTraced() && this.getReport() != null) {
-			// 记录运行参数（文件创建时间为开始时间）
-			try {
-				if (!workFolder.exists()) {
-					workFolder.mkdirs();
-				}
+			try (FileRepository fileRepository = new FileRepository()) {
+				fileRepository.setRepositoryFolder(Files.pathOf(this.getWorkFolder(), this.getId()));
+				// 写入参数文件
 				Properties params = new Properties();
 				params.put("Report", this.getReport().getId());
 				params.put("ReportName", this.getReport().getName());
@@ -109,12 +112,19 @@ public abstract class Reporter implements IReporter {
 				for (ExecuteReportParameter item : this.getReport().getParameters()) {
 					params.put(item.getName(), item.getValue() == null ? Strings.VALUE_EMPTY : item.getValue());
 				}
-				try (FileOutputStream outputStream = new FileOutputStream(new File(workFolder, "Params.properties"))) {
+				try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();) {
 					try (OutputStreamWriter writer = new OutputStreamWriter(outputStream, "utf-8")) {
-						params.store(writer, String.format("create by %s", this.getRunner()));
-						writer.flush();
+						params.store(outputStream, String.format("create by %s", this.getRunner()));
+						outputStream.flush();
+						params = null;
 					}
-					outputStream.flush();
+					try (FileData fileData = new FileData(new ByteArrayInputStream(outputStream.toByteArray()))) {
+						fileData.setName("Params.properties");
+						IOperationResult<FileItem> opRsltFile = fileRepository.save(fileData);
+						if (opRsltFile.getError() != null) {
+							throw opRsltFile.getError();
+						}
+					}
 				}
 				if (reportLog == null) {
 					reportLog = new ReportRunningLog();
@@ -143,35 +153,48 @@ public abstract class Reporter implements IReporter {
 			}
 		}
 		IDataTable dataTable = this.run();
+		// 记录运行结果（文件创建时间为结束时间）
 		if (this.isTraced() && dataTable != null) {
-			// 记录运行结果（文件创建时间为结束时间）
-			try (FileOutputStream outputStream = new FileOutputStream(new File(workFolder, "ReportData.csv"))) {
-				CsvWriter writer = new CsvWriter();
-				IDataTableColumn column;
-				for (int i = 0; i < dataTable.getColumns().size(); i++) {
-					column = dataTable.getColumns().get(i);
-					if (i > 0) {
-						writer.writeDelimiter(outputStream);
-					}
-					writer.write(outputStream, Strings.isNullOrEmpty(column.getDescription()) ? column.getDescription()
-							: column.getName());
-				}
-				writer.writeNewLine(outputStream);
-
-				IDataTableRow row;
-				for (int i = 0; i < dataTable.getRows().size(); i++) {
-					row = dataTable.getRows().get(i);
-					if (i > 0) {
-						writer.writeNewLine(outputStream);
-					}
-					for (int j = 0; j < dataTable.getColumns().size(); j++) {
-						if (j > 0) {
+			try (FileRepository fileRepository = new FileRepository()) {
+				fileRepository.setRepositoryFolder(Files.pathOf(this.getWorkFolder(), this.getId()));
+				try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();) {
+					CsvWriter writer = new CsvWriter();
+					IDataTableColumn column;
+					for (int i = 0; i < dataTable.getColumns().size(); i++) {
+						column = dataTable.getColumns().get(i);
+						if (i > 0) {
 							writer.writeDelimiter(outputStream);
 						}
-						writer.write(outputStream, Strings.valueOf(row.getValue(j)));
+						writer.write(outputStream,
+								Strings.isNullOrEmpty(column.getDescription()) ? column.getDescription()
+										: column.getName());
+					}
+					writer.writeNewLine(outputStream);
+					IDataTableRow row;
+					for (int i = 0; i < dataTable.getRows().size(); i++) {
+						row = dataTable.getRows().get(i);
+						if (i > 0) {
+							writer.writeNewLine(outputStream);
+						}
+						for (int j = 0; j < dataTable.getColumns().size(); j++) {
+							if (j > 0) {
+								writer.writeDelimiter(outputStream);
+							}
+							writer.write(outputStream, Strings.valueOf(row.getValue(j)));
+						}
+					}
+					outputStream.flush();
+					writer = null;
+					column = null;
+					row = null;
+					try (FileData fileData = new FileData(new ByteArrayInputStream(outputStream.toByteArray()))) {
+						fileData.setName("ReportData.csv");
+						IOperationResult<FileItem> opRsltFile = fileRepository.save(fileData);
+						if (opRsltFile.getError() != null) {
+							throw opRsltFile.getError();
+						}
 					}
 				}
-
 				if (reportLog != null) {
 					reportLog.setEndDate(DateTimes.today());
 					reportLog.setEndTime(Short.valueOf(DateTimes.now().toString("HHmm")));
