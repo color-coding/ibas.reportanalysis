@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyManagementException;
@@ -166,7 +167,7 @@ public class RemoteReporter extends Reporter {
 			}
 			reportData.setParameters(parameters.toArray(new ReportDataParameter[] {}));
 			// 连接远程服务
-			URL url = new URL(stringBuilder.toString());
+			URL url = URI.create(stringBuilder.toString()).toURL();
 			Logger.log(MessageLevel.DEBUG, MSG_REPORTER_CONNECT_URL, url.toString());
 			URLConnection connection = this.openConnection(url);
 			// 设置通用的请求属性

@@ -6,7 +6,6 @@ import java.util.Properties;
 import org.colorcoding.ibas.bobas.common.IOperationResult;
 import org.colorcoding.ibas.bobas.common.OperationResult;
 import org.colorcoding.ibas.bobas.data.IDataTable;
-import org.colorcoding.ibas.initialfantasy.bo.shell.User;
 import org.colorcoding.ibas.reportanalysis.MyConfiguration;
 import org.colorcoding.ibas.reportanalysis.bo.report.Report;
 import org.colorcoding.ibas.reportanalysis.data.emReportType;
@@ -41,17 +40,11 @@ public class ReportAnalysis extends ApplicationClient {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <P> IOperationResult<P> execute(String instruct, Properties params) throws NotImplementedException {
+	public <P> IOperationResult<P> execute(String instruct, Properties params) throws ApplicationException {
 		if (EXECUT_NAME_RUN_REPORT.equalsIgnoreCase(instruct)) {
 			return (IOperationResult<P>) this.runReport(params);
-		} else {
-			throw new NotImplementedException(instruct);
 		}
-	}
-
-	@Override
-	public User authenticate(Properties params) throws AuthenticationException {
-		throw new AuthenticationException(new NotImplementedException());
+		throw new ApplicationException("not implemented.");
 	}
 
 	protected IOperationResult<IDataTable> runReport(Properties params) {
