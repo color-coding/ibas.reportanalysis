@@ -50,7 +50,7 @@ namespace reportanalysis {
                             }
                             let condition: ibas.ICondition = criteria.conditions.create();
                             condition.alias = bo.Report.PROPERTY_OBJECTKEY_NAME;
-                            condition.operation = ibas.emConditionOperation.GRATER_THAN;
+                            condition.operation = ibas.emConditionOperation.GREATER_THAN;
                             condition.value = "0";
                         }
                     }
@@ -171,7 +171,7 @@ namespace reportanalysis {
                                 that.messages(ibas.emMessageType.ERROR, error.message);
                             } else {
                                 that.messages(ibas.emMessageType.SUCCESS,
-                                    ibas.i18n.prop("shell_data_delete") + ibas.i18n.prop("shell_sucessful"));
+                                    ibas.i18n.prop("shell_data_delete") + ibas.i18n.prop("shell_successful"));
                             }
                             that.busy(false);
                         });

@@ -29,7 +29,7 @@ public class SystemReporter extends Reporter {
 		ExecuteReportParameter sqlParameter = this.getReport().getParameters()
 				.firstOrDefault(c -> PARAMETER_NAME_SQL.equalsIgnoreCase(c.getName()));
 		if (sqlParameter == null || sqlParameter.getValue() == null || sqlParameter.getValue().isEmpty()) {
-			throw new ReporterException(I18N.prop("msg_ra_invaild_report_query",
+			throw new ReporterException(I18N.prop("msg_ra_invalid_report_query",
 					this.getReport().getName() != null ? this.getReport().getName() : this.getReport().getId()));
 		}
 		// 替换变量

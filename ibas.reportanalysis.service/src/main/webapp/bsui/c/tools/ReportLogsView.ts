@@ -317,7 +317,7 @@ namespace reportanalysis {
                                         if (datePicker instanceof sap.m.DatePicker && datePicker.getDateValue() instanceof Date) {
                                             condition = criteria.conditions.create();
                                             condition.alias = bo.ReportRunningLog.PROPERTY_STARTDATE_NAME;
-                                            condition.operation = ibas.emConditionOperation.GRATER_EQUAL;
+                                            condition.operation = ibas.emConditionOperation.GREATER_EQUAL;
                                             condition.value = ibas.dates.toString(datePicker.getDateValue(), "yyyy-MM-dd");
                                         }
                                         datePicker = this.getParent().getContent()[3];

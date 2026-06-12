@@ -65,7 +65,7 @@
     "reportanalysis_please_server_address": "Please enter server address",
     "reportanalysis_import_result": "Import Result",
     "reportanalysis_import_successful": "Successfully imported report [{0}|{1}]",
-    "reportanalysis_import_faild": "Failed to import report [{0}], {1}\nDo you want to continue?",
+    "reportanalysis_import_failed": "Failed to import report [{0}], {1}\nDo you want to continue?",
     "reportanalysis_ui_calculation_total": "Calculate Total",
     "reportanalysis_ui_hide_total": "Hide Total",
     "reportanalysis_ui_total": "Total: {0}",
@@ -82,5 +82,5 @@
     "reportanalysisusers_refresh_file": "Report Files",
     "reportanalysisusers_refresh_3rdparty": "Third-party Apps",
     "reportanalysisusers_filter_report_by_groups": "Filter reports by groups",
-    "reportanalysis_closing_delimiter": "---- End ----"
+    "reportanalysis_last_input_parameter": "Last Input Parameters"
 }

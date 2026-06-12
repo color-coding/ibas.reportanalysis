@@ -134,7 +134,7 @@ namespace reportanalysis {
                                 // 失败，询问是否继续
                                 that.messages({
                                     type: ibas.emMessageType.ERROR,
-                                    message: ibas.i18n.prop("reportanalysis_import_faild", data.name, opRslt.message),
+                                    message: ibas.i18n.prop("reportanalysis_import_failed", data.name, opRslt.message),
                                     actions: [ibas.emMessageAction.YES, ibas.emMessageAction.NO],
                                     onCompleted(action: ibas.emMessageAction): void {
                                         if (action === ibas.emMessageAction.YES) {

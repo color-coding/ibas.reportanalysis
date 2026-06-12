@@ -46,11 +46,11 @@ public class ThirdAppReporter extends Reporter {
 	public IDataTable run() throws ReporterException {
 		String application = this.getApplication();
 		if (application == null || application.isEmpty()) {
-			throw new ReporterException(I18N.prop("msg_ra_invaild_third_party_app"));
+			throw new ReporterException(I18N.prop("msg_ra_invalid_third_party_app"));
 		}
 		ApplicationClient client = ApplicationClientManager.newInstance().create(application);
 		if (client == null) {
-			throw new ReporterException(I18N.prop("msg_ra_invaild_third_party_app"));
+			throw new ReporterException(I18N.prop("msg_ra_invalid_third_party_app"));
 		}
 		try {
 			Properties params = new Properties();
@@ -102,7 +102,7 @@ public class ThirdAppReporter extends Reporter {
 				throw new ReporterException(opRslt.getError());
 			}
 			if (opRslt.getResultObjects().size() == 0) {
-				throw new ReporterException(I18N.prop("msg_ra_invaild_reponse_data"));
+				throw new ReporterException(I18N.prop("msg_ra_invalid_reponse_data"));
 			}
 			return opRslt.getResultObjects().firstOrDefault();
 		} catch (Exception e) {

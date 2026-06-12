@@ -208,7 +208,7 @@ public class RemoteReporter extends Reporter {
 					}
 				}
 			}
-			throw new ReporterException(I18N.prop("msg_ra_invaild_reponse_data"));
+			throw new ReporterException(I18N.prop("msg_ra_invalid_reponse_data"));
 		} catch (ReporterException e) {
 			throw e;
 		} catch (Exception e) {
