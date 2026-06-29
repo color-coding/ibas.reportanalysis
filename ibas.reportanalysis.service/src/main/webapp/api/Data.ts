@@ -16,6 +16,10 @@ namespace reportanalysis {
     export namespace config {
         /** 配置项目-禁用报表图形功能 */
         export const CONFIG_ITEM_DISABLE_REPORT_CHARTS: string = "disableReportCharts";
+
+        /** 配置项目-禁用用户报表主页自动分组 */
+        export const CONFIG_ITEM_DISABLE_USER_REPORT_PAGE_AUTO_GROUP: string = "disableUserReportPageAutoGroup";
+
         /**
          * 获取此模块配置
          * @param key 配置项

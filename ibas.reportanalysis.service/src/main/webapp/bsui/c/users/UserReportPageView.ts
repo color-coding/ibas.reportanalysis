@@ -21,7 +21,7 @@ namespace reportanalysis {
                     let that: this = this;
                     jQuery.sap.require("sap.ui.layout.cssgrid.GridBasicLayout");
                     this.multiCombobox = new sap.m.MultiComboBox("", {
-                        width: "auto",
+                        width: "70%",
                         placeholder: ibas.i18n.prop("reportanalysisusers_filter_report_by_groups"),
                         selectionFinish: function (): void {
                             that.rebuildView();
@@ -59,6 +59,7 @@ namespace reportanalysis {
                                 new sap.m.ToolbarSpacer(""),
                                 this.multiCombobox,
                                 this.searchField = new sap.m.SearchField("", {
+                                    width: "30%",
                                     liveChange: function (oEvent: sap.ui.base.Event): void {
                                         that.searchQuery = this.getValue();
                                         that.rebuildView();
@@ -278,7 +279,13 @@ namespace reportanalysis {
                         }
                     }
                     this.allReports = reports.slice();
-                    this.rebuildView();
+                    if (groups.length > 0 && !config.get(config.CONFIG_ITEM_DISABLE_USER_REPORT_PAGE_AUTO_GROUP, true)) {
+                        // 默认分组
+                        this.multiCombobox.getItems().forEach(c => this.multiCombobox.addSelectedItem(c));
+                        this.rebuildView();
+                    } else {
+                        this.rebuildView();
+                    }
                 }
                 /** 创建报表卡片 */
                 private createTile(report: bo.UserReport): sap.f.GridListItem {
