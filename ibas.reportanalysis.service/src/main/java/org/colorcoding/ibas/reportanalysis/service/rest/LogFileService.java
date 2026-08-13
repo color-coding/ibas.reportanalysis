@@ -1,6 +1,6 @@
 package org.colorcoding.ibas.reportanalysis.service.rest;
 
-import javax.ws.rs.Path;
+import jakarta.ws.rs.Path;
 
 import org.colorcoding.ibas.reportanalysis.MyConfiguration;
 
