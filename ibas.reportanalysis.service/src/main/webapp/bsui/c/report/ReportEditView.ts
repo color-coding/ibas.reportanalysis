@@ -89,356 +89,542 @@ namespace reportanalysis {
                             new sap.m.IconTabBar("", {
                                 headerBackgroundDesign: sap.m.BackgroundDesign.Transparent,
                                 backgroundDesign: sap.m.BackgroundDesign.Transparent,
+                                applyContentPadding: true,
                                 expandable: false,
                                 items: [
                                     new sap.m.IconTabFilter("", {
                                         text: ibas.i18n.prop("reportanalysis_title_content"),
                                         content: [
-                                            new sap.ui.layout.form.SimpleForm("", {
-                                                editable: true,
-                                                content: [
-                                                    new sap.m.Toolbar("", { visible: false }),
-                                                    new sap.m.Label("", { text: ibas.i18n.prop("bo_report_category") }),
-                                                    new sap.extension.m.EnumSelect("", {
-                                                        enumType: bo.emReportType
-                                                    }).bindProperty("bindingValue", {
-                                                        path: "category",
-                                                        type: new sap.extension.data.Enum({
-                                                            enumType: bo.emReportType
-                                                        })
-                                                    }),
-                                                    new sap.m.Label("", { text: ibas.i18n.prop("bo_report_sqlstring") }),
-                                                    new sap.extension.m.TextArea("", {
-                                                        rows: 6
-                                                    }).bindProperty("bindingValue", {
-                                                        path: "sqlString",
-                                                        type: new sap.extension.data.Alphanumeric()
-                                                    }).bindProperty("editable", {
-                                                        path: "category",
-                                                        formatter(data: bo.emReportType): any {
-                                                            if (data === bo.emReportType.REPORT) {
-                                                                return true;
-                                                            }
-                                                            return false;
-                                                        }
-                                                    }),
-                                                    new sap.m.Label("", {
-                                                    }),
-                                                    new sap.m.Button("", {
-                                                        text: ibas.i18n.prop("reportanalysis_sql_code_edit"),
-                                                        type: sap.m.ButtonType.Accept,
-                                                        press: function (): void {
-                                                            let data: bo.Report = that.page.getModel().getData();
-                                                            if (ibas.objects.isNull(data)) {
-                                                                return;
-                                                            }
-                                                            jQuery.sap.require("sap.ui.codeeditor.CodeEditor");
-                                                            let dialog: sap.m.Dialog = new sap.m.Dialog("", {
-                                                                title: ibas.i18n.prop("reportanalysis_sql_code_edit"),
-                                                                type: sap.m.DialogType.Standard,
-                                                                state: sap.ui.core.ValueState.None,
-                                                                content: [
-                                                                    new sap.ui.codeeditor.CodeEditor("", {
-                                                                        height: ibas.strings.format("{0}px", window.innerHeight * 0.6),
-                                                                        width: ibas.strings.format("{0}px", window.innerWidth * 0.6),
-                                                                        type: "sql",
-                                                                        colorTheme: "eclipse",
-                                                                        value: {
-                                                                            path: "/sqlString"
-                                                                        }
-                                                                    })
-                                                                ],
-                                                                buttons: [
-                                                                    new sap.m.Button("", {
-                                                                        text: ibas.i18n.prop("reportanalysis_sql_code_pretty"),
-                                                                        type: sap.m.ButtonType.Transparent,
-                                                                        icon: "sap-icon://text-formatting",
-                                                                        press: function (): void {
-                                                                            let content: any = dialog.getContent()[0];
-                                                                            if (content instanceof sap.ui.codeeditor.CodeEditor) {
-                                                                                content.prettyPrint();
-                                                                            }
-                                                                        }
-                                                                    }),
-                                                                    new sap.m.Button("", {
-                                                                        text: ibas.i18n.prop("shell_exit"),
-                                                                        type: sap.m.ButtonType.Transparent,
-                                                                        icon: "sap-icon://inspect-down",
-                                                                        press: function (): void {
-                                                                            dialog.close();
-                                                                            dialog = null;
-                                                                        }
-                                                                    }),
-                                                                ]
-                                                            }).addStyleClass("sapUiNoContentPadding");
-                                                            dialog.setModel(new sap.extension.model.JSONModel(data));
-                                                            dialog.open();
-                                                        }
-                                                    }).bindProperty("enabled", {
-                                                        path: "category",
-                                                        formatter(data: bo.emReportType): any {
-                                                            if (data === bo.emReportType.REPORT) {
-                                                                return true;
-                                                            }
-                                                            return false;
-                                                        }
-                                                    }),
-                                                    new sap.m.Toolbar("", { visible: false }),
-                                                    new sap.m.Label("", { text: ibas.i18n.prop("bo_report_server") }),
-                                                    new sap.extension.m.Input("", {
-                                                    }).bindProperty("bindingValue", {
-                                                        path: "server",
-                                                        type: new sap.extension.data.Alphanumeric({
-                                                            maxLength: 200
-                                                        })
-                                                    }).bindProperty("editable", {
-                                                        path: "category",
-                                                        formatter(data: bo.emReportType): any {
-                                                            if (data === bo.emReportType.SERVICE) {
-                                                                return true;
-                                                            }
-                                                            return false;
-                                                        }
-                                                    }),
-                                                    new sap.m.Label("", { text: ibas.i18n.prop("bo_report_user") }),
-                                                    new sap.extension.m.Input("", {
-                                                    }).bindProperty("bindingValue", {
-                                                        path: "user",
-                                                        type: new sap.extension.data.Alphanumeric({
-                                                            maxLength: 30
-                                                        })
-                                                    }).bindProperty("editable", {
-                                                        path: "category",
-                                                        formatter(data: bo.emReportType): any {
-                                                            if (data === bo.emReportType.SERVICE) {
-                                                                return true;
-                                                            }
-                                                            return false;
-                                                        }
-                                                    }),
-                                                    new sap.m.Label("", { text: ibas.i18n.prop("bo_report_password") }),
-                                                    new sap.extension.m.Input("", {
-                                                        autocomplete: false,
-                                                        type: sap.m.InputType.Password
-                                                    }).bindProperty("bindingValue", {
-                                                        path: "password",
-                                                        type: new sap.extension.data.Alphanumeric({
-                                                            maxLength: 30
-                                                        })
-                                                    }).bindProperty("editable", {
-                                                        path: "category",
-                                                        formatter(data: bo.emReportType): any {
-                                                            if (data === bo.emReportType.SERVICE) {
-                                                                return true;
-                                                            }
-                                                            return false;
-                                                        }
-                                                    }),
-                                                    new sap.m.Label("", { text: ibas.i18n.prop("bo_report_address") }),
-                                                    new sap.m.FlexBox("", {
-                                                        width: "100%",
-                                                        justifyContent: sap.m.FlexJustifyContent.Start,
-                                                        renderType: sap.m.FlexRendertype.Bare,
-                                                        items: [
+                                            new sap.m.HBox("", {
+                                                width: "100%",
+                                                height: "28rem",
+                                                fitContainer: true,
+                                                renderType: sap.m.FlexRendertype.Bare,
+                                                items: [
+                                                    new sap.ui.layout.form.SimpleForm("", {
+                                                        width: "67%",
+                                                        editable: true,
+                                                        columnsL: 1,
+                                                        columnsM: 1,
+                                                        columnsXL: 1,
+                                                        content: [
+                                                            new sap.m.Toolbar("", { visible: false }),
+                                                            new sap.m.Label("", { text: ibas.i18n.prop("bo_report_category") }),
+                                                            new sap.extension.m.EnumSelect("", {
+                                                                enumType: bo.emReportType
+                                                            }).bindProperty("bindingValue", {
+                                                                path: "category",
+                                                                type: new sap.extension.data.Enum({
+                                                                    enumType: bo.emReportType
+                                                                })
+                                                            }),
+                                                            new sap.m.Label("", { text: ibas.i18n.prop("bo_report_sqlstring") }).bindProperty("visible", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): boolean {
+                                                                    return data === bo.emReportType.REPORT;
+                                                                }
+                                                            }),
+                                                            new sap.extension.m.TextArea("", {
+                                                                rows: 6,
+                                                                width: "100%",
+                                                                height: "22rem"
+                                                            }).bindProperty("bindingValue", {
+                                                                path: "sqlString",
+                                                                type: new sap.extension.data.Alphanumeric()
+                                                            }).bindProperty("editable", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): boolean {
+                                                                    return data === bo.emReportType.REPORT;
+                                                                }
+                                                            }).bindProperty("visible", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): boolean {
+                                                                    return data === bo.emReportType.REPORT;
+                                                                }
+                                                            }),
+                                                            new sap.m.Label("", {}).bindProperty("visible", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): boolean {
+                                                                    return data === bo.emReportType.REPORT;
+                                                                }
+                                                            }),
+                                                            new sap.m.Button("", {
+                                                                text: ibas.i18n.prop("reportanalysis_sql_code_edit"),
+                                                                type: sap.m.ButtonType.Accept,
+                                                                press: function (): void {
+                                                                    let data: bo.Report = that.page.getModel().getData();
+                                                                    if (ibas.objects.isNull(data)) {
+                                                                        return;
+                                                                    }
+                                                                    jQuery.sap.require("sap.ui.codeeditor.CodeEditor");
+                                                                    let dialog: sap.m.Dialog = new sap.m.Dialog("", {
+                                                                        title: ibas.i18n.prop("reportanalysis_sql_code_edit"),
+                                                                        type: sap.m.DialogType.Standard,
+                                                                        state: sap.ui.core.ValueState.None,
+                                                                        content: [
+                                                                            new sap.ui.codeeditor.CodeEditor("", {
+                                                                                height: ibas.strings.format("{0}px", window.innerHeight * 0.6),
+                                                                                width: ibas.strings.format("{0}px", window.innerWidth * 0.6),
+                                                                                type: "sql",
+                                                                                colorTheme: "eclipse",
+                                                                                value: {
+                                                                                    path: "/sqlString"
+                                                                                }
+                                                                            })
+                                                                        ],
+                                                                        buttons: [
+                                                                            new sap.m.Button("", {
+                                                                                text: ibas.i18n.prop("reportanalysis_sql_code_pretty"),
+                                                                                type: sap.m.ButtonType.Transparent,
+                                                                                icon: "sap-icon://text-formatting",
+                                                                                press: function (): void {
+                                                                                    let content: any = dialog.getContent()[0];
+                                                                                    if (content instanceof sap.ui.codeeditor.CodeEditor) {
+                                                                                        content.prettyPrint();
+                                                                                    }
+                                                                                }
+                                                                            }),
+                                                                            new sap.m.Button("", {
+                                                                                text: ibas.i18n.prop("shell_exit"),
+                                                                                type: sap.m.ButtonType.Transparent,
+                                                                                icon: "sap-icon://inspect-down",
+                                                                                press: function (): void {
+                                                                                    dialog.close();
+                                                                                    dialog = null;
+                                                                                }
+                                                                            })
+                                                                        ]
+                                                                    }).addStyleClass("sapUiNoContentPadding");
+                                                                    dialog.setModel(new sap.extension.model.JSONModel(data));
+                                                                    dialog.open();
+                                                                }
+                                                            }).bindProperty("visible", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): boolean {
+                                                                    return data === bo.emReportType.REPORT;
+                                                                }
+                                                            }),
+                                                            new sap.m.Toolbar("", { visible: false }),
+                                                            new sap.m.Label("", { text: ibas.i18n.prop("bo_report_server") }).bindProperty("visible", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): boolean {
+                                                                    return data === bo.emReportType.SERVICE;
+                                                                }
+                                                            }),
                                                             new sap.extension.m.Input("", {
                                                             }).bindProperty("bindingValue", {
-                                                                path: "address",
-                                                                type: new sap.extension.data.Alphanumeric()
+                                                                path: "server",
+                                                                type: new sap.extension.data.Alphanumeric({
+                                                                    maxLength: 200
+                                                                })
                                                             }).bindProperty("editable", {
                                                                 path: "category",
                                                                 formatter(data: bo.emReportType): any {
                                                                     if (data === bo.emReportType.SERVICE) {
                                                                         return true;
-                                                                    } else if (data === bo.emReportType.THIRD_APP) {
-                                                                        return true;
                                                                     }
                                                                     return false;
+                                                                }
+                                                            }).bindProperty("visible", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): boolean {
+                                                                    return data === bo.emReportType.SERVICE;
                                                                 }
                                                             }),
-                                                            new sap.m.MenuButton("", {
-                                                                icon: "sap-icon://attachment",
-                                                                width: "auto",
-                                                                type: sap.m.ButtonType.Transparent,
-                                                                menu: new sap.m.Menu("", {
-                                                                    items: [
-                                                                        new sap.m.MenuItem("", {
-                                                                            text: "Excel",
-                                                                            icon: "sap-icon://excel-attachment",
-                                                                            press: function (): void {
-                                                                                ibas.files.open((files) => {
-                                                                                    if (files.length > 0) {
-                                                                                        let fileData: FormData = new FormData();
-                                                                                        fileData.append("file", files[0], encodeURI(files[0].name));
-                                                                                        that.fireViewEvents(that.uploadReportEvent, fileData);
-                                                                                    }
-                                                                                }, {
-                                                                                    multiple: false,
-                                                                                    accept: "text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                                                                });
-                                                                            }
-                                                                        }),
-                                                                        new sap.m.MenuItem("", {
-                                                                            text: "Report",
-                                                                            icon: "sap-icon://business-objects-experience",
-                                                                            press: function (): void {
-                                                                                ibas.files.open((files) => {
-                                                                                    if (files.length > 0) {
-                                                                                        let fileData: FormData = new FormData();
-                                                                                        fileData.append("file", files[0], encodeURI(files[0].name));
-                                                                                        that.fireViewEvents(that.uploadReportEvent, fileData);
-                                                                                    }
-                                                                                }, {
-                                                                                    multiple: false,
-                                                                                    accept: "application/x-shockwave-flash,application/x-rpt"
-                                                                                });
-                                                                            }
-                                                                        }),
-                                                                        new sap.m.MenuItem("", {
-                                                                            text: "Download",
-                                                                            icon: "sap-icon://download-from-cloud",
-                                                                            press: function (): void {
-                                                                                that.fireViewEvents(that.downloadReportEvent);
-                                                                            }
-                                                                        }),
-                                                                    ],
-                                                                }),
-                                                                buttonMode: sap.m.MenuButtonMode.Split,
-                                                                useDefaultActionOnly: true,
-                                                                defaultAction: function (): void {
-                                                                    ibas.files.open((files) => {
-                                                                        if (files.length > 0) {
-                                                                            let fileData: FormData = new FormData();
-                                                                            fileData.append("file", files[0], encodeURI(files[0].name));
-                                                                            that.fireViewEvents(that.uploadReportEvent, fileData);
-                                                                        }
-                                                                    }, { multiple: false });
+                                                            new sap.m.Label("", { text: ibas.i18n.prop("bo_report_user") }).bindProperty("visible", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): boolean {
+                                                                    return data === bo.emReportType.SERVICE;
                                                                 }
-                                                            }).addStyleClass("sapUiTinyMarginBegin").bindProperty("visible", {
+                                                            }),
+                                                            new sap.extension.m.Input("", {
+                                                            }).bindProperty("bindingValue", {
+                                                                path: "user",
+                                                                type: new sap.extension.data.Alphanumeric({
+                                                                    maxLength: 30
+                                                                })
+                                                            }).bindProperty("editable", {
                                                                 path: "category",
                                                                 formatter(data: bo.emReportType): any {
-                                                                    if (data === bo.emReportType.FILE) {
-                                                                        return true;
-                                                                    } else if (data === bo.emReportType.THIRD_APP) {
+                                                                    if (data === bo.emReportType.SERVICE) {
                                                                         return true;
                                                                     }
                                                                     return false;
+                                                                }
+                                                            }).bindProperty("visible", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): boolean {
+                                                                    return data === bo.emReportType.SERVICE;
+                                                                }
+                                                            }),
+                                                            new sap.m.Label("", { text: ibas.i18n.prop("bo_report_password") }).bindProperty("visible", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): boolean {
+                                                                    return data === bo.emReportType.SERVICE;
+                                                                }
+                                                            }),
+                                                            new sap.extension.m.Input("", {
+                                                                autocomplete: false,
+                                                                type: sap.m.InputType.Password
+                                                            }).bindProperty("bindingValue", {
+                                                                path: "password",
+                                                                type: new sap.extension.data.Alphanumeric({
+                                                                    maxLength: 30
+                                                                })
+                                                            }).bindProperty("editable", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): any {
+                                                                    if (data === bo.emReportType.SERVICE) {
+                                                                        return true;
+                                                                    }
+                                                                    return false;
+                                                                }
+                                                            }).bindProperty("visible", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): boolean {
+                                                                    return data === bo.emReportType.SERVICE;
+                                                                }
+                                                            }),
+                                                            new sap.m.Label("", { text: ibas.i18n.prop("bo_report_address") }).bindProperty("visible", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): boolean {
+                                                                    return data === bo.emReportType.SERVICE
+                                                                        || data === bo.emReportType.FILE
+                                                                        || data === bo.emReportType.THIRD_APP;
+                                                                }
+                                                            }),
+                                                            new sap.m.FlexBox("", {
+                                                                width: "100%",
+                                                                justifyContent: sap.m.FlexJustifyContent.Start,
+                                                                renderType: sap.m.FlexRendertype.Bare,
+                                                                items: [
+                                                                    new sap.extension.m.Input("", {
+                                                                    }).bindProperty("bindingValue", {
+                                                                        path: "address",
+                                                                        type: new sap.extension.data.Alphanumeric()
+                                                                    }).bindProperty("editable", {
+                                                                        path: "category",
+                                                                        formatter(data: bo.emReportType): any {
+                                                                            if (data === bo.emReportType.SERVICE) {
+                                                                                return true;
+                                                                            } else if (data === bo.emReportType.THIRD_APP) {
+                                                                                return true;
+                                                                            }
+                                                                            return false;
+                                                                        }
+                                                                    }),
+                                                                    new sap.m.MenuButton("", {
+                                                                        icon: "sap-icon://attachment",
+                                                                        width: "auto",
+                                                                        type: sap.m.ButtonType.Transparent,
+                                                                        menu: new sap.m.Menu("", {
+                                                                            items: [
+                                                                                new sap.m.MenuItem("", {
+                                                                                    text: "Excel",
+                                                                                    icon: "sap-icon://excel-attachment",
+                                                                                    press: function (): void {
+                                                                                        ibas.files.open((files) => {
+                                                                                            if (files.length > 0) {
+                                                                                                let fileData: FormData = new FormData();
+                                                                                                fileData.append("file", files[0], encodeURI(files[0].name));
+                                                                                                that.fireViewEvents(that.uploadReportEvent, fileData);
+                                                                                            }
+                                                                                        }, {
+                                                                                            multiple: false,
+                                                                                            accept: "text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                                                                        });
+                                                                                    }
+                                                                                }),
+                                                                                new sap.m.MenuItem("", {
+                                                                                    text: "Report",
+                                                                                    icon: "sap-icon://business-objects-experience",
+                                                                                    press: function (): void {
+                                                                                        ibas.files.open((files) => {
+                                                                                            if (files.length > 0) {
+                                                                                                let fileData: FormData = new FormData();
+                                                                                                fileData.append("file", files[0], encodeURI(files[0].name));
+                                                                                                that.fireViewEvents(that.uploadReportEvent, fileData);
+                                                                                            }
+                                                                                        }, {
+                                                                                            multiple: false,
+                                                                                            accept: "application/x-shockwave-flash,application/x-rpt"
+                                                                                        });
+                                                                                    }
+                                                                                }),
+                                                                                new sap.m.MenuItem("", {
+                                                                                    text: "Download",
+                                                                                    icon: "sap-icon://download-from-cloud",
+                                                                                    press: function (): void {
+                                                                                        that.fireViewEvents(that.downloadReportEvent);
+                                                                                    }
+                                                                                }),
+                                                                            ],
+                                                                        }),
+                                                                        buttonMode: sap.m.MenuButtonMode.Split,
+                                                                        useDefaultActionOnly: true,
+                                                                        defaultAction: function (): void {
+                                                                            ibas.files.open((files) => {
+                                                                                if (files.length > 0) {
+                                                                                    let fileData: FormData = new FormData();
+                                                                                    fileData.append("file", files[0], encodeURI(files[0].name));
+                                                                                    that.fireViewEvents(that.uploadReportEvent, fileData);
+                                                                                }
+                                                                            }, { multiple: false });
+                                                                        }
+                                                                    }).addStyleClass("sapUiTinyMarginBegin").bindProperty("visible", {
+                                                                        path: "category",
+                                                                        formatter(data: bo.emReportType): any {
+                                                                            if (data === bo.emReportType.FILE) {
+                                                                                return true;
+                                                                            } else if (data === bo.emReportType.THIRD_APP) {
+                                                                                return true;
+                                                                            }
+                                                                            return false;
+                                                                        }
+                                                                    }),
+                                                                ]
+                                                            }).bindProperty("visible", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): boolean {
+                                                                    return data === bo.emReportType.SERVICE
+                                                                        || data === bo.emReportType.FILE
+                                                                        || data === bo.emReportType.THIRD_APP;
+                                                                }
+                                                            }),
+                                                            new sap.m.Label("", { text: ibas.i18n.prop("bo_report_thirdpartyapp") }).bindProperty("visible", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): boolean {
+                                                                    return data === bo.emReportType.THIRD_APP;
+                                                                }
+                                                            }),
+                                                            new sap.extension.m.RepositoryInput("", {
+                                                                showValueHelp: true,
+                                                                repository: thirdpartyapp.bo.BORepositoryThirdPartyApp,
+                                                                dataInfo: {
+                                                                    type: thirdpartyapp.bo.Application,
+                                                                    key: thirdpartyapp.bo.Application.PROPERTY_CODE_NAME,
+                                                                    text: thirdpartyapp.bo.Application.PROPERTY_NAME_NAME
+                                                                },
+                                                                valueHelpRequest: function (): void {
+                                                                    that.fireViewEvents(that.chooseReportThirdPartyAppEvent);
+                                                                }
+                                                            }).bindProperty("bindingValue", {
+                                                                path: "thirdPartyApp",
+                                                                type: new sap.extension.data.Alphanumeric({
+                                                                    maxLength: 20
+                                                                })
+                                                            }).bindProperty("editable", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): any {
+                                                                    if (data === bo.emReportType.THIRD_APP) {
+                                                                        return true;
+                                                                    }
+                                                                    return false;
+                                                                }
+                                                            }).bindProperty("visible", {
+                                                                path: "category",
+                                                                formatter(data: bo.emReportType): boolean {
+                                                                    return data === bo.emReportType.THIRD_APP;
                                                                 }
                                                             }),
                                                         ]
                                                     }),
-                                                    new sap.m.Label("", { text: ibas.i18n.prop("bo_report_thirdpartyapp") }),
-                                                    new sap.extension.m.RepositoryInput("", {
-                                                        showValueHelp: true,
-                                                        repository: thirdpartyapp.bo.BORepositoryThirdPartyApp,
-                                                        dataInfo: {
-                                                            type: thirdpartyapp.bo.Application,
-                                                            key: thirdpartyapp.bo.Application.PROPERTY_CODE_NAME,
-                                                            text: thirdpartyapp.bo.Application.PROPERTY_NAME_NAME
-                                                        },
-                                                        valueHelpRequest: function (): void {
-                                                            that.fireViewEvents(that.chooseReportThirdPartyAppEvent);
-                                                        }
-                                                    }).bindProperty("bindingValue", {
-                                                        path: "thirdPartyApp",
-                                                        type: new sap.extension.data.Alphanumeric({
-                                                            maxLength: 20
-                                                        })
-                                                    }).bindProperty("editable", {
-                                                        path: "category",
-                                                        formatter(data: bo.emReportType): any {
-                                                            if (data === bo.emReportType.THIRD_APP) {
-                                                                return true;
-                                                            }
-                                                            return false;
-                                                        }
+                                                    new sap.ui.layout.form.SimpleForm("", {
+                                                        width: "32%",
+                                                        editable: true,
+                                                        columnsL: 1,
+                                                        columnsM: 1,
+                                                        columnsXL: 1,
+                                                        content: [
+                                                            new sap.m.Toolbar("", {
+                                                                content: [
+                                                                    new sap.m.Button("", {
+                                                                        text: ibas.i18n.prop("shell_data_add"),
+                                                                        type: sap.m.ButtonType.Transparent,
+                                                                        icon: "sap-icon://add",
+                                                                        press: function (): void {
+                                                                            that.fireViewEvents(that.addReportParameterEvent);
+                                                                        }
+                                                                    }),
+                                                                    new sap.m.Button("", {
+                                                                        text: ibas.i18n.prop("shell_data_remove"),
+                                                                        type: sap.m.ButtonType.Transparent,
+                                                                        icon: "sap-icon://less",
+                                                                        press: function (): void {
+                                                                            let items: bo.ReportParameter[] = [];
+                                                                            for (let item of that.tableReportParameter.getSelectedItems()) {
+                                                                                items.push(item.getBindingContext().getObject());
+                                                                            }
+                                                                            that.fireViewEvents(that.removeReportParameterEvent, items);
+                                                                        }
+                                                                    })
+                                                                ]
+                                                            }),
+                                                            new sap.m.ScrollContainer("", {
+                                                                width: "100%",
+                                                                height: "25rem",
+                                                                vertical: true,
+                                                                horizontal: false,
+                                                                content: [
+                                                                    this.tableReportParameter = new sap.m.List("", {
+                                                                        width: "100%",
+                                                                        mode: sap.m.ListMode.MultiSelect,
+                                                                        items: {
+                                                                            path: "/rows",
+                                                                            template: new sap.m.CustomListItem("", {
+                                                                                content: [
+                                                                                    new sap.ui.layout.form.SimpleForm("", {
+                                                                                        editable: true,
+                                                                                        backgroundDesign: sap.ui.layout.BackgroundDesign.Transparent,
+                                                                                        content: [
+                                                                                            new sap.m.Label("", { text: ibas.i18n.prop("bo_reportparameter_name") }),
+                                                                                            new sap.m.FlexBox("", {
+                                                                                                width: "100%",
+                                                                                                justifyContent: sap.m.FlexJustifyContent.Start,
+                                                                                                renderType: sap.m.FlexRendertype.Bare,
+                                                                                                items: [
+                                                                                                    new sap.extension.m.Input("", {
+                                                                                                        width: "40%",
+                                                                                                    }).bindProperty("bindingValue", {
+                                                                                                        path: "name",
+                                                                                                        type: new sap.extension.data.Alphanumeric({ maxLength: 30 })
+                                                                                                    }),
+                                                                                                    new sap.extension.m.Input("", {
+                                                                                                        placeholder: ibas.i18n.prop("bo_reportparameter_description"),
+                                                                                                    }).bindProperty("bindingValue", {
+                                                                                                        path: "description",
+                                                                                                        type: new sap.extension.data.Alphanumeric({ maxLength: 100 })
+                                                                                                    }).addStyleClass("sapUiTinyMarginBegin"),
+                                                                                                ]
+                                                                                            }),
+                                                                                            new sap.m.Label("", { text: ibas.i18n.prop("bo_reportparameter_category") }),
+                                                                                            new sap.m.FlexBox("", {
+                                                                                                width: "100%",
+                                                                                                justifyContent: sap.m.FlexJustifyContent.Start,
+                                                                                                renderType: sap.m.FlexRendertype.Bare,
+                                                                                                items: [
+                                                                                                    new sap.extension.m.EnumSelect("", {
+                                                                                                        width: "40%",
+                                                                                                        enumType: bo.emReportParameterType
+                                                                                                    }).bindProperty("bindingValue", {
+                                                                                                        path: "category",
+                                                                                                        type: new sap.extension.data.Enum({ enumType: bo.emReportParameterType })
+                                                                                                    }),
+                                                                                                    // new sap.m.Label("", { text: ibas.i18n.prop("bo_reportparameter_value") }),
+                                                                                                    new sap.extension.m.Input("", {
+                                                                                                        showValueHelp: true,
+                                                                                                        valueHelpOnly: false,
+                                                                                                        placeholder: ibas.i18n.prop("bo_reportparameter_value"),
+                                                                                                        valueHelpRequest: function (): void {
+                                                                                                            that.fireViewEvents(that.chooseReportParameterVariableEvent,
+                                                                                                                this.getBindingContext().getObject());
+                                                                                                        }
+                                                                                                    }).bindProperty("bindingValue", {
+                                                                                                        path: "value",
+                                                                                                        type: new sap.extension.data.Alphanumeric()
+                                                                                                    }).addStyleClass("sapUiTinyMarginBegin"),
+                                                                                                ]
+                                                                                            }),
+                                                                                        ]
+                                                                                    })
+                                                                                ]
+                                                                            })
+                                                                        }
+                                                                    })]
+                                                            })
+                                                        ]
                                                     }),
                                                 ]
                                             })
                                         ]
                                     }),
                                     new sap.m.IconTabFilter("", {
-                                        text: ibas.i18n.prop("reportanalysis_title_parameters"),
+                                        text: ibas.i18n.prop("reportanalysis_title_semantics"),
                                         content: [
-                                            this.tableReportParameter = new sap.extension.table.DataTable("", {
-                                                enableSelectAll: false,
-                                                visibleRowCount: sap.extension.table.visibleRowCount(6),
-                                                dataInfo: {
-                                                    code: bo.Report.BUSINESS_OBJECT_CODE,
-                                                    name: bo.ReportParameter.name
-                                                },
-                                                toolbar: new sap.m.Toolbar("", {
-                                                    content: [
-                                                        new sap.m.Button("", {
-                                                            text: ibas.i18n.prop("shell_data_add"),
-                                                            type: sap.m.ButtonType.Transparent,
-                                                            icon: "sap-icon://add",
-                                                            press: function (): void {
-                                                                that.fireViewEvents(that.addReportParameterEvent);
-                                                            }
-                                                        }),
-                                                        new sap.m.Button("", {
-                                                            text: ibas.i18n.prop("shell_data_remove"),
-                                                            type: sap.m.ButtonType.Transparent,
-                                                            icon: "sap-icon://less",
-                                                            press: function (): void {
-                                                                that.fireViewEvents(that.removeReportParameterEvent, that.tableReportParameter.getSelecteds());
-                                                            }
-                                                        })
-                                                    ]
-                                                }),
-                                                rows: "{/rows}",
-                                                columns: [
-                                                    new sap.extension.table.DataColumn("", {
-                                                        label: ibas.i18n.prop("bo_reportparameter_name"),
-                                                        template: new sap.extension.m.Input("", {
-                                                        }).bindProperty("bindingValue", {
-                                                            path: "name",
-                                                            type: new sap.extension.data.Alphanumeric({
-                                                                maxLength: 30
-                                                            })
-                                                        }),
-                                                    }),
-                                                    new sap.extension.table.DataColumn("", {
-                                                        label: ibas.i18n.prop("bo_reportparameter_description"),
-                                                        template: new sap.extension.m.Input("", {
-                                                        }).bindProperty("bindingValue", {
-                                                            path: "description",
-                                                            type: new sap.extension.data.Alphanumeric({
-                                                                maxLength: 100
-                                                            })
-                                                        }),
-                                                        width: "14rem",
-                                                    }),
-                                                    new sap.extension.table.DataColumn("", {
-                                                        label: ibas.i18n.prop("bo_reportparameter_category"),
-                                                        template: new sap.extension.m.EnumSelect("", {
-                                                            enumType: bo.emReportParameterType
-                                                        }).bindProperty("bindingValue", {
-                                                            path: "category",
-                                                            type: new sap.extension.data.Enum({
-                                                                enumType: bo.emReportParameterType
-                                                            })
-                                                        }),
-                                                    }),
-                                                    new sap.extension.table.DataColumn("", {
-                                                        label: ibas.i18n.prop("bo_reportparameter_value"),
-                                                        template: new sap.extension.m.Input("", {
-                                                            showValueHelp: true,
-                                                            valueHelpOnly: false,
-                                                            valueHelpRequest: function (): void {
-                                                                that.fireViewEvents(that.chooseReportParameterVariableEvent,
-                                                                    // 获取当前对象
-                                                                    this.getBindingContext().getObject()
-                                                                );
-                                                            }
-                                                        }).bindProperty("bindingValue", {
-                                                            path: "value",
-                                                            type: new sap.extension.data.Alphanumeric()
-                                                        }),
+                                            new sap.m.VBox("", {
+                                                width: "100%",
+                                                height: "28rem",
+                                                fitContainer: true,
+                                                renderType: sap.m.FlexRendertype.Bare,
+                                                items: [
+                                                    new sap.m.ScrollContainer("", {
                                                         width: "100%",
+                                                        height: "24rem",
+                                                        vertical: true,
+                                                        horizontal: false,
+                                                        content: [
+                                                            new sap.m.IllustratedMessage("", {
+                                                                title: ibas.i18n.prop("reportanalysis_semantics_no_content"),
+                                                                description: ibas.i18n.prop("reportanalysis_semantics_no_content_description"),
+                                                                illustrationSize: sap.m.IllustratedMessageSize.Medium,
+                                                                illustrationType: sap.m.IllustratedMessageType.NoData,
+                                                            }).bindProperty("visible", {
+                                                                path: "semantics",
+                                                                formatter(value: string): boolean {
+                                                                    return ibas.strings.isEmpty(value);
+                                                                }
+                                                            }),
+                                                            new sap.extension.core.Markdown("", {
+                                                                width: "100%",
+                                                                markdown: {
+                                                                    path: "semantics",
+                                                                }
+                                                            }).bindProperty("visible", {
+                                                                path: "semantics",
+                                                                formatter(value: string): boolean {
+                                                                    return !ibas.strings.isEmpty(value);
+                                                                }
+                                                            })
+                                                        ]
                                                     }),
+                                                    new sap.m.Toolbar("", {
+                                                        content: [
+                                                            new sap.m.ToolbarSpacer(""),
+                                                            new sap.m.Button("", {
+                                                                text: ibas.i18n.prop("reportanalysis_semantics_code_edit"),
+                                                                type: sap.m.ButtonType.Accept,
+                                                                visible: ibas.variablesManager.getValue(ibas.VARIABLE_NAME_USER_SUPER) === true,
+                                                                press: function (): void {
+                                                                    let data: bo.Report = that.page.getModel().getData();
+                                                                    if (ibas.objects.isNull(data)) {
+                                                                        return;
+                                                                    }
+                                                                    jQuery.sap.require("sap.ui.codeeditor.CodeEditor");
+                                                                    let dialog: sap.m.Dialog = new sap.m.Dialog("", {
+                                                                        title: ibas.i18n.prop("reportanalysis_semantics_code_edit"),
+                                                                        type: sap.m.DialogType.Standard,
+                                                                        state: sap.ui.core.ValueState.None,
+                                                                        content: [
+                                                                            new sap.ui.codeeditor.CodeEditor("", {
+                                                                                height: ibas.strings.format("{0}px", window.innerHeight * 0.6),
+                                                                                width: ibas.strings.format("{0}px", window.innerWidth * 0.6),
+                                                                                type: "markdown",
+                                                                                colorTheme: "eclipse",
+                                                                                value: {
+                                                                                    path: "/semantics"
+                                                                                }
+                                                                            })
+                                                                        ],
+                                                                        buttons: [
+                                                                            new sap.m.Button("", {
+                                                                                text: ibas.i18n.prop("shell_exit"),
+                                                                                type: sap.m.ButtonType.Transparent,
+                                                                                icon: "sap-icon://inspect-down",
+                                                                                press: function (): void {
+                                                                                    dialog.close();
+                                                                                    dialog = null;
+                                                                                }
+                                                                            })
+                                                                        ]
+                                                                    }).addStyleClass("sapUiNoContentPadding");
+                                                                    dialog.setModel(new sap.extension.model.JSONModel(data));
+                                                                    dialog.open();
+                                                                }
+                                                            })
+                                                        ]
+                                                    })
                                                 ]
-                                            }),
+                                            })
                                         ]
                                     }),
                                 ]
@@ -620,8 +806,9 @@ namespace reportanalysis {
                         ]
                     });
                 }
+
                 private page: sap.extension.m.Page;
-                private tableReportParameter: sap.extension.table.Table;
+                private tableReportParameter: sap.m.List;
 
                 /** 显示数据 */
                 showReport(data: bo.Report): void {

@@ -334,6 +334,20 @@ public interface IReport extends IBOSimple {
 	void setSqlString(String value);
 
 	/**
+	 * 获取-报表语义
+	 *
+	 * @return 值
+	 */
+	String getSemantics();
+
+	/**
+	 * 设置-报表语义
+	 *
+	 * @param value 值
+	 */
+	void setSemantics(String value);
+
+	/**
 	 * 获取-服务器名称
 	 * 
 	 * @return 值
