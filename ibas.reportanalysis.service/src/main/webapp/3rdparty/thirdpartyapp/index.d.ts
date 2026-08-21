@@ -1198,7 +1198,7 @@ declare namespace thirdpartyapp {
 declare namespace thirdpartyapp {
     namespace app {
         /** 编辑应用-应用 */
-        class ApplicationEditApp extends ibas.BOEditApplication<IApplicationEditView, bo.Application> {
+        class ApplicationEditApp extends ibas.BOEditService<IApplicationEditView, bo.Application> {
             /** 应用标识 */
             static APPLICATION_ID: string;
             /** 应用名称 */
@@ -1238,6 +1238,13 @@ declare namespace thirdpartyapp {
             /** 上传图片事件 */
             uploadPictureEvent: Function;
         }
+        /** Application编辑服务映射 */
+        class ApplicationEditServiceMapping extends ibas.BOEditServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOEditServiceCaller<bo.Application>>;
+        }
     }
 }
 /**
@@ -1268,7 +1275,7 @@ declare namespace thirdpartyapp {
             run(): void;
             run(data: bo.Application): void;
             /** 查询数据 */
-            protected fetchData(criteria: ibas.ICriteria | string): void;
+            protected fetchData(criteria: ibas.ICriteria | string | number): void;
         }
         /** 视图-应用 */
         interface IApplicationViewView extends ibas.IBOViewView {
@@ -1411,7 +1418,7 @@ declare namespace thirdpartyapp {
 declare namespace thirdpartyapp {
     namespace app {
         /** 编辑应用-应用配置 */
-        class ApplicationConfigEditApp extends ibas.BOEditApplication<IApplicationConfigEditView, bo.ApplicationConfig> {
+        class ApplicationConfigEditApp extends ibas.BOEditService<IApplicationConfigEditView, bo.ApplicationConfig> {
             /** 应用标识 */
             static APPLICATION_ID: string;
             /** 应用名称 */
@@ -1452,6 +1459,13 @@ declare namespace thirdpartyapp {
             /** 显示数据-应用配置-项目 */
             showApplicationConfigItems(datas: bo.ApplicationConfigItem[]): void;
         }
+        /** ApplicationConfig编辑服务映射 */
+        class ApplicationConfigEditServiceMapping extends ibas.BOEditServiceMapping {
+            /** 构造函数 */
+            constructor();
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOEditServiceCaller<bo.ApplicationConfig>>;
+        }
     }
 }
 /**
@@ -1482,7 +1496,7 @@ declare namespace thirdpartyapp {
             run(): void;
             run(data: bo.ApplicationConfig): void;
             /** 查询数据 */
-            protected fetchData(criteria: ibas.ICriteria | string): void;
+            protected fetchData(criteria: ibas.ICriteria | string | number): void;
         }
         /** 视图-应用配置 */
         interface IApplicationConfigViewView extends ibas.IBOViewView {
