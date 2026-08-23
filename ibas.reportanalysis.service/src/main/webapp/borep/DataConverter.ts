@@ -35,6 +35,7 @@ namespace reportanalysis {
                         Id: newData.id,
                         Name: newData.name,
                         Group: newData.group,
+                        Semantics: newData.semantics,
                         Category: ibas.enums.toString(bo.emReportType, newData.category),
                         ResultMethod: newData.resultMethod,
                         Parameters: parameters
@@ -102,6 +103,7 @@ namespace reportanalysis {
                     newData.id = remote.Id;
                     newData.name = remote.Name;
                     newData.group = remote.Group;
+                    newData.semantics = remote.Semantics;
                     newData.category = ibas.enums.valueOf(bo.emReportType, remote.Category);
                     newData.resultMethod = remote.ResultMethod;
                     for (let item of remote.Parameters) {

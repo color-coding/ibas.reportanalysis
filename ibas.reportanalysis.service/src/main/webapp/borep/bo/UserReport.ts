@@ -14,6 +14,7 @@ namespace reportanalysis {
                 uReport.id = <any>report.objectKey;
                 uReport.name = report.name;
                 uReport.category = report.category;
+                uReport.semantics = report.semantics;
                 for (let item of report.reportParameters) {
                     uReport.parameters.add(UserReportParameter.create(item));
                 }
@@ -31,6 +32,8 @@ namespace reportanalysis {
             category: emReportType;
             /** 组 */
             group: string;
+            /** 报表语义 */
+            semantics: string;
             /** 结果形式 */
             resultMethod: string;
             /** 报表参数 */

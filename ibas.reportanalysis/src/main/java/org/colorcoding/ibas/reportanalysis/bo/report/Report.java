@@ -799,6 +799,37 @@ public class Report extends BusinessObject<Report> implements IReport, IDataOwne
 	}
 
 	/**
+	 * 属性名称-报表语义
+	 */
+	private static final String PROPERTY_SEMANTICS_NAME = "Semantics";
+
+	/**
+	 * 报表语义 属性
+	 */
+	@DbField(name = "Semantics", type = DataType.MEMO, table = DB_TABLE_NAME)
+	public static final IPropertyInfo<String> PROPERTY_SEMANTICS = registerProperty(PROPERTY_SEMANTICS_NAME,
+		String.class, MY_CLASS);
+
+	/**
+	 * 获取-报表语义
+	 *
+	 * @return 值
+	 */
+	@XmlElement(name = PROPERTY_SEMANTICS_NAME)
+	public final String getSemantics() {
+		return this.getProperty(PROPERTY_SEMANTICS);
+	}
+
+	/**
+	 * 设置-报表语义
+	 *
+	 * @param value 值
+	 */
+	public final void setSemantics(String value) {
+		this.setProperty(PROPERTY_SEMANTICS, value);
+	}
+
+	/**
 	 * 属性名称-服务器名称
 	 */
 	private static final String PROPERTY_SERVER_NAME = "Server";

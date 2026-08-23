@@ -36,6 +36,7 @@ public class UserReport extends Serializable {
 		userReport.setName(boItem.getName());
 		userReport.setCategory(boItem.getCategory());
 		userReport.setGroup(boItem.getGroup());
+		userReport.setSemantics(boItem.getSemantics());
 		ArrayList<UserReportParameter> parameters = new ArrayList<>();
 		// 参数
 		if (boItem.getAssociatedReport() != null) {
@@ -94,6 +95,17 @@ public class UserReport extends Serializable {
 
 	public void setGroup(String group) {
 		this.group = group;
+	}
+
+	@XmlElement(name = "Semantics")
+	private String semantics;
+
+	public String getSemantics() {
+		return semantics;
+	}
+
+	public void setSemantics(String semantics) {
+		this.semantics = semantics;
 	}
 
 	@XmlElementWrapper(name = "Parameters")

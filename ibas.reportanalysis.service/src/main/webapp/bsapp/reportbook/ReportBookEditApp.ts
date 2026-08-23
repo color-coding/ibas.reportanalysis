@@ -8,7 +8,7 @@
 namespace reportanalysis {
     export namespace app {
         /** 应用-报表簿 */
-        export class ReportBookEditApp extends ibas.BOEditApplication<IReportBookEditView, bo.ReportBook> {
+        export class ReportBookEditApp extends ibas.BOEditService<IReportBookEditView, bo.ReportBook> {
             /** 应用标识 */
             static APPLICATION_ID: string = "2ce72468-0c9d-45e5-b170-85ced746f983";
             /** 应用名称 */
@@ -306,6 +306,21 @@ namespace reportanalysis {
             chooseReportBookItemReportEvent: Function;
             /** 选择用户、角色事件 */
             chooseUserRoleEvent: Function;
+        }
+        /** ReportBook编辑服务映射 */
+        export class ReportBookEditServiceMapping extends ibas.BOEditServiceMapping {
+            /** 构造函数 */
+            constructor() {
+                super();
+                this.id = ReportBookEditApp.APPLICATION_ID;
+                this.name = ReportBookEditApp.APPLICATION_NAME;
+                this.boCode = ReportBookEditApp.BUSINESS_OBJECT_CODE;
+                this.description = ibas.i18n.prop(this.name);
+            }
+            /** 创建服务实例 */
+            create(): ibas.IService<ibas.IBOEditServiceCaller<bo.ReportBook>> {
+                return new ReportBookEditApp();
+            }
         }
     }
 }

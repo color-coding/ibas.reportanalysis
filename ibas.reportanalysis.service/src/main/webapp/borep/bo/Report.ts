@@ -279,6 +279,17 @@ namespace reportanalysis {
                 this.setProperty(Report.PROPERTY_SQLSTRING_NAME, value);
             }
 
+            /** 映射的属性名称-报表语义 */
+            static PROPERTY_SEMANTICS_NAME: string = "Semantics";
+            /** 获取-报表语义 */
+            get semantics(): string {
+                return this.getProperty<string>(Report.PROPERTY_SEMANTICS_NAME);
+            }
+            /** 设置-报表语义 */
+            set semantics(value: string) {
+                this.setProperty(Report.PROPERTY_SEMANTICS_NAME, value);
+            }
+
             /** 映射的属性名称-服务器名称 */
             static PROPERTY_SERVER_NAME: string = "Server";
             /** 获取-服务器名称 */

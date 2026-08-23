@@ -82,6 +82,9 @@ namespace reportanalysis {
             /** 查询语句 */
             sqlString: string;
 
+            /** 报表语义 */
+            semantics: string;
+
             /** 服务器名称 */
             server: string;
 

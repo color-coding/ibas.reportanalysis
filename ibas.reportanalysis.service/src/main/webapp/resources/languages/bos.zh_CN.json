@@ -23,6 +23,7 @@
         "bo_report_reportparameters": "报表参数",
         "bo_report_series": "服务系列",
         "bo_report_server": "服务器名称",
+        "bo_report_semantics": "报表语义",
         "bo_report_sqlstring": "查询语句",
         "bo_report_teammembers": "团队成员",
         "bo_report_thirdpartyapp": "第三方应用",

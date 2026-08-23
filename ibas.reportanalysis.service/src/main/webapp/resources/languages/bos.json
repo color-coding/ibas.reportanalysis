@@ -23,6 +23,7 @@
         "bo_report_reportparameters": "Report Parameters",
         "bo_report_series": "Service Series",
         "bo_report_server": "Server Name",
+        "bo_report_semantics": "Report Semantics",
         "bo_report_sqlstring": "Query String",
         "bo_report_teammembers": "Team Members",
         "bo_report_thirdpartyapp": "Third-party App",
