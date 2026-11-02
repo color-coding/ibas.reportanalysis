@@ -9,7 +9,7 @@ namespace reportanalysis {
     export namespace app {
         const BO_CODE_REPORT: string = ibas.config.applyVariables(bo.BO_CODE_REPORT);
         /** 查看应用-报表 */
-        abstract class ReportViewApp<T extends IReportViewView> extends ibas.Application<T>  {
+        abstract class ReportViewApp<T extends IReportViewView> extends ibas.Application<T> {
             /** 应用标识 */
             static APPLICATION_ID: string = "3c42c391-4dc3-4188-a9d7-b6cc757428ea";
             /** 应用名称 */
@@ -32,19 +32,19 @@ namespace reportanalysis {
             /** 视图显示后 */
             protected viewShowed(): void {
                 // 视图加载完成
-                if (ibas.objects.isNull(this.report.parameters)
-                    || this.report.parameters.firstOrDefault((item) => {
-                        if (item.category !== bo.emReportParameterType.PRESET) {
-                            return true;
-                        }
-                    }) === null) {
+                if (!ibas.objects.isNull(this.report.parameters)) {
+                    // 设置系统变量值
+                    this.report.valueParameters();
+                }
+                if (
+                    ibas.objects.isNull(this.report.parameters) ||
+                    this.report.parameters.firstOrDefault((c) => c.category !== bo.emReportParameterType.PRESET && ibas.strings.isEmpty(c.value)) === null
+                ) {
                     // 没有参数的报表，直接运行
                     this.view.showReport(this.report);
                     this.runReport();
                 } else {
                     // 有参数报表
-                    // 设置系统变量值
-                    this.report.valueParameters();
                     // 显示信息
                     this.view.showReport(this.report);
                 }
@@ -162,12 +162,13 @@ namespace reportanalysis {
                             }
                         }
                     });
-
                 } else {
-                    if (ibas.servicesManager.runLinkService({
-                        boCode: objectCode,
-                        linkValue: value.toString()
-                    })) {
+                    if (
+                        ibas.servicesManager.runLinkService({
+                            boCode: objectCode,
+                            linkValue: value.toString()
+                        })
+                    ) {
                         this.proceeding(ibas.emMessageType.SUCCESS, ibas.i18n.prop("reportanalysis_link_to_object_value", objectCode, value));
                     } else {
                         this.proceeding(ibas.emMessageType.ERROR, ibas.i18n.prop("reportanalysis_found_object_value", objectCode));
@@ -210,7 +211,6 @@ namespace reportanalysis {
             constructor() {
                 super();
                 this.id = ReportDataChooseApp.APPLICATION_ID;
-
             }
             /** 注册视图 */
             protected registerView(): void {
@@ -221,15 +221,8 @@ namespace reportanalysis {
             /** 视图显示后 */
             protected viewShowed(): void {
                 // 设置系统变量值
-                let done: boolean = true;
                 this.report.valueParameters();
-                for (let item of this.report.parameters) {
-                    if (ibas.objects.isNull(item.value) || ibas.strings.isEmpty(item.value)) {
-                        done = false;
-                        break;
-                    }
-                }
-                if (done) {
+                if (this.report.parameters.firstOrDefault((c) => c.category !== bo.emReportParameterType.PRESET && ibas.strings.isEmpty(c.value)) === null) {
                     // 没有参数的报表，直接运行
                     this.runReport();
                 } else {
@@ -239,9 +232,7 @@ namespace reportanalysis {
             }
             private chooseData(table: ibas.DataTable): void {
                 if (ibas.objects.isNull(table) || table.rows.length <= 0) {
-                    this.messages(ibas.emMessageType.WARNING, ibas.i18n.prop("shell_please_chooose_data",
-                        ibas.i18n.prop("shell_using")
-                    ));
+                    this.messages(ibas.emMessageType.WARNING, ibas.i18n.prop("shell_please_chooose_data", ibas.i18n.prop("shell_using")));
                     return;
                 }
                 this.close();
@@ -303,8 +294,7 @@ namespace reportanalysis {
                 super.viewShowed();
             }
             /** 编辑数据，参数：目标数据 */
-            protected editData(): void {
-            }
+            protected editData(): void {}
             run(): void;
             run(data: bo.Report): void;
             run(): void {
